@@ -230,7 +230,9 @@ int pc8736x_gpio_open(struct inode *inode, struct file *file)
 		return -EINVAL;
 	int ret = nonseekable_open(inode, file);
 	//bug
-	pc8736x_gpio_shadow[__VERIFIER_nondet_int()] = 5;
+	int port = __VERIFIER_nondet_int();
+	__VERIFIER_assume(port>=0 && port<4);
+	pc8736x_gpio_shadow[port] = (u8)__VERIFIER_nondet_int();
 	return ret;
 }
 

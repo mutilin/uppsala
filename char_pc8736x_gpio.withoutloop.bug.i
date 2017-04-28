@@ -10085,7 +10085,9 @@ int pc8736x_gpio_open(struct inode *inode, struct file *file)
   return -22;
  int ret = nonseekable_open(inode, file);
 
- pc8736x_gpio_shadow[__VERIFIER_nondet_int()] = 5;
+ int port = __VERIFIER_nondet_int();
+ __VERIFIER_assume(port>=0 && port<4);
+ pc8736x_gpio_shadow[port] = (u8)__VERIFIER_nondet_int();
  return ret;
 }
 
@@ -10147,7 +10149,7 @@ void *scenario_pc8736x_gpio_cdev(void *args) {
  whoop_file_1 = (struct file *) malloc(sizeof(struct file));
 
  if(pc8736x_gpio_open(whoop_inode_1, whoop_file_1)==0) {
-# 306 "char_pc8736x_gpio.withoutloop.bug.c"
+# 308 "char_pc8736x_gpio.withoutloop.bug.c"
   default_release(whoop_inode_1, whoop_file_1);
  };
  return 0;
