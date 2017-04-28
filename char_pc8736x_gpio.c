@@ -253,6 +253,65 @@ static void __init pc8736x_init_shadow(void)
 
 static struct cdev pc8736x_gpio_cdev;
 
+//-----------------------------------------------------------------------
+// Declare values needed by entry point wrappers
+struct inode *whoop_inode_0;
+struct file *whoop_file_0;
+struct inode *whoop_inode_1;
+struct file *whoop_file_1;
+struct inode *whoop_inode_2;
+struct file *whoop_file_2;
+struct inode *whoop_inode_3;
+struct file *whoop_file_3;
+struct inode *whoop_inode_4;
+struct file *whoop_file_4;
+struct inode *whoop_inode_5;
+struct file *whoop_file_5;
+struct inode *whoop_inode_6;
+struct file *whoop_file_6;
+struct pci_dev *whoop_pci_dev;
+const char *whoop_buf;
+struct platform_device *whoop_platform_device;
+struct vm_area_struct *whoop_vm_area_struct;
+struct cx_dev *whoop_cx_dev;
+//-----------------------------------------------------------------------
+
+void *scenario_pc8736x_gpio_cdev(void *args) {
+	whoop_inode_0 = (struct inode *) malloc(sizeof(struct inode));
+	whoop_file_0 = (struct file *) malloc(sizeof(struct file));
+	whoop_inode_1 = (struct inode *) malloc(sizeof(struct inode));
+	whoop_file_1 = (struct file *) malloc(sizeof(struct file));
+
+	if(pc8736x_gpio_open(whoop_inode_1, whoop_file_1)==0) {
+		while(__VERIFIER_nondet_int()) {
+			switch(__VERIFIER_nondet_int()) {
+				case 0:
+					//read
+					break;
+				default:
+					//write
+					break;
+			}
+		}
+		//release
+	};
+	return 0;
+}
+
+// Declare pthread_t's
+pthread_t pthread_t_pc8736x_gpio_cdev;
+
+int cdev_add(struct cdev *dev, dev_t d, unsigned n) {
+
+	// Create pthread threads
+	return pthread_create(&pthread_t_pc8736x_gpio_cdev, NULL, scenario_pc8736x_gpio_cdev, NULL);
+}
+
+void cdev_del(struct cdev *dev) {
+	// Wait for threads to finish
+	pthread_join(pthread_t_pc8736x_gpio_cdev, NULL);
+}
+
 int __init pc8736x_gpio_init(void)
 {
 	int rc;
@@ -354,26 +413,6 @@ void __exit pc8736x_gpio_cleanup(void)
 module_init(pc8736x_gpio_init);
 module_exit(pc8736x_gpio_cleanup);
 
-// Declare values needed by entry point wrappers
-struct inode *whoop_inode_0;
-struct file *whoop_file_0;
-struct inode *whoop_inode_1;
-struct file *whoop_file_1;
-struct inode *whoop_inode_2;
-struct file *whoop_file_2;
-struct inode *whoop_inode_3;
-struct file *whoop_file_3;
-struct inode *whoop_inode_4;
-struct file *whoop_file_4;
-struct inode *whoop_inode_5;
-struct file *whoop_file_5;
-struct inode *whoop_inode_6;
-struct file *whoop_file_6;
-struct pci_dev *whoop_pci_dev;
-const char *whoop_buf;
-struct platform_device *whoop_platform_device;
-struct vm_area_struct *whoop_vm_area_struct;
-struct cx_dev *whoop_cx_dev;
 
 poll_table *whoop_poll_table;
 
@@ -423,7 +462,7 @@ void *whoop_wrapper_pc8736x_gpio_change(void* args)
 	return NULL;
 }
 
-int main(void)
+int old_main(void)
 {
 	// Instantiate values required by entry points
 	whoop_inode_0 = (struct inode *) malloc(sizeof(struct inode));
@@ -468,3 +507,12 @@ int main(void)
 	pthread_join(pthread_t_pc8736x_gpio_change, NULL);
 
 }
+
+int main(void) {
+
+	if(pc8736x_gpio_init()==0) {
+		pc8736x_gpio_cleanup();
+	}
+
+}
+
