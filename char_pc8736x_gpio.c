@@ -274,11 +274,17 @@ const char *whoop_buf;
 struct platform_device *whoop_platform_device;
 struct vm_area_struct *whoop_vm_area_struct;
 struct cx_dev *whoop_cx_dev;
+
+poll_table *whoop_poll_table;
+
+loff_t *whoop_loff_t;
+int whoop_int;
+
 //-----------------------------------------------------------------------
 
+void default_release(struct inode * inode, struct file * filp);
+
 void *scenario_pc8736x_gpio_cdev(void *args) {
-	whoop_inode_0 = (struct inode *) malloc(sizeof(struct inode));
-	whoop_file_0 = (struct file *) malloc(sizeof(struct file));
 	whoop_inode_1 = (struct inode *) malloc(sizeof(struct inode));
 	whoop_file_1 = (struct file *) malloc(sizeof(struct file));
 
@@ -294,6 +300,7 @@ void *scenario_pc8736x_gpio_cdev(void *args) {
 			}
 		}
 		//release
+		default_release(whoop_inode_1, whoop_file_1);
 	};
 	return 0;
 }
@@ -312,6 +319,45 @@ void cdev_del(struct cdev *dev) {
 	pthread_join(pthread_t_pc8736x_gpio_cdev, NULL);
 }
 
+//------------------------------------------------------------------------------------
+void *scenario_pc8736x_gpio_ops(void *args) {
+	while(__VERIFIER_nondet_int()) {
+		switch(__VERIFIER_nondet_int()) {
+			case 0:
+				pc8736x_gpio_get(__VERIFIER_nondet_int());
+				break;
+			case 1:	
+				pc8736x_gpio_current(__VERIFIER_nondet_int());
+				break;
+			case 2:
+				pc8736x_gpio_configure(__VERIFIER_nondet_int(), __VERIFIER_nondet_int(), __VERIFIER_nondet_int());
+				break;
+			case 3:
+				pc8736x_gpio_change(__VERIFIER_nondet_int());
+				break;
+			default:
+				pc8736x_gpio_set(__VERIFIER_nondet_int(), __VERIFIER_nondet_int());
+				break;
+		}
+	}
+	return 0;
+}
+
+// Declare pthread_t's
+pthread_t pthread_t_pc8736x_gpio_ops;
+
+int nonseekable_open(struct inode * inode, struct file * filp) {
+	// Create pthread threads
+	return pthread_create(&pthread_t_pc8736x_gpio_ops, NULL, scenario_pc8736x_gpio_ops, NULL);
+}
+
+void default_release(struct inode * inode, struct file * filp) {
+	// Wait for threads to finish
+	pthread_join(pthread_t_pc8736x_gpio_ops, NULL);
+}
+
+
+//------------------------------------------------------------------------------------
 int __init pc8736x_gpio_init(void)
 {
 	int rc;
@@ -414,11 +460,6 @@ module_init(pc8736x_gpio_init);
 module_exit(pc8736x_gpio_cleanup);
 
 
-poll_table *whoop_poll_table;
-
-loff_t *whoop_loff_t;
-int whoop_int;
-
 // Pthread wrappers for entry points
 void *whoop_wrapper_pc8736x_gpio_set(void* args)
 {
@@ -509,7 +550,6 @@ int old_main(void)
 }
 
 int main(void) {
-
 	if(pc8736x_gpio_init()==0) {
 		pc8736x_gpio_cleanup();
 	}
