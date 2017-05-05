@@ -33,6 +33,17 @@ int ldv_thread_join(pthread_t ldv_thread, void (*function)(void * ));
 void ldv_mutex_model_lock(struct mutex *, char *);
 void ldv_mutex_model_unlock(struct mutex *, char *);
 
+int ldv_register_thread(pthread_t *ldv_thread, void (*function)(void * ), void *data) {
+	int a = __VERIFIER_nondet_int();
+	if(a) {
+		int ret = ldv_thread_create(ldv_thread,function, data);
+		__VERIFIER_assume(ret==0);
+		return 0;
+	} else {
+		return a;
+	}
+}
+
 static int major;		/* default to dynamic major */
 
 static DEFINE_MUTEX(pc8736x_gpio_config_lock);
@@ -341,7 +352,7 @@ pthread_t pthread_t_pc8736x_gpio_cdev;
 int cdev_add(struct cdev *dev, dev_t d, unsigned n) {
 
 	// Create pthread threads
-	return ldv_thread_create(&pthread_t_pc8736x_gpio_cdev, scenario_pc8736x_gpio_cdev, NULL);
+	return ldv_register_thread(&pthread_t_pc8736x_gpio_cdev, scenario_pc8736x_gpio_cdev, NULL);
 	//return pthread_create(&pthread_t_pc8736x_gpio_cdev, NULL, scenario_pc8736x_gpio_cdev, NULL);
 }
 
@@ -381,11 +392,11 @@ pthread_t pthread_t_pc8736x_gpio_ops2;
 
 int nonseekable_open(struct inode * inode, struct file * filp) {
 	// Create pthread threads
-	int res = ldv_thread_create(&pthread_t_pc8736x_gpio_ops, scenario_pc8736x_gpio_ops, NULL);
+	int res = ldv_register_thread(&pthread_t_pc8736x_gpio_ops, scenario_pc8736x_gpio_ops, NULL);
 	//int res = pthread_create(&pthread_t_pc8736x_gpio_ops, NULL, scenario_pc8736x_gpio_ops, NULL);
 	if(res!=0) return res;
 
-	return ldv_thread_create(&pthread_t_pc8736x_gpio_ops2, scenario_pc8736x_gpio_ops, NULL);
+	return ldv_register_thread(&pthread_t_pc8736x_gpio_ops2, scenario_pc8736x_gpio_ops, NULL);
 	//return pthread_create(&pthread_t_pc8736x_gpio_ops2, NULL, scenario_pc8736x_gpio_ops, NULL);
 }
 
