@@ -33,16 +33,8 @@ int ldv_thread_join(pthread_t ldv_thread, void (*function)(void * ));
 void ldv_mutex_model_lock(struct mutex *, char *);
 void ldv_mutex_model_unlock(struct mutex *, char *);
 
-int ldv_register_thread(pthread_t *ldv_thread, void (*function)(void * ), void *data) {
-	int a = __VERIFIER_nondet_int();
-	if(a) {
-		int ret = ldv_thread_create(ldv_thread,function, data);
-		__VERIFIER_assume(ret==0);
-		return 0;
-	} else {
-		return a;
-	}
-}
+#define ldv_register_thread(ldv_thread, function, data) \
+	(__VERIFIER_nondet_int()) ? ldv_thread_create(ldv_thread,function,data), 0 : -1
 
 static int major;		/* default to dynamic major */
 
