@@ -1751,23 +1751,23 @@ extern ssize_t nsc_gpio_write(struct file *file , char const   *data , size_t le
 extern ssize_t nsc_gpio_read(struct file *file , char *buf , size_t len , loff_t *ppos ) ;
 #line 39
 extern void nsc_gpio_dump(struct nsc_gpio_ops *amp , unsigned int index ) ;
-#line 30 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 30 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 static int major  ;
-#line 32 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 32 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 static struct mutex pc8736x_gpio_config_lock  =    {1, 0};
-#line 33 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 33 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 static unsigned int pc8736x_gpio_base  ;
-#line 34 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 34 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 static u8 pc8736x_gpio_shadow[4]  ;
-#line 63 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 63 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 static unsigned char superio_cmd  =    0;
-#line 64 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 64 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 static unsigned char selected_device  =    255;
-#line 67 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 67 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 static int port_offset[4]  = {      0,      4,      8,      10};
-#line 75 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 75 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 static struct platform_device *pdev  ;
-#line 77 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 77 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 static void ( __attribute__((__always_inline__)) superio_outb)(int addr , int val ) 
 { 
 
@@ -1783,7 +1783,7 @@ static void ( __attribute__((__always_inline__)) superio_outb)(int addr , int va
   return;
 }
 }
-#line 83 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 83 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 static int ( __attribute__((__always_inline__)) superio_inb)(int addr ) 
 { 
   unsigned char tmp ;
@@ -1799,7 +1799,7 @@ static int ( __attribute__((__always_inline__)) superio_inb)(int addr )
   return (tmp);
 }
 }
-#line 89 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 89 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 static int pc8736x_superio_present(void) 
 { 
   int id ;
@@ -1835,7 +1835,7 @@ static int pc8736x_superio_present(void)
   return (0);
 }
 }
-#line 107 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 107 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 static void device_select(unsigned int devldn ) 
 { 
 
@@ -1851,7 +1851,7 @@ static void device_select(unsigned int devldn )
   return;
 }
 }
-#line 113 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 113 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 static void select_pin(unsigned int iminor___0 ) 
 { 
 
@@ -1867,7 +1867,7 @@ static void select_pin(unsigned int iminor___0 )
   return;
 }
 }
-#line 121 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 121 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 static u32 ( __attribute__((__always_inline__)) pc8736x_gpio_configure_fn)(unsigned int index ,
                                                                            u32 mask ,
                                                                            u32 bits ,
@@ -1900,7 +1900,7 @@ static u32 ( __attribute__((__always_inline__)) pc8736x_gpio_configure_fn)(unsig
   return (config);
 }
 }
-#line 143 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 143 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 u32 pc8736x_gpio_configure(unsigned int index , u32 mask , u32 bits ) 
 { 
   u32 tmp ;
@@ -1914,7 +1914,7 @@ u32 pc8736x_gpio_configure(unsigned int index , u32 mask , u32 bits )
   return (tmp);
 }
 }
-#line 149 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 149 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 int pc8736x_gpio_get(unsigned int minor ) 
 { 
   int port ;
@@ -1925,38 +1925,32 @@ int pc8736x_gpio_get(unsigned int minor )
   {
   {
 #line 153
-  mutex_lock(& pc8736x_gpio_config_lock);
-#line 154
   port = minor >> 3;
-#line 155
+#line 154
   bit = minor & 7U;
-#line 156
+#line 155
   tmp = inb_p((pc8736x_gpio_base + (unsigned int )port_offset[port]) + 1U);
-#line 156
+#line 155
   val = tmp;
-#line 157
+#line 156
   val = val >> bit;
-#line 158
+#line 157
   val = val & 1;
   }
   {
-#line 160
+#line 159
   while (1) {
     while_continue: /* CIL Label */ ;
-#line 160
+#line 159
     goto while_break;
   }
   while_break: /* CIL Label */ ;
   }
-  {
 #line 163
-  mutex_unlock(& pc8736x_gpio_config_lock);
-  }
-#line 165
   return (val);
 }
 }
-#line 168 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 166 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 void pc8736x_gpio_set(unsigned int minor , int val ) 
 { 
   int port ;
@@ -1968,73 +1962,69 @@ void pc8736x_gpio_set(unsigned int minor , int val )
 
   {
   {
-#line 172
+#line 170
   minor = minor & 31U;
-#line 173
+#line 171
   port = minor >> 3;
-#line 174
+#line 172
   bit = minor & 7U;
-#line 176
-  mutex_lock(& pc8736x_gpio_config_lock);
-#line 177
+#line 173
   tmp = inb_p(pc8736x_gpio_base + (unsigned int )port_offset[port]);
-#line 177
+#line 173
   curval = tmp;
   }
   {
-#line 179
+#line 175
   while (1) {
     while_continue: /* CIL Label */ ;
-#line 179
+#line 175
     goto while_break;
   }
   while_break: /* CIL Label */ ;
   }
-#line 183
+#line 179
   val = (curval & ~ (1 << bit)) | (val << bit);
   {
-#line 185
+#line 181
   while (1) {
     while_continue___0: /* CIL Label */ ;
-#line 185
+#line 181
     goto while_break___0;
   }
   while_break___0: /* CIL Label */ ;
   }
   {
-#line 188
+#line 184
   outb_p(val, pc8736x_gpio_base + (unsigned int )port_offset[port]);
-#line 190
+#line 186
   tmp___0 = inb_p(pc8736x_gpio_base + (unsigned int )port_offset[port]);
-#line 190
+#line 186
   curval = tmp___0;
-#line 191
+#line 187
   tmp___1 = inb_p((pc8736x_gpio_base + (unsigned int )port_offset[port]) + 1U);
-#line 191
+#line 187
   val = tmp___1;
   }
   {
-#line 193
+#line 189
   while (1) {
     while_continue___1: /* CIL Label */ ;
-#line 193
+#line 189
     goto while_break___1;
   }
   while_break___1: /* CIL Label */ ;
   }
   {
-#line 194
+#line 190
   pc8736x_gpio_shadow[port] = val;
-#line 195
+#line 191
   __VERIFIER_assert((int )pc8736x_gpio_shadow[port] == val);
-#line 196
-  mutex_unlock(& pc8736x_gpio_config_lock);
   }
-#line 197
+#line 192
   return;
 }
 }
-#line 199 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 194 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 int pc8736x_gpio_current(unsigned int minor ) 
 { 
   int port ;
@@ -2043,26 +2033,22 @@ int pc8736x_gpio_current(unsigned int minor )
 
   {
   {
-#line 202
+#line 197
   minor = minor & 31U;
-#line 203
+#line 198
   port = minor >> 3;
-#line 204
+#line 199
   bit = minor & 7U;
-#line 205
-  mutex_lock(& pc8736x_gpio_config_lock);
-#line 206
+#line 200
   tmp = pc8736x_gpio_shadow[port];
-#line 207
+#line 201
   __VERIFIER_assert((int )tmp == (int )pc8736x_gpio_shadow[port]);
-#line 208
-  mutex_unlock(& pc8736x_gpio_config_lock);
   }
-#line 209
+#line 202
   return (((int )tmp >> bit) & 1);
 }
 }
-#line 212 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 205 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 void pc8736x_gpio_change(unsigned int index ) 
 { 
   int tmp ;
@@ -2070,31 +2056,31 @@ void pc8736x_gpio_change(unsigned int index )
 
   {
   {
-#line 214
+#line 207
   tmp = pc8736x_gpio_current(index);
   }
-#line 214
+#line 207
   if (tmp) {
-#line 214
+#line 207
     tmp___0 = 0;
   } else {
-#line 214
+#line 207
     tmp___0 = 1;
   }
   {
-#line 214
+#line 207
   pc8736x_gpio_set(index, tmp___0);
   }
-#line 215
+#line 208
   return;
 }
 }
-#line 217 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 210 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 static struct nsc_gpio_ops pc8736x_gpio_ops  = 
-#line 217
+#line 210
      {(struct module *)0, & pc8736x_gpio_configure, & nsc_gpio_dump, & pc8736x_gpio_get,
     & pc8736x_gpio_set, & pc8736x_gpio_change, & pc8736x_gpio_current, 0};
-#line 227 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 220 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 int pc8736x_gpio_open(struct inode *inode , struct file *file ) 
 { 
   unsigned int m ;
@@ -2108,148 +2094,148 @@ int pc8736x_gpio_open(struct inode *inode , struct file *file )
 
   {
   {
-#line 229
+#line 222
   tmp = iminor(inode);
-#line 229
+#line 222
   m = tmp;
-#line 230
+#line 223
   file->private_data = & pc8736x_gpio_ops;
-#line 231
+#line 224
   __VERIFIER_assert((unsigned long )file->private_data == (unsigned long )(& pc8736x_gpio_ops));
   }
   {
-#line 234
+#line 227
   while (1) {
     while_continue: /* CIL Label */ ;
-#line 234
+#line 227
     goto while_break;
   }
   while_break: /* CIL Label */ ;
   }
-#line 236
+#line 229
   if (m >= 32U) {
-#line 237
+#line 230
     return (-22);
   } else {
 
   }
   {
-#line 238
+#line 231
   tmp___0 = nonseekable_open(inode, file);
-#line 238
+#line 231
   ret = tmp___0;
   }
-#line 239
+#line 232
   if (ret != 0) {
     {
-#line 241
+#line 234
     tmp___1 = __VERIFIER_nondet_int();
-#line 241
+#line 234
     port = tmp___1;
-#line 242
+#line 235
     __VERIFIER_assume(port >= 0 && port < 4);
-#line 243
+#line 236
     tmp___3 = __VERIFIER_nondet_int();
-#line 243
+#line 236
     tmp___2 = (u8 )tmp___3;
-#line 244
+#line 237
     pc8736x_gpio_shadow[port] = tmp___2;
-#line 245
+#line 238
     __VERIFIER_assert((int )pc8736x_gpio_shadow[port] == (int )tmp___2);
     }
   } else {
 
   }
-#line 247
+#line 240
   return (ret);
 }
 }
-#line 250 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 243 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 static struct file_operations pc8736x_gpio_fileops  = 
-#line 250
+#line 243
      {(struct module *)0, & no_llseek, & nsc_gpio_read, & nsc_gpio_write, 0, 0, 0, 0,
     0, 0, & pc8736x_gpio_open, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-#line 258 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 251 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 static void pc8736x_init_shadow(void) 
 { 
   int port ;
 
   {
-#line 263
+#line 256
   port = 0;
   {
-#line 263
+#line 256
   while (1) {
     while_continue: /* CIL Label */ ;
-#line 263
+#line 256
     if (port < 4) {
 
     } else {
-#line 263
+#line 256
       goto while_break;
     }
     {
-#line 264
+#line 257
     pc8736x_gpio_shadow[port] = inb_p(pc8736x_gpio_base + (unsigned int )port_offset[port]);
-#line 263
+#line 256
     port = port + 1;
     }
   }
   while_break: /* CIL Label */ ;
   }
-#line 268
+#line 261
   return;
 }
 }
-#line 270 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 263 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 static struct cdev pc8736x_gpio_cdev  ;
-#line 274 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 267 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 struct inode *whoop_inode_0  ;
-#line 275 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 268 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 struct file *whoop_file_0  ;
-#line 276 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 269 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 struct inode *whoop_inode_1  ;
-#line 277 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 270 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 struct file *whoop_file_1  ;
-#line 278 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 271 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 struct inode *whoop_inode_2  ;
-#line 279 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 272 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 struct file *whoop_file_2  ;
-#line 280 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 273 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 struct inode *whoop_inode_3  ;
-#line 281 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 274 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 struct file *whoop_file_3  ;
-#line 282 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 275 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 struct inode *whoop_inode_4  ;
-#line 283 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 276 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 struct file *whoop_file_4  ;
-#line 284 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 277 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 struct inode *whoop_inode_5  ;
-#line 285 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 278 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 struct file *whoop_file_5  ;
-#line 286 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 279 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 struct inode *whoop_inode_6  ;
-#line 287 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 280 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 struct file *whoop_file_6  ;
-#line 288 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 281 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 struct pci_dev *whoop_pci_dev  ;
-#line 289 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 282 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 char const   *whoop_buf  ;
-#line 290 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 283 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 struct platform_device *whoop_platform_device  ;
-#line 291 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 284 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 struct vm_area_struct *whoop_vm_area_struct  ;
-#line 292 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 285 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 struct cx_dev *whoop_cx_dev  ;
-#line 294 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 287 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 poll_table *whoop_poll_table  ;
-#line 296 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 289 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 loff_t *whoop_loff_t  ;
-#line 297 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 290 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 int whoop_int  ;
-#line 301
+#line 294
 void default_release(struct inode *inode , struct file *filp ) ;
-#line 303 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 296 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 void *scenario_pc8736x_gpio_cdev(void *args ) 
 { 
   void *tmp ;
@@ -2258,62 +2244,62 @@ void *scenario_pc8736x_gpio_cdev(void *args )
 
   {
   {
-#line 304
+#line 297
   tmp = malloc(sizeof(struct inode ));
-#line 304
+#line 297
   whoop_inode_1 = (struct inode *)tmp;
-#line 305
+#line 298
   tmp___0 = malloc(sizeof(struct file ));
-#line 305
+#line 298
   whoop_file_1 = (struct file *)tmp___0;
-#line 307
+#line 300
   tmp___1 = pc8736x_gpio_open(whoop_inode_1, whoop_file_1);
   }
-#line 307
+#line 300
   if (tmp___1 == 0) {
     {
-#line 319
+#line 312
     default_release(whoop_inode_1, whoop_file_1);
     }
   } else {
 
   }
-#line 321
+#line 314
   return (0);
 }
 }
-#line 325 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 318 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 pthread_t pthread_t_pc8736x_gpio_cdev  ;
-#line 327 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 320 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 int cdev_add(struct cdev *dev , dev_t d , unsigned int n ) 
 { 
   int tmp ;
 
   {
   {
-#line 330
+#line 323
   tmp = pthread_create(& pthread_t_pc8736x_gpio_cdev, (void *)0, & scenario_pc8736x_gpio_cdev,
                        (void *)0);
   }
-#line 330
+#line 323
   return (tmp);
 }
 }
-#line 333 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 326 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 void cdev_del(struct cdev *dev ) 
 { 
 
 
   {
   {
-#line 335
+#line 328
   pthread_join(pthread_t_pc8736x_gpio_cdev, (void *)0);
   }
-#line 336
+#line 329
   return;
 }
 }
-#line 339 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 332 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 void *scenario_pc8736x_gpio_ops(void *args ) 
 { 
   int tmp ;
@@ -2328,102 +2314,102 @@ void *scenario_pc8736x_gpio_ops(void *args )
 
   {
   {
-#line 341
+#line 334
   tmp = __VERIFIER_nondet_int();
   }
   {
-#line 342
+#line 335
   if (tmp == 0) {
-#line 342
+#line 335
     goto case_0;
   } else {
 
   }
-#line 345
+#line 338
   if (tmp == 1) {
-#line 345
+#line 338
     goto case_1;
   } else {
 
   }
-#line 348
+#line 341
   if (tmp == 2) {
-#line 348
+#line 341
     goto case_2;
   } else {
 
   }
-#line 351
+#line 344
   if (tmp == 3) {
-#line 351
+#line 344
     goto case_3;
   } else {
 
   }
-#line 354
+#line 347
   goto switch_default;
   case_0: /* CIL Label */ 
   {
-#line 343
+#line 336
   tmp___0 = __VERIFIER_nondet_int();
-#line 343
+#line 336
   pc8736x_gpio_get(tmp___0);
   }
-#line 344
+#line 337
   goto switch_break;
   case_1: /* CIL Label */ 
   {
-#line 346
+#line 339
   tmp___1 = __VERIFIER_nondet_int();
-#line 346
+#line 339
   pc8736x_gpio_current(tmp___1);
   }
-#line 347
+#line 340
   goto switch_break;
   case_2: /* CIL Label */ 
   {
-#line 349
+#line 342
   tmp___2 = __VERIFIER_nondet_int();
-#line 349
+#line 342
   tmp___3 = __VERIFIER_nondet_int();
-#line 349
+#line 342
   tmp___4 = __VERIFIER_nondet_int();
-#line 349
+#line 342
   pc8736x_gpio_configure(tmp___4, tmp___3, tmp___2);
   }
-#line 350
+#line 343
   goto switch_break;
   case_3: /* CIL Label */ 
   {
-#line 352
+#line 345
   tmp___5 = __VERIFIER_nondet_int();
-#line 352
+#line 345
   pc8736x_gpio_change(tmp___5);
   }
-#line 353
+#line 346
   goto switch_break;
   switch_default: /* CIL Label */ 
   {
-#line 355
+#line 348
   tmp___6 = __VERIFIER_nondet_int();
-#line 355
+#line 348
   tmp___7 = __VERIFIER_nondet_int();
-#line 355
+#line 348
   pc8736x_gpio_set(tmp___7, tmp___6);
   }
-#line 356
+#line 349
   goto switch_break;
   switch_break: /* CIL Label */ ;
   }
-#line 359
+#line 352
   return (0);
 }
 }
-#line 363 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 356 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 pthread_t pthread_t_pc8736x_gpio_ops  ;
-#line 364 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 357 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 pthread_t pthread_t_pc8736x_gpio_ops2  ;
-#line 366 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 359 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 int nonseekable_open(struct inode *inode , struct file *filp ) 
 { 
   int res ;
@@ -2432,45 +2418,45 @@ int nonseekable_open(struct inode *inode , struct file *filp )
 
   {
   {
-#line 368
+#line 361
   tmp = pthread_create(& pthread_t_pc8736x_gpio_ops, (void *)0, & scenario_pc8736x_gpio_ops,
                        (void *)0);
-#line 368
+#line 361
   res = tmp;
   }
-#line 369
+#line 362
   if (res != 0) {
-#line 369
+#line 362
     return (res);
   } else {
 
   }
   {
-#line 371
+#line 364
   tmp___0 = pthread_create(& pthread_t_pc8736x_gpio_ops2, (void *)0, & scenario_pc8736x_gpio_ops,
                            (void *)0);
   }
-#line 371
+#line 364
   return (tmp___0);
 }
 }
-#line 374 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 367 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 void default_release(struct inode *inode , struct file *filp ) 
 { 
 
 
   {
   {
-#line 376
+#line 369
   pthread_join(pthread_t_pc8736x_gpio_ops, (void *)0);
-#line 377
+#line 370
   pthread_join(pthread_t_pc8736x_gpio_ops2, (void *)0);
   }
-#line 378
+#line 371
   return;
 }
 }
-#line 382 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 375 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 int pc8736x_gpio_init(void) 
 { 
   int rc ;
@@ -2483,188 +2469,188 @@ int pc8736x_gpio_init(void)
 
   {
   {
-#line 387
+#line 380
   pdev = platform_device_alloc("pc8736x_gpio", 0);
   }
-#line 388
+#line 381
   if (! pdev) {
-#line 389
+#line 382
     return (-12);
   } else {
 
   }
   {
-#line 391
+#line 384
   rc = platform_device_add(pdev);
   }
-#line 392
+#line 385
   if (rc) {
-#line 393
+#line 386
     rc = -19;
-#line 394
+#line 387
     goto undo_platform_dev_alloc;
   } else {
 
   }
   {
-#line 396
+#line 389
   while (1) {
     while_continue: /* CIL Label */ ;
-#line 396
+#line 389
     goto while_break;
   }
   while_break: /* CIL Label */ ;
   }
   {
-#line 398
+#line 391
   tmp = pc8736x_superio_present();
   }
-#line 398
+#line 391
   if (tmp) {
 
   } else {
-#line 399
+#line 392
     rc = -19;
     {
-#line 400
+#line 393
     while (1) {
       while_continue___0: /* CIL Label */ ;
-#line 400
+#line 393
       goto while_break___0;
     }
     while_break___0: /* CIL Label */ ;
     }
-#line 401
+#line 394
     goto undo_platform_dev_add;
   }
   {
-#line 403
+#line 396
   pc8736x_gpio_ops.dev = & pdev->dev;
-#line 404
+#line 397
   __VERIFIER_assert((unsigned long )pc8736x_gpio_ops.dev == (unsigned long )(& pdev->dev));
-#line 409
+#line 402
   rc = superio_inb(33);
   }
-#line 410
+#line 403
   if (! (rc & 1)) {
-#line 411
+#line 404
     rc = -19;
     {
-#line 412
+#line 405
     while (1) {
       while_continue___1: /* CIL Label */ ;
-#line 412
+#line 405
       goto while_break___1;
     }
     while_break___1: /* CIL Label */ ;
     }
-#line 413
+#line 406
     goto undo_platform_dev_add;
   } else {
 
   }
   {
-#line 415
+#line 408
   device_select(7);
-#line 416
+#line 409
   tmp___0 = superio_inb(48);
   }
-#line 416
+#line 409
   if (tmp___0) {
 
   } else {
-#line 417
+#line 410
     rc = -19;
     {
-#line 418
+#line 411
     while (1) {
       while_continue___2: /* CIL Label */ ;
-#line 418
+#line 411
       goto while_break___2;
     }
     while_break___2: /* CIL Label */ ;
     }
-#line 419
+#line 412
     goto undo_platform_dev_add;
   }
   {
-#line 423
+#line 416
   tmp___1 = superio_inb(96);
-#line 423
+#line 416
   tmp___2 = superio_inb(97);
-#line 423
+#line 416
   pc8736x_gpio_base = (tmp___1 << 8) | tmp___2;
-#line 426
+#line 419
   tmp___3 = __request_region((void *)0, pc8736x_gpio_base, 16, "pc8736x_gpio", 0);
   }
-#line 426
+#line 419
   if (tmp___3) {
 
   } else {
-#line 427
+#line 420
     rc = -19;
     {
-#line 428
+#line 421
     while (1) {
       while_continue___3: /* CIL Label */ ;
-#line 428
+#line 421
       goto while_break___3;
     }
     while_break___3: /* CIL Label */ ;
     }
-#line 430
+#line 423
     goto undo_platform_dev_add;
   }
   {
-#line 432
+#line 425
   while (1) {
     while_continue___4: /* CIL Label */ ;
-#line 432
+#line 425
     goto while_break___4;
   }
   while_break___4: /* CIL Label */ ;
   }
-#line 434
+#line 427
   if (major) {
     {
-#line 435
+#line 428
     devid = major << 20;
-#line 436
+#line 429
     rc = register_chrdev_region(devid, 32, "pc8736x_gpio");
     }
   } else {
     {
-#line 438
+#line 431
     rc = alloc_chrdev_region(& devid, 0, 32, "pc8736x_gpio");
-#line 439
+#line 432
     major = devid >> 20;
     }
   }
-#line 442
+#line 435
   if (rc < 0) {
     {
-#line 443
+#line 436
     while (1) {
       while_continue___5: /* CIL Label */ ;
-#line 443
+#line 436
       goto while_break___5;
     }
     while_break___5: /* CIL Label */ ;
     }
-#line 444
+#line 437
     goto undo_request_region;
   } else {
 
   }
-#line 446
+#line 439
   if (! major) {
-#line 447
+#line 440
     major = rc;
     {
-#line 448
+#line 441
     while (1) {
       while_continue___6: /* CIL Label */ ;
-#line 448
+#line 441
       goto while_break___6;
     }
     while_break___6: /* CIL Label */ ;
@@ -2673,166 +2659,166 @@ int pc8736x_gpio_init(void)
 
   }
   {
-#line 451
+#line 444
   pc8736x_init_shadow();
-#line 454
+#line 447
   cdev_init(& pc8736x_gpio_cdev, & pc8736x_gpio_fileops);
-#line 455
+#line 448
   cdev_add(& pc8736x_gpio_cdev, devid, 32);
   }
-#line 457
+#line 450
   return (0);
   undo_request_region: 
   {
-#line 460
+#line 453
   __release_region((void *)0, pc8736x_gpio_base, 16);
   }
   undo_platform_dev_add: 
   {
-#line 462
+#line 455
   platform_device_del(pdev);
   }
   undo_platform_dev_alloc: 
   {
-#line 464
+#line 457
   platform_device_put(pdev);
   }
-#line 466
+#line 459
   return (rc);
 }
 }
-#line 469 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 462 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 void pc8736x_gpio_cleanup(void) 
 { 
 
 
   {
   {
-#line 471
+#line 464
   while (1) {
     while_continue: /* CIL Label */ ;
-#line 471
+#line 464
     goto while_break;
   }
   while_break: /* CIL Label */ ;
   }
   {
-#line 473
+#line 466
   cdev_del(& pc8736x_gpio_cdev);
-#line 474
+#line 467
   unregister_chrdev_region(major << 20, 32);
-#line 475
+#line 468
   __release_region((void *)0, pc8736x_gpio_base, 16);
-#line 477
+#line 470
   platform_device_unregister(pdev);
   }
-#line 478
+#line 471
   return;
 }
 }
-#line 480 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 473 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 int (*_whoop_init)(void)  =    & pc8736x_gpio_init;
-#line 481 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 474 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 void (*_whoop_exit)(void)  =    & pc8736x_gpio_cleanup;
-#line 485 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 478 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 void *whoop_wrapper_pc8736x_gpio_set(void *args ) 
 { 
 
 
   {
   {
-#line 487
+#line 480
   pc8736x_gpio_set(whoop_int, whoop_int);
   }
-#line 488
+#line 481
   return ((void *)0);
 }
 }
-#line 491 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 484 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 void *whoop_wrapper_pc8736x_gpio_open(void *args ) 
 { 
 
 
   {
   {
-#line 493
+#line 486
   pc8736x_gpio_open(whoop_inode_1, whoop_file_1);
   }
-#line 494
+#line 487
   return ((void *)0);
 }
 }
-#line 497 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 490 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 void *whoop_wrapper_pc8736x_gpio_get(void *args ) 
 { 
 
 
   {
   {
-#line 499
+#line 492
   pc8736x_gpio_get(whoop_int);
   }
-#line 500
+#line 493
   return ((void *)0);
 }
 }
-#line 503 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 496 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 void *whoop_wrapper_pc8736x_gpio_current(void *args ) 
 { 
 
 
   {
   {
-#line 505
+#line 498
   pc8736x_gpio_current(whoop_int);
   }
-#line 506
+#line 499
   return ((void *)0);
 }
 }
-#line 509 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 502 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 void *whoop_wrapper_pc8736x_gpio_configure(void *args ) 
 { 
 
 
   {
   {
-#line 511
+#line 504
   pc8736x_gpio_configure(whoop_int, whoop_int, whoop_int);
   }
-#line 512
+#line 505
   return ((void *)0);
 }
 }
-#line 515 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 508 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 void *whoop_wrapper_pc8736x_gpio_cleanup(void *args ) 
 { 
 
 
   {
   {
-#line 517
+#line 510
   pc8736x_gpio_cleanup();
   }
-#line 518
+#line 511
   return ((void *)0);
 }
 }
-#line 521 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 514 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 void *whoop_wrapper_pc8736x_gpio_change(void *args ) 
 { 
 
 
   {
   {
-#line 523
+#line 516
   pc8736x_gpio_change(whoop_int);
   }
-#line 524
+#line 517
   return ((void *)0);
 }
 }
-#line 527 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 520 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 int old_main(void) 
 { 
   void *tmp ;
@@ -2863,133 +2849,133 @@ int old_main(void)
 
   {
   {
-#line 530
+#line 523
   tmp = malloc(sizeof(struct inode ));
-#line 530
+#line 523
   whoop_inode_0 = (struct inode *)tmp;
-#line 531
+#line 524
   tmp___0 = malloc(sizeof(struct file ));
-#line 531
+#line 524
   whoop_file_0 = (struct file *)tmp___0;
-#line 532
+#line 525
   tmp___1 = malloc(sizeof(struct inode ));
-#line 532
+#line 525
   whoop_inode_1 = (struct inode *)tmp___1;
-#line 533
+#line 526
   tmp___2 = malloc(sizeof(struct file ));
-#line 533
+#line 526
   whoop_file_1 = (struct file *)tmp___2;
-#line 534
+#line 527
   tmp___3 = malloc(sizeof(struct inode ));
-#line 534
+#line 527
   whoop_inode_2 = (struct inode *)tmp___3;
-#line 535
+#line 528
   tmp___4 = malloc(sizeof(struct file ));
-#line 535
+#line 528
   whoop_file_2 = (struct file *)tmp___4;
-#line 536
+#line 529
   tmp___5 = malloc(sizeof(struct inode ));
-#line 536
+#line 529
   whoop_inode_3 = (struct inode *)tmp___5;
-#line 537
+#line 530
   tmp___6 = malloc(sizeof(struct file ));
-#line 537
+#line 530
   whoop_file_3 = (struct file *)tmp___6;
-#line 538
+#line 531
   tmp___7 = malloc(sizeof(struct inode ));
-#line 538
+#line 531
   whoop_inode_4 = (struct inode *)tmp___7;
-#line 539
+#line 532
   tmp___8 = malloc(sizeof(struct file ));
-#line 539
+#line 532
   whoop_file_4 = (struct file *)tmp___8;
-#line 540
+#line 533
   tmp___9 = malloc(sizeof(struct inode ));
-#line 540
+#line 533
   whoop_inode_5 = (struct inode *)tmp___9;
-#line 541
+#line 534
   tmp___10 = malloc(sizeof(struct file ));
-#line 541
+#line 534
   whoop_file_5 = (struct file *)tmp___10;
-#line 542
+#line 535
   tmp___11 = malloc(sizeof(struct inode ));
-#line 542
+#line 535
   whoop_inode_6 = (struct inode *)tmp___11;
-#line 543
+#line 536
   tmp___12 = malloc(sizeof(struct file ));
-#line 543
+#line 536
   whoop_file_6 = (struct file *)tmp___12;
-#line 544
+#line 537
   tmp___13 = malloc(sizeof(struct pci_dev ));
-#line 544
+#line 537
   whoop_pci_dev = (struct pci_dev *)tmp___13;
-#line 545
+#line 538
   tmp___14 = malloc(sizeof(char ));
-#line 545
+#line 538
   whoop_buf = (char *)tmp___14;
-#line 546
+#line 539
   tmp___15 = malloc(sizeof(struct platform_device ));
-#line 546
+#line 539
   whoop_platform_device = (struct platform_device *)tmp___15;
-#line 547
+#line 540
   tmp___16 = malloc(sizeof(struct vm_area_struct ));
-#line 547
+#line 540
   whoop_vm_area_struct = (struct vm_area_struct *)tmp___16;
-#line 548
+#line 541
   tmp___17 = malloc(sizeof(struct cx_dev ));
-#line 548
+#line 541
   whoop_cx_dev = (struct cx_dev *)tmp___17;
-#line 550
+#line 543
   tmp___18 = malloc(sizeof(poll_table ));
-#line 550
+#line 543
   whoop_poll_table = (poll_table *)tmp___18;
-#line 552
+#line 545
   tmp___19 = malloc(sizeof(loff_t ));
-#line 552
+#line 545
   whoop_loff_t = (loff_t *)tmp___19;
-#line 553
+#line 546
   whoop_int = __VERIFIER_nondet_int();
-#line 554
+#line 547
   __VERIFIER_assume(whoop_int >= 0);
-#line 557
+#line 550
   tmp___20 = (*_whoop_init)();
-#line 557
+#line 550
   _whoop_init_result = tmp___20;
-#line 564
+#line 557
   pthread_create(& pthread_t_pc8736x_gpio_open, (void *)0, & whoop_wrapper_pc8736x_gpio_open,
                  (void *)0);
-#line 565
+#line 558
   pthread_create(& pthread_t_pc8736x_gpio_change, (void *)0, & whoop_wrapper_pc8736x_gpio_change,
                  (void *)0);
-#line 568
+#line 561
   pthread_join(pthread_t_pc8736x_gpio_open, (void *)0);
-#line 569
+#line 562
   pthread_join(pthread_t_pc8736x_gpio_change, (void *)0);
   }
-#line 571
+#line 564
   return (0);
 }
 }
-#line 573 "char_pc8736x_gpio.withoutloop.twothreads.fixed.c"
+#line 566 "char_pc8736x_gpio.withoutloop.twothreads.bug.c"
 int main(void) 
 { 
   int tmp ;
 
   {
   {
-#line 574
+#line 567
   tmp = pc8736x_gpio_init();
   }
-#line 574
+#line 567
   if (tmp == 0) {
     {
-#line 575
+#line 568
     pc8736x_gpio_cleanup();
     }
   } else {
 
   }
-#line 578
+#line 571
   return (0);
 }
 }
