@@ -1,51 +1,3 @@
-typedef unsigned long int pthread_t;
-typedef union
-{
-  char __size[56];
-  long int __align;
-} pthread_attr_t;
-typedef struct __pthread_internal_list
-{
-  struct __pthread_internal_list *__prev;
-  struct __pthread_internal_list *__next;
-} __pthread_list_t;
-typedef union
-{
-  struct __pthread_mutex_s
-  {
-    int __lock;
-    unsigned int __count;
-    int __owner;
-    unsigned int __nusers;
-    int __kind;
-    int __spins;
-    __pthread_list_t __list;
-  } __data;
-  char __size[40];
-  long int __align;
-} pthread_mutex_t;
-typedef union
-{
-  char __size[4];
-  int __align;
-} pthread_mutexattr_t;
-extern int pthread_create (pthread_t *__restrict __newthread,
-      __const pthread_attr_t *__restrict __attr,
-      void *(*__start_routine) (void *),
-      void *__restrict __arg) __attribute__ ((__nothrow__)) __attribute__ ((__nonnull__ (1, 3)));
-extern void pthread_exit (void *__retval) __attribute__ ((__noreturn__));
-extern int pthread_join (pthread_t __th, void **__thread_return);
-extern int pthread_mutex_init (pthread_mutex_t *__mutex,
-          __const pthread_mutexattr_t *__mutexattr)
-     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1)));
-extern int pthread_mutex_destroy (pthread_mutex_t *__mutex)
-     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1)));
-extern int pthread_mutex_trylock (pthread_mutex_t *__mutex)
-     __attribute__ ((__nothrow__)) __attribute__ ((__nonnull__ (1)));
-extern int pthread_mutex_lock (pthread_mutex_t *__mutex)
-     __attribute__ ((__nothrow__)) __attribute__ ((__nonnull__ (1)));
-extern int pthread_mutex_unlock (pthread_mutex_t *__mutex)
-     __attribute__ ((__nothrow__)) __attribute__ ((__nonnull__ (1)));
 struct device;
 typedef signed char __s8;
 typedef unsigned char __u8;
@@ -74,6 +26,7 @@ typedef __kernel_long_t __kernel_time_t;
 typedef __kernel_long_t __kernel_clock_t;
 typedef int __kernel_timer_t;
 typedef int __kernel_clockid_t;
+typedef __u16 __le16;
 typedef __u16 __be16;
 typedef __u32 __be32;
 typedef __u32 __wsum;
@@ -205,23 +158,6 @@ union __anonunion____missing_field_name_11 {
 struct desc_struct {
    union __anonunion____missing_field_name_11 __annonCompField8 ;
 };
-struct gate_struct64 {
-   u16 offset_low ;
-   u16 segment ;
-   unsigned int ist : 3 ;
-   unsigned int zero0 : 5 ;
-   unsigned int type : 5 ;
-   unsigned int dpl : 2 ;
-   unsigned int p : 1 ;
-   u16 offset_middle ;
-   u32 offset_high ;
-   u32 zero1 ;
-};
-typedef struct gate_struct64 gate_desc;
-struct desc_ptr {
-   unsigned short size ;
-   unsigned long address ;
-};
 typedef unsigned long pgdval_t;
 typedef unsigned long pgprotval_t;
 struct pgprot {
@@ -237,64 +173,17 @@ typedef struct page *pgtable_t;
 struct file;
 struct seq_file;
 struct thread_struct;
-struct tss_struct;
 struct mm_struct;
 struct cpumask;
-struct paravirt_callee_save {
-   void *func ;
-};
-struct pv_cpu_ops {
-   unsigned long (*get_debugreg)(int ) ;
-   void (*set_debugreg)(int , unsigned long ) ;
-   void (*clts)(void) ;
-   unsigned long (*read_cr0)(void) ;
-   void (*write_cr0)(unsigned long ) ;
-   unsigned long (*read_cr4_safe)(void) ;
-   unsigned long (*read_cr4)(void) ;
-   void (*write_cr4)(unsigned long ) ;
-   unsigned long (*read_cr8)(void) ;
-   void (*write_cr8)(unsigned long ) ;
-   void (*load_tr_desc)(void) ;
-   void (*load_gdt)(struct desc_ptr const * ) ;
-   void (*load_idt)(struct desc_ptr const * ) ;
-   void (*store_idt)(struct desc_ptr * ) ;
-   void (*set_ldt)(void const * , unsigned int ) ;
-   unsigned long (*store_tr)(void) ;
-   void (*load_tls)(struct thread_struct * , unsigned int ) ;
-   void (*load_gs_index)(unsigned int ) ;
-   void (*write_ldt_entry)(struct desc_struct * , int , void const * ) ;
-   void (*write_gdt_entry)(struct desc_struct * , int , void const * , int ) ;
-   void (*write_idt_entry)(gate_desc * , int , gate_desc const * ) ;
-   void (*alloc_ldt)(struct desc_struct * , unsigned int ) ;
-   void (*free_ldt)(struct desc_struct * , unsigned int ) ;
-   void (*load_sp0)(struct tss_struct * , struct thread_struct * ) ;
-   void (*set_iopl_mask)(unsigned int ) ;
-   void (*wbinvd)(void) ;
-   void (*io_delay)(void) ;
-   void (*cpuid)(unsigned int * , unsigned int * , unsigned int * , unsigned int * ) ;
-   u64 (*read_msr)(unsigned int , int * ) ;
-   int (*write_msr)(unsigned int , unsigned int , unsigned int ) ;
-   u64 (*read_tsc)(void) ;
-   u64 (*read_pmc)(int ) ;
-   unsigned long long (*read_tscp)(unsigned int * ) ;
-   void (*irq_enable_sysexit)(void) ;
-   void (*usergs_sysret64)(void) ;
-   void (*usergs_sysret32)(void) ;
-   void (*iret)(void) ;
-   void (*swapgs)(void) ;
-   void (*start_context_switch)(struct task_struct * ) ;
-   void (*end_context_switch)(struct task_struct * ) ;
-};
-struct pv_irq_ops {
-   struct paravirt_callee_save save_fl ;
-   struct paravirt_callee_save restore_fl ;
-   struct paravirt_callee_save irq_disable ;
-   struct paravirt_callee_save irq_enable ;
-   void (*safe_halt)(void) ;
-   void (*halt)(void) ;
-   void (*adjust_exception_frame)(void) ;
-};
 typedef void (*ctor_fn_t)(void);
+struct _ddebug {
+   char const *modname ;
+   char const *function ;
+   char const *filename ;
+   char const *format ;
+   unsigned int lineno : 18 ;
+   unsigned int flags : 8 ;
+};
 struct net_device;
 struct file_operations;
 struct completion;
@@ -331,23 +220,6 @@ typedef struct cpumask cpumask_t;
 typedef struct cpumask *cpumask_var_t;
 struct static_key;
 struct seq_operations;
-struct x86_hw_tss {
-   u32 reserved1 ;
-   u64 sp0 ;
-   u64 sp1 ;
-   u64 sp2 ;
-   u64 reserved2 ;
-   u64 ist[7U] ;
-   u32 reserved3 ;
-   u32 reserved4 ;
-   u16 reserved5 ;
-   u16 io_bitmap_base ;
-};
-struct tss_struct {
-   struct x86_hw_tss x86_tss ;
-   unsigned long io_bitmap[1025U] ;
-   unsigned long stack[64U] ;
-};
 struct i387_fsave_struct {
    u32 cwd ;
    u32 swd ;
@@ -550,6 +422,12 @@ struct __anonstruct_rwlock_t_30 {
    struct lockdep_map dep_map ;
 };
 typedef struct __anonstruct_rwlock_t_30 rwlock_t;
+typedef unsigned long pthread_t;
+union pthread_attr_t {
+   char __size[56U] ;
+   long __align ;
+};
+typedef union pthread_attr_t pthread_attr_t;
 struct plist_head {
    struct list_head node_list ;
 };
@@ -1037,9 +915,6 @@ struct __anonstruct_mm_context_t_105 {
 typedef struct __anonstruct_mm_context_t_105 mm_context_t;
 struct device_node;
 struct llist_node;
-struct llist_head {
-   struct llist_node *first ;
-};
 struct llist_node {
    struct llist_node *next ;
 };
@@ -1047,6 +922,8 @@ struct dma_map_ops;
 struct dev_archdata {
    struct dma_map_ops *dma_ops ;
    void *iommu ;
+};
+struct pdev_archdata {
 };
 struct device_private;
 struct device_driver;
@@ -4474,6 +4351,16 @@ struct net_device_stats {
    unsigned long tx_compressed ;
 };
 struct neigh_parms;
+struct netdev_hw_addr {
+   struct list_head list ;
+   unsigned char addr[32U] ;
+   unsigned char type ;
+   bool global_use ;
+   int sync_cnt ;
+   int refcount ;
+   int synced ;
+   struct callback_head callback_head ;
+};
 struct netdev_hw_addr_list {
    struct list_head list ;
    int count ;
@@ -4645,7 +4532,7 @@ struct net_device_ops {
    void (*ndo_dfwd_del_station)(struct net_device * , void * ) ;
    netdev_tx_t (*ndo_dfwd_start_xmit)(struct sk_buff * , struct net_device * , void * ) ;
 };
-enum ldv_28333 {
+enum ldv_28317 {
     NETREG_UNINITIALIZED = 0,
     NETREG_REGISTERED = 1,
     NETREG_UNREGISTERING = 2,
@@ -4653,7 +4540,7 @@ enum ldv_28333 {
     NETREG_RELEASED = 4,
     NETREG_DUMMY = 5
 } ;
-enum ldv_28334 {
+enum ldv_28318 {
     RTNL_LINK_INITIALIZED = 0,
     RTNL_LINK_INITIALIZING = 1
 } ;
@@ -4778,9 +4665,9 @@ struct net_device {
    struct list_head todo_list ;
    struct hlist_node index_hlist ;
    struct list_head link_watch_list ;
-   enum ldv_28333 reg_state : 8 ;
+   enum ldv_28317 reg_state : 8 ;
    bool dismantle ;
-   enum ldv_28334 rtnl_link_state : 16 ;
+   enum ldv_28318 rtnl_link_state : 16 ;
    void (*destructor)(struct net_device * ) ;
    struct netpoll_info *npinfo ;
    struct net *nd_net ;
@@ -4811,6 +4698,43 @@ struct pcpu_sw_netstats {
    u64 tx_bytes ;
    struct u64_stats_sync syncp ;
 };
+typedef unsigned long kernel_ulong_t;
+struct acpi_device_id {
+   __u8 id[9U] ;
+   kernel_ulong_t driver_data ;
+};
+struct of_device_id {
+   char name[32U] ;
+   char type[32U] ;
+   char compatible[128U] ;
+   void const *data ;
+};
+struct platform_device_id {
+   char name[20U] ;
+   kernel_ulong_t driver_data ;
+};
+struct mfd_cell;
+struct platform_device {
+   char const *name ;
+   int id ;
+   bool id_auto ;
+   struct device dev ;
+   u32 num_resources ;
+   struct resource *resource ;
+   struct platform_device_id const *id_entry ;
+   struct mfd_cell *mfd_cell ;
+   struct pdev_archdata archdata ;
+};
+struct platform_driver {
+   int (*probe)(struct platform_device * ) ;
+   int (*remove)(struct platform_device * ) ;
+   void (*shutdown)(struct platform_device * ) ;
+   int (*suspend)(struct platform_device * , pm_message_t ) ;
+   int (*resume)(struct platform_device * ) ;
+   struct device_driver driver ;
+   struct platform_device_id const *id_table ;
+   bool prevent_deferred_probe ;
+};
 typedef __u64 Elf64_Addr;
 typedef __u16 Elf64_Half;
 typedef __u32 Elf64_Word;
@@ -4833,7 +4757,7 @@ struct kernel_param_ops {
 };
 struct kparam_string;
 struct kparam_array;
-union __anonunion____missing_field_name_242 {
+union __anonunion____missing_field_name_245 {
    void *arg ;
    struct kparam_string const *str ;
    struct kparam_array const *arr ;
@@ -4843,7 +4767,7 @@ struct kernel_param {
    struct kernel_param_ops const *ops ;
    u16 perm ;
    s16 level ;
-   union __anonunion____missing_field_name_242 __annonCompField75 ;
+   union __anonunion____missing_field_name_245 __annonCompField75 ;
 };
 struct kparam_string {
    unsigned int maxlen ;
@@ -4971,546 +4895,91 @@ struct module {
    ctor_fn_t (**ctors)(void) ;
    unsigned int num_ctors ;
 };
-struct tcmsg {
-   unsigned char tcm_family ;
-   unsigned char tcm__pad1 ;
-   unsigned short tcm__pad2 ;
-   int tcm_ifindex ;
-   __u32 tcm_handle ;
-   __u32 tcm_parent ;
-   __u32 tcm_info ;
+struct mii_ioctl_data {
+   __u16 phy_id ;
+   __u16 reg_num ;
+   __u16 val_in ;
+   __u16 val_out ;
 };
-struct if_irda_qos {
-   unsigned long baudrate ;
-   unsigned short data_size ;
-   unsigned short window_size ;
-   unsigned short min_turn_time ;
-   unsigned short max_turn_time ;
-   unsigned char add_bofs ;
-   unsigned char link_disc ;
+struct mii_if_info {
+   int phy_id ;
+   int advertising ;
+   int phy_id_mask ;
+   int reg_num_mask ;
+   unsigned int full_duplex : 1 ;
+   unsigned int force_media : 1 ;
+   unsigned int supports_gmii : 1 ;
+   struct net_device *dev ;
+   int (*mdio_read)(struct net_device * , int , int ) ;
+   void (*mdio_write)(struct net_device * , int , int , int ) ;
 };
-struct if_irda_line {
-   __u8 dtr ;
-   __u8 rts ;
+struct ks8851_mll_platform_data {
+   u8 mac_addr[6U] ;
 };
-union __anonunion_ifr_ifrn_249 {
-   char ifrn_name[16U] ;
-};
-union __anonunion_ifr_ifru_250 {
-   struct if_irda_line ifru_line ;
-   struct if_irda_qos ifru_qos ;
-   unsigned short ifru_flags ;
-   unsigned int ifru_receiving ;
-   unsigned int ifru_mode ;
-   unsigned int ifru_dongle ;
-};
-struct if_irda_req {
-   union __anonunion_ifr_ifrn_249 ifr_ifrn ;
-   union __anonunion_ifr_ifru_250 ifr_ifru ;
-};
-typedef __u32 magic_t;
-typedef unsigned char cc_t;
-typedef unsigned int speed_t;
-typedef unsigned int tcflag_t;
-struct ktermios {
-   tcflag_t c_iflag ;
-   tcflag_t c_oflag ;
-   tcflag_t c_cflag ;
-   tcflag_t c_lflag ;
-   cc_t c_line ;
-   cc_t c_cc[19U] ;
-   speed_t c_ispeed ;
-   speed_t c_ospeed ;
-};
-struct winsize {
-   unsigned short ws_row ;
-   unsigned short ws_col ;
-   unsigned short ws_xpixel ;
-   unsigned short ws_ypixel ;
-};
-struct termiox {
-   __u16 x_hflag ;
-   __u16 x_cflag ;
-   __u16 x_rflag[5U] ;
-   __u16 x_sflag ;
-};
-struct cdev {
-   struct kobject kobj ;
-   struct module *owner ;
-   struct file_operations const *ops ;
-   struct list_head list ;
-   dev_t dev ;
-   unsigned int count ;
-};
-struct tty_driver;
-struct serial_icounter_struct;
-struct tty_operations {
-   struct tty_struct *(*lookup)(struct tty_driver * , struct inode * , int ) ;
-   int (*install)(struct tty_driver * , struct tty_struct * ) ;
-   void (*remove)(struct tty_driver * , struct tty_struct * ) ;
-   int (*open)(struct tty_struct * , struct file * ) ;
-   void (*close)(struct tty_struct * , struct file * ) ;
-   void (*shutdown)(struct tty_struct * ) ;
-   void (*cleanup)(struct tty_struct * ) ;
-   int (*write)(struct tty_struct * , unsigned char const * , int ) ;
-   int (*put_char)(struct tty_struct * , unsigned char ) ;
-   void (*flush_chars)(struct tty_struct * ) ;
-   int (*write_room)(struct tty_struct * ) ;
-   int (*chars_in_buffer)(struct tty_struct * ) ;
-   int (*ioctl)(struct tty_struct * , unsigned int , unsigned long ) ;
-   long (*compat_ioctl)(struct tty_struct * , unsigned int , unsigned long ) ;
-   void (*set_termios)(struct tty_struct * , struct ktermios * ) ;
-   void (*throttle)(struct tty_struct * ) ;
-   void (*unthrottle)(struct tty_struct * ) ;
-   void (*stop)(struct tty_struct * ) ;
-   void (*start)(struct tty_struct * ) ;
-   void (*hangup)(struct tty_struct * ) ;
-   int (*break_ctl)(struct tty_struct * , int ) ;
-   void (*flush_buffer)(struct tty_struct * ) ;
-   void (*set_ldisc)(struct tty_struct * ) ;
-   void (*wait_until_sent)(struct tty_struct * , int ) ;
-   void (*send_xchar)(struct tty_struct * , char ) ;
-   int (*tiocmget)(struct tty_struct * ) ;
-   int (*tiocmset)(struct tty_struct * , unsigned int , unsigned int ) ;
-   int (*resize)(struct tty_struct * , struct winsize * ) ;
-   int (*set_termiox)(struct tty_struct * , struct termiox * ) ;
-   int (*get_icount)(struct tty_struct * , struct serial_icounter_struct * ) ;
-   int (*poll_init)(struct tty_driver * , int , char * ) ;
-   int (*poll_get_char)(struct tty_driver * , int ) ;
-   void (*poll_put_char)(struct tty_driver * , int , char ) ;
-   struct file_operations const *proc_fops ;
-};
-struct tty_port;
-struct tty_driver {
-   int magic ;
-   struct kref kref ;
-   struct cdev *cdevs ;
-   struct module *owner ;
-   char const *driver_name ;
-   char const *name ;
-   int name_base ;
-   int major ;
-   int minor_start ;
-   unsigned int num ;
-   short type ;
-   short subtype ;
-   struct ktermios init_termios ;
-   unsigned long flags ;
-   struct proc_dir_entry *proc_entry ;
-   struct tty_driver *other ;
-   struct tty_struct **ttys ;
-   struct tty_port **ports ;
-   struct ktermios **termios ;
-   void *driver_state ;
-   struct tty_operations const *ops ;
-   struct list_head tty_drivers ;
-};
-struct ld_semaphore {
-   long count ;
-   raw_spinlock_t wait_lock ;
-   unsigned int wait_readers ;
-   struct list_head read_wait ;
-   struct list_head write_wait ;
-   struct lockdep_map dep_map ;
-};
-struct tty_ldisc_ops {
-   int magic ;
+typedef u32 phandle;
+struct property {
    char *name ;
-   int num ;
-   int flags ;
-   int (*open)(struct tty_struct * ) ;
-   void (*close)(struct tty_struct * ) ;
-   void (*flush_buffer)(struct tty_struct * ) ;
-   ssize_t (*chars_in_buffer)(struct tty_struct * ) ;
-   ssize_t (*read)(struct tty_struct * , struct file * , unsigned char * , size_t ) ;
-   ssize_t (*write)(struct tty_struct * , struct file * , unsigned char const * ,
-                    size_t ) ;
-   int (*ioctl)(struct tty_struct * , struct file * , unsigned int , unsigned long ) ;
-   long (*compat_ioctl)(struct tty_struct * , struct file * , unsigned int , unsigned long ) ;
-   void (*set_termios)(struct tty_struct * , struct ktermios * ) ;
-   unsigned int (*poll)(struct tty_struct * , struct file * , struct poll_table_struct * ) ;
-   int (*hangup)(struct tty_struct * ) ;
-   void (*receive_buf)(struct tty_struct * , unsigned char const * , char * , int ) ;
-   void (*write_wakeup)(struct tty_struct * ) ;
-   void (*dcd_change)(struct tty_struct * , unsigned int ) ;
-   void (*fasync)(struct tty_struct * , int ) ;
-   int (*receive_buf2)(struct tty_struct * , unsigned char const * , char * , int ) ;
-   struct module *owner ;
-   int refcount ;
+   int length ;
+   void *value ;
+   struct property *next ;
+   unsigned long _flags ;
+   unsigned int unique_id ;
 };
-struct tty_ldisc {
-   struct tty_ldisc_ops *ops ;
-   struct tty_struct *tty ;
-};
-union __anonunion____missing_field_name_251 {
-   struct tty_buffer *next ;
-   struct llist_node free ;
-};
-struct tty_buffer {
-   union __anonunion____missing_field_name_251 __annonCompField76 ;
-   int used ;
-   int size ;
-   int commit ;
-   int read ;
-   int flags ;
-   unsigned long data[0U] ;
-};
-struct tty_bufhead {
-   struct tty_buffer *head ;
-   struct work_struct work ;
-   struct mutex lock ;
-   atomic_t priority ;
-   struct tty_buffer sentinel ;
-   struct llist_head free ;
-   atomic_t mem_used ;
-   int mem_limit ;
-   struct tty_buffer *tail ;
-};
-struct tty_port_operations {
-   int (*carrier_raised)(struct tty_port * ) ;
-   void (*dtr_rts)(struct tty_port * , int ) ;
-   void (*shutdown)(struct tty_port * ) ;
-   int (*activate)(struct tty_port * , struct tty_struct * ) ;
-   void (*destruct)(struct tty_port * ) ;
-};
-struct tty_port {
-   struct tty_bufhead buf ;
-   struct tty_struct *tty ;
-   struct tty_struct *itty ;
-   struct tty_port_operations const *ops ;
-   spinlock_t lock ;
-   int blocked_open ;
-   int count ;
-   wait_queue_head_t open_wait ;
-   wait_queue_head_t close_wait ;
-   wait_queue_head_t delta_msr_wait ;
-   unsigned long flags ;
-   unsigned char console : 1 ;
-   unsigned char low_latency : 1 ;
-   struct mutex mutex ;
-   struct mutex buf_mutex ;
-   unsigned char *xmit_buf ;
-   unsigned int close_delay ;
-   unsigned int closing_wait ;
-   int drain_delay ;
+struct device_node {
+   char const *name ;
+   char const *type ;
+   phandle phandle ;
+   char const *full_name ;
+   struct property *properties ;
+   struct property *deadprops ;
+   struct device_node *parent ;
+   struct device_node *child ;
+   struct device_node *sibling ;
+   struct device_node *next ;
+   struct device_node *allnext ;
+   struct proc_dir_entry *pde ;
    struct kref kref ;
+   unsigned long _flags ;
+   void *data ;
 };
-struct tty_struct {
-   int magic ;
-   struct kref kref ;
-   struct device *dev ;
-   struct tty_driver *driver ;
-   struct tty_operations const *ops ;
-   int index ;
-   struct ld_semaphore ldisc_sem ;
-   struct tty_ldisc *ldisc ;
-   struct mutex atomic_write_lock ;
-   struct mutex legacy_mutex ;
-   struct mutex throttle_mutex ;
-   struct rw_semaphore termios_rwsem ;
-   struct mutex winsize_mutex ;
-   spinlock_t ctrl_lock ;
-   struct ktermios termios ;
-   struct ktermios termios_locked ;
-   struct termiox *termiox ;
-   char name[64U] ;
-   struct pid *pgrp ;
-   struct pid *session ;
-   unsigned long flags ;
-   int count ;
-   struct winsize winsize ;
-   unsigned char stopped : 1 ;
-   unsigned char hw_stopped : 1 ;
-   unsigned char flow_stopped : 1 ;
-   unsigned char packet : 1 ;
-   unsigned char ctrl_status ;
-   unsigned int receive_room ;
-   int flow_change ;
-   struct tty_struct *link ;
-   struct fasync_struct *fasync ;
-   int alt_speed ;
-   wait_queue_head_t write_wait ;
-   wait_queue_head_t read_wait ;
-   struct work_struct hangup_work ;
-   void *disc_data ;
-   void *driver_data ;
-   struct list_head tty_files ;
-   unsigned char closing : 1 ;
-   unsigned char *write_buf ;
-   int write_cnt ;
-   struct work_struct SAK_work ;
-   struct tty_port *port ;
+union ks_tx_hdr {
+   u8 txb[4U] ;
+   __le16 txw[2U] ;
 };
-struct tc_stats {
-   __u64 bytes ;
-   __u32 packets ;
-   __u32 drops ;
-   __u32 overlimits ;
-   __u32 bps ;
-   __u32 pps ;
-   __u32 qlen ;
-   __u32 backlog ;
-};
-struct tc_sizespec {
-   unsigned char cell_log ;
-   unsigned char size_log ;
-   short cell_align ;
-   int overhead ;
-   unsigned int linklayer ;
-   unsigned int mpu ;
-   unsigned int mtu ;
-   unsigned int tsize ;
-};
-struct gnet_stats_basic_packed {
-   __u64 bytes ;
-   __u32 packets ;
-};
-struct gnet_stats_rate_est64 {
-   __u64 bps ;
-   __u64 pps ;
-};
-struct gnet_stats_queue {
-   __u32 qlen ;
-   __u32 backlog ;
-   __u32 drops ;
-   __u32 requeues ;
-   __u32 overlimits ;
-};
-struct gnet_dump {
-   spinlock_t *lock ;
-   struct sk_buff *skb ;
-   struct nlattr *tail ;
-   int compat_tc_stats ;
-   int compat_xstats ;
-   void *xstats ;
-   int xstats_len ;
-   struct tc_stats tc_stats ;
-};
-struct nla_policy {
-   u16 type ;
+struct type_frame_head {
+   u16 sts ;
    u16 len ;
 };
-struct rtnl_link_ops {
-   struct list_head list ;
-   char const *kind ;
-   size_t priv_size ;
-   void (*setup)(struct net_device * ) ;
-   int maxtype ;
-   struct nla_policy const *policy ;
-   int (*validate)(struct nlattr ** , struct nlattr ** ) ;
-   int (*newlink)(struct net * , struct net_device * , struct nlattr ** , struct nlattr ** ) ;
-   int (*changelink)(struct net_device * , struct nlattr ** , struct nlattr ** ) ;
-   void (*dellink)(struct net_device * , struct list_head * ) ;
-   size_t (*get_size)(struct net_device const * ) ;
-   int (*fill_info)(struct sk_buff * , struct net_device const * ) ;
-   size_t (*get_xstats_size)(struct net_device const * ) ;
-   int (*fill_xstats)(struct sk_buff * , struct net_device const * ) ;
-   unsigned int (*get_num_tx_queues)(void) ;
-   unsigned int (*get_num_rx_queues)(void) ;
-   int slave_maxtype ;
-   struct nla_policy const *slave_policy ;
-   int (*slave_validate)(struct nlattr ** , struct nlattr ** ) ;
-   int (*slave_changelink)(struct net_device * , struct net_device * , struct nlattr ** ,
-                           struct nlattr ** ) ;
-   size_t (*get_slave_size)(struct net_device const * , struct net_device const * ) ;
-   int (*fill_slave_info)(struct sk_buff * , struct net_device const * , struct net_device const * ) ;
-};
-struct Qdisc_ops;
-struct qdisc_walker;
-struct tcf_walker;
-struct qdisc_size_table {
-   struct callback_head rcu ;
-   struct list_head list ;
-   struct tc_sizespec szopts ;
-   int refcnt ;
-   u16 data[] ;
-};
-struct Qdisc {
-   int (*enqueue)(struct sk_buff * , struct Qdisc * ) ;
-   struct sk_buff *(*dequeue)(struct Qdisc * ) ;
-   unsigned int flags ;
-   u32 limit ;
-   struct Qdisc_ops const *ops ;
-   struct qdisc_size_table *stab ;
-   struct list_head list ;
-   u32 handle ;
-   u32 parent ;
-   int (*reshape_fail)(struct sk_buff * , struct Qdisc * ) ;
-   void *u32_node ;
-   struct Qdisc *__parent ;
-   struct netdev_queue *dev_queue ;
-   struct gnet_stats_rate_est64 rate_est ;
-   struct Qdisc *next_sched ;
-   struct sk_buff *gso_skb ;
-   unsigned long state ;
-   struct sk_buff_head q ;
-   struct gnet_stats_basic_packed bstats ;
-   unsigned int __state ;
-   struct gnet_stats_queue qstats ;
-   struct callback_head callback_head ;
-   int padded ;
-   atomic_t refcnt ;
-   spinlock_t busylock ;
-};
-struct tcf_proto;
-struct Qdisc_class_ops {
-   struct netdev_queue *(*select_queue)(struct Qdisc * , struct tcmsg * ) ;
-   int (*graft)(struct Qdisc * , unsigned long , struct Qdisc * , struct Qdisc ** ) ;
-   struct Qdisc *(*leaf)(struct Qdisc * , unsigned long ) ;
-   void (*qlen_notify)(struct Qdisc * , unsigned long ) ;
-   unsigned long (*get)(struct Qdisc * , u32 ) ;
-   void (*put)(struct Qdisc * , unsigned long ) ;
-   int (*change)(struct Qdisc * , u32 , u32 , struct nlattr ** , unsigned long * ) ;
-   int (*delete)(struct Qdisc * , unsigned long ) ;
-   void (*walk)(struct Qdisc * , struct qdisc_walker * ) ;
-   struct tcf_proto **(*tcf_chain)(struct Qdisc * , unsigned long ) ;
-   unsigned long (*bind_tcf)(struct Qdisc * , unsigned long , u32 ) ;
-   void (*unbind_tcf)(struct Qdisc * , unsigned long ) ;
-   int (*dump)(struct Qdisc * , unsigned long , struct sk_buff * , struct tcmsg * ) ;
-   int (*dump_stats)(struct Qdisc * , unsigned long , struct gnet_dump * ) ;
-};
-struct Qdisc_ops {
-   struct Qdisc_ops *next ;
-   struct Qdisc_class_ops const *cl_ops ;
-   char id[16U] ;
-   int priv_size ;
-   int (*enqueue)(struct sk_buff * , struct Qdisc * ) ;
-   struct sk_buff *(*dequeue)(struct Qdisc * ) ;
-   struct sk_buff *(*peek)(struct Qdisc * ) ;
-   unsigned int (*drop)(struct Qdisc * ) ;
-   int (*init)(struct Qdisc * , struct nlattr * ) ;
-   void (*reset)(struct Qdisc * ) ;
-   void (*destroy)(struct Qdisc * ) ;
-   int (*change)(struct Qdisc * , struct nlattr * ) ;
-   void (*attach)(struct Qdisc * ) ;
-   int (*dump)(struct Qdisc * , struct sk_buff * ) ;
-   int (*dump_stats)(struct Qdisc * , struct gnet_dump * ) ;
-   struct module *owner ;
-};
-struct tcf_result {
-   unsigned long class ;
-   u32 classid ;
-};
-struct tcf_proto_ops {
-   struct list_head head ;
-   char kind[16U] ;
-   int (*classify)(struct sk_buff * , struct tcf_proto const * , struct tcf_result * ) ;
-   int (*init)(struct tcf_proto * ) ;
-   void (*destroy)(struct tcf_proto * ) ;
-   unsigned long (*get)(struct tcf_proto * , u32 ) ;
-   void (*put)(struct tcf_proto * , unsigned long ) ;
-   int (*change)(struct net * , struct sk_buff * , struct tcf_proto * , unsigned long ,
-                 u32 , struct nlattr ** , unsigned long * ) ;
-   int (*delete)(struct tcf_proto * , unsigned long ) ;
-   void (*walk)(struct tcf_proto * , struct tcf_walker * ) ;
-   int (*dump)(struct net * , struct tcf_proto * , unsigned long , struct sk_buff * ,
-               struct tcmsg * ) ;
-   struct module *owner ;
-};
-struct tcf_proto {
-   struct tcf_proto *next ;
-   void *root ;
-   int (*classify)(struct sk_buff * , struct tcf_proto const * , struct tcf_result * ) ;
-   __be16 protocol ;
-   u32 prio ;
-   u32 classid ;
-   struct Qdisc *q ;
-   void *data ;
-   struct tcf_proto_ops const *ops ;
-};
-struct qdisc_walker {
-   int stop ;
-   int skip ;
-   int count ;
-   int (*fn)(struct Qdisc * , unsigned long , struct qdisc_walker * ) ;
-};
-struct __anonstruct_qos_value_t_258 {
-   __u32 value ;
-   __u16 bits ;
-};
-typedef struct __anonstruct_qos_value_t_258 qos_value_t;
-struct qos_info {
-   magic_t magic ;
-   qos_value_t baud_rate ;
-   qos_value_t max_turn_time ;
-   qos_value_t data_size ;
-   qos_value_t window_size ;
-   qos_value_t additional_bofs ;
-   qos_value_t min_turn_time ;
-   qos_value_t link_disc_time ;
-   qos_value_t power ;
-};
-struct irlap_cb;
-struct irda_skb_cb {
-   unsigned int default_qdisc_pad ;
-   magic_t magic ;
-   __u32 next_speed ;
-   __u16 mtt ;
-   __u16 xbofs ;
-   __u16 next_xbofs ;
-   void *context ;
-   void (*destructor)(struct sk_buff * ) ;
-   __u16 xbofs_delay ;
-   __u8 line ;
-};
-struct __anonstruct_chipio_t_260 {
-   int cfg_base ;
-   int sir_base ;
-   int fir_base ;
-   int mem_base ;
-   int sir_ext ;
-   int fir_ext ;
-   int irq ;
-   int irq2 ;
-   int dma ;
-   int dma2 ;
-   int fifo_size ;
-   int irqflags ;
-   int direction ;
-   int enabled ;
-   int suspended ;
-   __u32 speed ;
-   __u32 new_speed ;
-   int dongle_id ;
-};
-typedef struct __anonstruct_chipio_t_260 chipio_t;
-struct __anonstruct_iobuff_t_261 {
-   int state ;
-   int in_frame ;
-   __u8 *head ;
-   __u8 *data ;
-   int len ;
-   int truesize ;
-   __u16 fcs ;
-   struct sk_buff *skb ;
-};
-typedef struct __anonstruct_iobuff_t_261 iobuff_t;
-struct st_fifo_entry {
-   int status ;
-   int len ;
-};
-struct st_fifo {
-   struct st_fifo_entry entries[10U] ;
-   int head ;
-   int tail ;
-   int len ;
-};
-struct w83977af_ir {
-   struct st_fifo st_fifo ;
-   int tx_buff_offsets[10U] ;
-   int tx_len ;
+struct ks_net {
    struct net_device *netdev ;
-   struct irlap_cb *irlap ;
-   struct qos_info qos ;
-   chipio_t io ;
-   iobuff_t tx_buff ;
-   iobuff_t rx_buff ;
-   dma_addr_t tx_buff_dma ;
-   dma_addr_t rx_buff_dma ;
-   spinlock_t lock ;
-   __u32 new_speed ;
+   void *hw_addr ;
+   void *hw_addr_cmd ;
+   union ks_tx_hdr txh ;
+   struct mutex lock ;
+   struct platform_device *pdev ;
+   struct mii_if_info mii ;
+   struct type_frame_head *frame_head_info ;
+   spinlock_t statelock ;
+   u32 msg_enable ;
+   u32 frame_cnt ;
+   int bus_width ;
+   u16 rc_rxqcr ;
+   u16 rc_txcr ;
+   u16 rc_ier ;
+   u16 sharedbus ;
+   u16 cmd_reg_cache ;
+   u16 cmd_reg_cache_int ;
+   u16 promiscuous ;
+   u16 all_mcast ;
+   u16 mcast_lst_size ;
+   u8 mcast_lst[32U][6U] ;
+   u8 mcast_bits[8U] ;
+   u8 mac_addr[6U] ;
+   u8 fid ;
+   u8 extra_byte ;
+   u8 enabled ;
 };
-struct ldv_struct_free_irq_5 {
+struct ldv_struct_free_irq_9 {
    int arg0 ;
    int signal_pending ;
 };
@@ -5521,7 +4990,8 @@ struct ldv_struct_interrupt_scenario_2 {
    void *arg3 ;
    int signal_pending ;
 };
-struct ldv_struct_main_10 {
+struct ldv_struct_platform_instance_4 {
+   struct platform_driver *arg0 ;
    int signal_pending ;
 };
 struct ldv_struct_random_allocationless_scenario_3 {
@@ -5532,17 +5002,6 @@ struct device_private {
    void *driver_data ;
 };
 enum hrtimer_restart;
-typedef unsigned long kernel_ulong_t;
-struct acpi_device_id {
-   __u8 id[9U] ;
-   kernel_ulong_t driver_data ;
-};
-struct of_device_id {
-   char name[32U] ;
-   char type[32U] ;
-   char compatible[128U] ;
-   void const *data ;
-};
 struct kthread_work;
 struct kthread_worker {
    spinlock_t lock ;
@@ -5637,9 +5096,36 @@ struct spi_message {
    struct list_head queue ;
    void *state ;
 };
-long ldv__builtin_expect(long exp , long c ) ;
-extern struct pv_cpu_ops pv_cpu_ops ;
-extern struct pv_irq_ops pv_irq_ops ;
+struct __pthread_internal_list {
+   struct __pthread_internal_list *__prev ;
+   struct __pthread_internal_list *__next ;
+};
+typedef struct __pthread_internal_list __pthread_list_t;
+struct __pthread_mutex_s {
+   int __lock ;
+   unsigned int __count ;
+   int __owner ;
+   unsigned int __nusers ;
+   int __kind ;
+   int __spins ;
+   __pthread_list_t __list ;
+};
+union __anonunion_pthread_mutex_t_8 {
+   struct __pthread_mutex_s __data ;
+   char __size[40U] ;
+   long __align ;
+};
+typedef union __anonunion_pthread_mutex_t_8 pthread_mutex_t;
+long __builtin_expect(long exp , long c ) ;
+void *ldv_dev_get_drvdata(struct device const *dev ) ;
+int ldv_dev_set_drvdata(struct device *dev , void *data ) ;
+void *ldv_kzalloc(size_t size , gfp_t flags ) ;
+static void ldv_mutex_lock_68(struct mutex *ldv_func_arg1 ) ;
+static void ldv_mutex_lock_73(struct mutex *ldv_func_arg1 ) ;
+static void ldv_mutex_lock_75(struct mutex *ldv_func_arg1 ) ;
+void ldv_mutex_lock_lock_of_ks_net(struct mutex *lock ) ;
+void ldv_mutex_unlock_lock_of_ks_net(struct mutex *lock ) ;
+extern struct module __this_module ;
 __inline static void set_bit(long nr , unsigned long volatile *addr )
 {
   {
@@ -5662,60 +5148,25 @@ __inline static int test_and_clear_bit(long nr , unsigned long volatile *addr )
   return (1);
 }
 }
+__inline static int constant_test_bit(long nr , unsigned long const volatile *addr )
+{
+  {
+  return ((int )((unsigned long )*(addr + (unsigned long )(nr >> 6)) >> ((int )nr & 63)) & 1);
+}
+}
 extern int printk(char const * , ...) ;
-extern int sprintf(char * , char const * , ...) ;
+extern int __dynamic_netdev_dbg(struct _ddebug * , struct net_device const * , char const *
+                                , ...) ;
 extern void *memcpy(void * , void const * , size_t ) ;
+extern void *memset(void * , int , size_t ) ;
+extern size_t strlcpy(char * , char const * , size_t ) ;
 extern void warn_slowpath_null(char const * , int const ) ;
-__inline static void slow_down_io(void)
-{
-  {
-  {
-  (*(pv_cpu_ops.io_delay))();
-  }
-  return;
-}
-}
-__inline static unsigned long arch_local_save_flags(void)
-{
-  unsigned long __ret = 0 ;
-  unsigned long __edi = 0 ;
-  unsigned long __esi = 0 ;
-  unsigned long __edx = 0 ;
-  unsigned long __ecx = 0 ;
-  unsigned long __eax = 0 ;
-  long tmp ;
-  {
-  {
-  tmp = ldv__builtin_expect((unsigned long )pv_irq_ops.save_fl.func == (unsigned long )((void *)0),
-                         0L);
-  }
-  if (tmp != 0L) {
-    {
-    __asm__ volatile ("1:\tud2\n.pushsection __bug_table,\"a\"\n2:\t.long 1b - 2b, %c0 - 2b\n\t.word %c1, 0\n\t.org 2b+%c2\n.popsection": : "i" ((char *)"/home/alpha/git/klever2/klever/native-scheduler-work-dir/scheduler/jobs/d5cd53f56669d61faa91054857893dbd/klever-core-work-dir/lkbce/arch/x86/include/asm/paravirt.h"),
-                         "i" (804), "i" (12UL));
-    __builtin_unreachable();
-    }
-  } else {
-  }
-  __asm__ volatile ("771:\n\tcall *%c2;\n772:\n.pushsection .parainstructions,\"a\"\n .balign 8 \n .quad  771b\n  .byte %c1\n  .byte 772b-771b\n  .short %c3\n.popsection\n": "=a" (__eax): [paravirt_typenum] "i" (44UL),
-                       [paravirt_opptr] "i" (& pv_irq_ops.save_fl.func), [paravirt_clobber] "i" (1): "memory",
-                       "cc");
-  __ret = __eax;
-  return (__ret);
-}
-}
-__inline static int arch_irqs_disabled_flags(unsigned long flags )
-{
-  {
-  return ((flags & 512UL) == 0UL);
-}
-}
-extern void __ldv_spin_lock(spinlock_t * ) ;
-static void ldv___ldv_spin_lock_78(spinlock_t *ldv_func_arg1 ) ;
-void ldv_spin_lock_lock_of_w83977af_ir(void) ;
-void ldv_spin_unlock_lock_of_w83977af_ir(void) ;
+void ldv_spin_lock_statelock_of_ks_net(void) ;
+void ldv_spin_unlock_statelock_of_ks_net(void) ;
 void ldv_initialize(void) ;
 int ldv_post_init(int init_ret_val ) ;
+extern void ldv_pre_probe(void) ;
+int ldv_post_probe(int probe_ret_val ) ;
 extern int ldv_failed_register_netdev(void) ;
 void ldv_check_final_state(void) ;
 extern void ldv_switch_to_interrupt_context(void) ;
@@ -5727,213 +5178,111 @@ void ldv_free(void *s ) ;
 void *ldv_xmalloc(size_t size ) ;
 extern void *external_allocated_data(void) ;
 void *ldv_xmalloc_unknown_size(size_t size ) ;
+extern int pthread_create(pthread_t * , pthread_attr_t const * , void *(*)(void * ) ,
+                          void * ) ;
+extern int pthread_join(pthread_t , void ** ) ;
+extern void __mutex_init(struct mutex * , char const * , struct lock_class_key * ) ;
+static void ldv_mutex_unlock_70(struct mutex *ldv_func_arg1 ) ;
+static void ldv_mutex_unlock_74(struct mutex *ldv_func_arg1 ) ;
+static void ldv_mutex_unlock_76(struct mutex *ldv_func_arg1 ) ;
 extern void __raw_spin_lock_init(raw_spinlock_t * , char const * , struct lock_class_key * ) ;
-extern void _raw_spin_unlock_irqrestore(raw_spinlock_t * , unsigned long ) ;
-void ldv_assert(char const *desc , int expr ) ;
-__u32 io_speed;
+extern void _raw_spin_lock(raw_spinlock_t * ) ;
+extern void _raw_spin_unlock(raw_spinlock_t * ) ;
+int ks_enabled;
 __inline static raw_spinlock_t *spinlock_check(spinlock_t *lock )
 {
   {
   return (& lock->__annonCompField19.rlock);
 }
 }
-__inline static void spin_unlock_irqrestore(spinlock_t *lock , unsigned long flags )
+__inline static void spin_lock(spinlock_t *lock )
 {
   {
   {
-  _raw_spin_unlock_irqrestore(& lock->__annonCompField19.rlock, flags);
+  _raw_spin_lock(& lock->__annonCompField19.rlock);
   }
   return;
 }
 }
-__inline static void ldv_spin_unlock_irqrestore_79(spinlock_t *lock , unsigned long flags ) ;
-extern unsigned long volatile jiffies ;
-extern struct resource ioport_resource ;
+__inline static void ldv_spin_lock_71(spinlock_t *lock ) ;
+__inline static void spin_unlock(spinlock_t *lock )
+{
+  {
+  {
+  _raw_spin_unlock(& lock->__annonCompField19.rlock);
+  }
+  return;
+}
+}
+__inline static void ldv_spin_unlock_72(spinlock_t *lock ) ;
+extern struct resource iomem_resource ;
+__inline static resource_size_t resource_size(struct resource const *res )
+{
+  {
+  return (((unsigned long long )res->end - (unsigned long long )res->start) + 1ULL);
+}
+}
 extern struct resource *__request_region(struct resource * , resource_size_t , resource_size_t ,
                                          char const * , int ) ;
 extern void __release_region(struct resource * , resource_size_t , resource_size_t ) ;
-__inline static void outb(unsigned char value , int port )
+__inline static char const *kobject_name(struct kobject const *kobj )
 {
   {
-  __asm__ volatile ("outb %b0, %w1": : "a" (value), "Nd" (port));
-  return;
+  return ((char const *)kobj->name);
 }
 }
-__inline static unsigned char inb(int port )
+extern void *ioremap_nocache(resource_size_t , unsigned long ) ;
+__inline static void *ioremap(resource_size_t offset , unsigned long size )
 {
-  unsigned char value ;
-  {
-  __asm__ volatile ("inb %w1, %b0": "=a" (value): "Nd" (port));
-  return (value);
-}
-}
-__inline static unsigned char inb_p(int port )
-{
-  unsigned char value ;
-  unsigned char tmp ;
-  {
-  {
-  tmp = inb(port);
-  value = tmp;
-  slow_down_io();
-  }
-  return (value);
-}
-}
-extern void __udelay(unsigned long ) ;
-extern void __const_udelay(unsigned long ) ;
-extern bool capable(int ) ;
-extern int net_ratelimit(void) ;
-__inline static int is_device_dma_capable(struct device *dev )
-{
-  {
-  return ((unsigned long )dev->dma_mask != (unsigned long )((u64 *)0ULL) && *(dev->dma_mask) != 0ULL);
-}
-}
-extern void debug_dma_alloc_coherent(struct device * , size_t , dma_addr_t , void * ) ;
-extern void debug_dma_free_coherent(struct device * , size_t , void * , dma_addr_t ) ;
-extern struct device x86_dma_fallback_dev ;
-extern struct dma_map_ops *dma_ops ;
-__inline static struct dma_map_ops *get_dma_ops(struct device *dev )
-{
-  long tmp ;
-  {
-  {
-  tmp = ldv__builtin_expect((unsigned long )dev == (unsigned long )((struct device *)0),
-                         0L);
-  }
-  if (tmp != 0L || (unsigned long )dev->archdata.dma_ops == (unsigned long )((struct dma_map_ops *)0)) {
-    return (dma_ops);
-  } else {
-    return (dev->archdata.dma_ops);
-  }
-}
-}
-__inline static unsigned long dma_alloc_coherent_mask(struct device *dev , gfp_t gfp )
-{
-  unsigned long dma_mask ;
-  {
-  dma_mask = 0UL;
-  dma_mask = (unsigned long )dev->coherent_dma_mask;
-  if (dma_mask == 0UL) {
-    dma_mask = (int )gfp & 1 ? 16777215UL : 4294967295UL;
-  } else {
-  }
-  return (dma_mask);
-}
-}
-__inline static gfp_t dma_alloc_coherent_gfp_flags(struct device *dev , gfp_t gfp )
-{
-  unsigned long dma_mask ;
-  unsigned long tmp ;
-  {
-  {
-  tmp = dma_alloc_coherent_mask(dev, gfp);
-  dma_mask = tmp;
-  }
-  if ((unsigned long long )dma_mask <= 16777215ULL) {
-    gfp = gfp | 1U;
-  } else {
-  }
-  if ((unsigned long long )dma_mask <= 4294967295ULL && (gfp & 1U) == 0U) {
-    gfp = gfp | 4U;
-  } else {
-  }
-  return (gfp);
-}
-}
-__inline static void *dma_alloc_attrs(struct device *dev , size_t size , dma_addr_t *dma_handle ,
-                                      gfp_t gfp , struct dma_attrs *attrs )
-{
-  struct dma_map_ops *ops ;
-  struct dma_map_ops *tmp ;
-  void *memory ;
-  int tmp___0 ;
-  gfp_t tmp___1 ;
-  {
-  {
-  tmp = get_dma_ops(dev);
-  ops = tmp;
-  gfp = gfp & 4294967288U;
-  }
-  if ((unsigned long )dev == (unsigned long )((struct device *)0)) {
-    dev = & x86_dma_fallback_dev;
-  } else {
-  }
-  {
-  tmp___0 = is_device_dma_capable(dev);
-  }
-  if (tmp___0 == 0) {
-    return ((void *)0);
-  } else {
-  }
-  if ((unsigned long )ops->alloc == (unsigned long )((void *(*)(struct device * ,
-                                                                size_t , dma_addr_t * ,
-                                                                gfp_t , struct dma_attrs * ))0)) {
-    return ((void *)0);
-  } else {
-  }
-  {
-  tmp___1 = dma_alloc_coherent_gfp_flags(dev, gfp);
-  memory = (*(ops->alloc))(dev, size, dma_handle, tmp___1, attrs);
-  debug_dma_alloc_coherent(dev, size, *dma_handle, memory);
-  }
-  return (memory);
-}
-}
-__inline static void dma_free_attrs(struct device *dev , size_t size , void *vaddr ,
-                                    dma_addr_t bus , struct dma_attrs *attrs )
-{
-  struct dma_map_ops *ops ;
-  struct dma_map_ops *tmp ;
-  int __ret_warn_on ;
-  unsigned long _flags ;
-  int tmp___0 ;
-  long tmp___1 ;
-  {
-  {
-  tmp = get_dma_ops(dev);
-  ops = tmp;
-  _flags = arch_local_save_flags();
-  tmp___0 = arch_irqs_disabled_flags(_flags);
-  __ret_warn_on = tmp___0 != 0;
-  tmp___1 = ldv__builtin_expect(__ret_warn_on != 0, 0L);
-  }
-  if (tmp___1 != 0L) {
-    {
-    warn_slowpath_null("/home/alpha/git/klever2/klever/native-scheduler-work-dir/scheduler/jobs/d5cd53f56669d61faa91054857893dbd/klever-core-work-dir/lkbce/arch/x86/include/asm/dma-mapping.h",
-                       166);
-    }
-  } else {
-  }
-  {
-  ldv__builtin_expect(__ret_warn_on != 0, 0L);
-  debug_dma_free_coherent(dev, size, vaddr, bus);
-  }
-  if ((unsigned long )ops->free != (unsigned long )((void (*)(struct device * , size_t ,
-                                                              void * , dma_addr_t ,
-                                                              struct dma_attrs * ))0)) {
-    {
-    (*(ops->free))(dev, size, vaddr, bus, attrs);
-    }
-  } else {
-  }
-  return;
-}
-}
-__inline static void *dma_zalloc_coherent(struct device *dev , size_t size , dma_addr_t *dma_handle ,
-                                          gfp_t flag )
-{
-  void *ret ;
   void *tmp ;
   {
   {
-  tmp = dma_alloc_attrs(dev, size, dma_handle, flag | 32768U, (struct dma_attrs *)0);
-  ret = tmp;
+  tmp = ioremap_nocache(offset, size);
   }
-  return (ret);
+  return (tmp);
 }
 }
+extern void iounmap(void volatile * ) ;
+extern unsigned int ioread8(void * ) ;
+extern unsigned int ioread16(void * ) ;
+extern void iowrite16(u16 , void * ) ;
+__inline static char const *dev_name(struct device const *dev )
+{
+  char const *tmp ;
+  {
+  if ((unsigned long )dev->init_name != (unsigned long )((char const * )0)) {
+    return ((char const *)dev->init_name);
+  } else {
+  }
+  {
+  tmp = kobject_name(& dev->kobj);
+  }
+  return (tmp);
+}
+}
+static void *ldv_dev_get_drvdata_65(struct device const *dev ) ;
+static int ldv_dev_set_drvdata_66(struct device *dev , void *data ) ;
+__inline static void *dev_get_platdata(struct device const *dev )
+{
+  {
+  return ((void *)dev->platform_data);
+}
+}
+extern void __const_udelay(unsigned long ) ;
+extern void get_random_bytes(void * , int ) ;
+extern void kfree(void const * ) ;
+extern void *__kmalloc(size_t , gfp_t ) ;
+__inline static void *kmalloc(size_t size , gfp_t flags )
+{
+  void *tmp___2 ;
+  {
+  {
+  tmp___2 = __kmalloc(size, flags);
+  }
+  return (tmp___2);
+}
+}
+__inline static void *kzalloc(size_t size , gfp_t flags ) ;
 extern void consume_skb(struct sk_buff * ) ;
 extern unsigned char *skb_put(struct sk_buff * , unsigned int ) ;
 __inline static void skb_reserve(struct sk_buff *skb , int len )
@@ -5941,13 +5290,6 @@ __inline static void skb_reserve(struct sk_buff *skb , int len )
   {
   skb->data = skb->data + (unsigned long )len;
   skb->tail = skb->tail + (sk_buff_data_t )len;
-  return;
-}
-}
-__inline static void skb_reset_mac_header(struct sk_buff *skb )
-{
-  {
-  skb->mac_header = (int )((__u16 )((long )skb->data)) - (int )((__u16 )((long )skb->head));
   return;
 }
 }
@@ -5960,36 +5302,6 @@ __inline static struct sk_buff *netdev_alloc_skb(struct net_device *dev , unsign
   tmp = __netdev_alloc_skb(dev, length, 32U);
   }
   return (tmp);
-}
-}
-__inline static struct sk_buff *dev_alloc_skb(unsigned int length )
-{
-  struct sk_buff *tmp ;
-  {
-  {
-  tmp = netdev_alloc_skb((struct net_device *)0, length);
-  }
-  return (tmp);
-}
-}
-__inline static void skb_copy_from_linear_data(struct sk_buff const *skb , void *to ,
-                                               unsigned int const len )
-{
-  {
-  {
-  memcpy(to, (void const *)skb->data, (size_t )len);
-  }
-  return;
-}
-}
-__inline static void skb_copy_to_linear_data(struct sk_buff *skb , void const *from ,
-                                             unsigned int const len )
-{
-  {
-  {
-  memcpy((void *)skb->data, from, (size_t )len);
-  }
-  return;
 }
 }
 __inline static struct netdev_queue *netdev_get_tx_queue(struct net_device const *dev ,
@@ -6005,8 +5317,8 @@ __inline static void *netdev_priv(struct net_device const *dev )
   return ((void *)(dev + 3200U));
 }
 }
-static void ldv_free_netdev_72(struct net_device *ldv_func_arg1 ) ;
-static void ldv_free_netdev_74(struct net_device *ldv_func_arg1 ) ;
+static void ldv_free_netdev_80(struct net_device *ldv_func_arg1 ) ;
+static void ldv_free_netdev_82(struct net_device *ldv_func_arg1 ) ;
 extern int netpoll_trap(void) ;
 extern void __netif_schedule(struct Qdisc * ) ;
 __inline static void netif_tx_start_queue(struct netdev_queue *dev_queue )
@@ -6075,7 +5387,7 @@ __inline static void netif_tx_stop_queue(struct netdev_queue *dev_queue )
   {
   {
   __ret_warn_on = (unsigned long )dev_queue == (unsigned long )((struct netdev_queue *)0);
-  tmp = ldv__builtin_expect(__ret_warn_on != 0, 0L);
+  tmp = __builtin_expect(__ret_warn_on != 0, 0L);
   }
   if (tmp != 0L) {
     {
@@ -6084,7 +5396,7 @@ __inline static void netif_tx_stop_queue(struct netdev_queue *dev_queue )
   } else {
   }
   {
-  tmp___0 = ldv__builtin_expect(__ret_warn_on != 0, 0L);
+  tmp___0 = __builtin_expect(__ret_warn_on != 0, 0L);
   }
   if (tmp___0 != 0L) {
     {
@@ -6110,1402 +5422,1224 @@ __inline static void netif_stop_queue(struct net_device *dev )
   return;
 }
 }
-extern int netif_rx(struct sk_buff * ) ;
-static int ldv_register_netdev_71(struct net_device *ldv_func_arg1 ) ;
-static void ldv_unregister_netdev_73(struct net_device *ldv_func_arg1 ) ;
-__inline static int ldv_request_irq_75(unsigned int irq___0 , irqreturn_t (*handler)(int ,
-                                                                                     void * ) ,
-                                       unsigned long flags , char const *name ,
-                                       void *dev ) ;
-static void ldv_free_irq_76(unsigned int ldv_func_arg1 , void *ldv_func_arg2 ) ;
-static void ldv_free_irq_77(unsigned int ldv_func_arg1 , void *ldv_func_arg2 ) ;
-__inline static void disable_dma(unsigned int dmanr )
+__inline static bool netif_running(struct net_device const *dev )
 {
-  {
-  if (dmanr <= 3U) {
-    {
-    outb((int )((unsigned int )((unsigned char )dmanr) | 4U), 10);
-    }
-  } else {
-    {
-    outb((int )(((unsigned int )((unsigned char )dmanr) & 3U) | 4U), 212);
-    }
-  }
-  return;
-}
-}
-extern int request_dma(unsigned int , char const * ) ;
-extern void free_dma(unsigned int ) ;
-extern unsigned int irda_debug ;
-extern void irda_init_max_qos_capabilies(struct qos_info * ) ;
-extern void irda_qos_bits_to_value(struct qos_info * ) ;
-extern struct irlap_cb *irlap_open(struct net_device * , struct qos_info * , char const * ) ;
-extern void irlap_close(struct irlap_cb * ) ;
-extern void irda_device_set_media_busy(struct net_device * , int ) ;
-extern struct net_device *alloc_irdadev(int ) ;
-extern void irda_setup_dma(int , dma_addr_t , int , int ) ;
-__inline static __u16 irda_get_mtt(struct sk_buff const *skb )
-{
-  struct irda_skb_cb const *cb ;
-  {
-  cb = (struct irda_skb_cb const *)(& skb->cb);
-  return ((unsigned int )cb->magic == 4951U ? (__u16 )cb->mtt : 10000U);
-}
-}
-__inline static __u32 irda_get_next_speed(struct sk_buff const *skb )
-{
-  struct irda_skb_cb const *cb ;
-  {
-  cb = (struct irda_skb_cb const *)(& skb->cb);
-  return ((unsigned int )cb->magic == 4951U ? (__u32 )cb->next_speed : 4294967295U);
-}
-}
-extern int async_wrap_skb(struct sk_buff * , __u8 * , int ) ;
-extern void async_unwrap_char(struct net_device * , struct net_device_stats * , iobuff_t * ,
-                              __u8 ) ;
-__inline static void w977_efm_enter(unsigned int efio___0 )
-{
-  {
-  {
-  outb(135, (int )efio___0);
-  outb(135, (int )efio___0);
-  }
-  return;
-}
-}
-__inline static void w977_select_device(__u8 devnum , unsigned int efio___0 )
-{
-  {
-  {
-  outb(7, (int )efio___0);
-  outb((int )devnum, (int )(efio___0 + 1U));
-  }
-  return;
-}
-}
-__inline static void w977_write_reg(__u8 reg , __u8 value , unsigned int efio___0 )
-{
-  {
-  {
-  outb((int )reg, (int )efio___0);
-  outb((int )value, (int )(efio___0 + 1U));
-  }
-  return;
-}
-}
-__inline static void w977_efm_exit(unsigned int efio___0 )
-{
-  {
-  {
-  outb(170, (int )efio___0);
-  }
-  return;
-}
-}
-__inline static void switch_bank(int iobase , int set )
-{
-  {
-  {
-  outb((int )((unsigned char )set), iobase + 3);
-  }
-  return;
-}
-}
-static char *driver_name = (char *)"w83977af_ir";
-static int qos_mtt_bits = 7;
-static unsigned int io[4U] = { 384U, 4294967295U, 4294967295U, 4294967295U};
-static unsigned int irq[4U] = { 11U, 0U, 0U, 0U};
-static unsigned int dma[4U] = { 1U, 0U, 0U, 0U};
-static unsigned int efbase[2U] = { 880U, 1008U};
-static unsigned int efio = 880U;
-static struct w83977af_ir *dev_self[4U] = { (struct w83977af_ir *)0, (struct w83977af_ir *)0, (struct w83977af_ir *)0, (struct w83977af_ir *)0};
-static int w83977af_open(int i , unsigned int iobase , unsigned int irq___0 , unsigned int dma___0 ) ;
-static int w83977af_close(struct w83977af_ir *self ) ;
-static int w83977af_probe(int iobase , int irq___0 , int dma___0 ) ;
-static int w83977af_dma_receive(struct w83977af_ir *self ) ;
-static int w83977af_dma_receive_complete(struct w83977af_ir *self ) ;
-static netdev_tx_t w83977af_hard_xmit(struct sk_buff *skb , struct net_device *dev ) ;
-static int w83977af_pio_write(int iobase , __u8 *buf , int len , int fifo_size ) ;
-static void w83977af_dma_write(struct w83977af_ir *self , int iobase ) ;
-static void w83977af_change_speed(struct w83977af_ir *self , __u32 speed ) ;
-static int w83977af_is_receiving(struct w83977af_ir *self ) ;
-static int w83977af_net_open(struct net_device *dev ) ;
-static int w83977af_net_close(struct net_device *dev ) ;
-static int w83977af_net_ioctl(struct net_device *dev , struct ifreq *rq , int cmd ) ;
-static int w83977af_init(void)
-{
-  int i ;
   int tmp ;
   {
   {
-  printk("\017%s()\n", "w83977af_init");
-  i = 0;
+  tmp = constant_test_bit(0L, (unsigned long const volatile *)(& dev->state));
   }
-  goto ldv_44920;
-  ldv_44919:
-  {
-  tmp = w83977af_open(i, io[i], irq[i], dma[i]);
-  }
-  if (tmp == 0) {
-    return (0);
-  } else {
-  }
-  i = i + 1;
-  ldv_44920: ;
-  if ((unsigned int )i <= 3U && io[i] <= 1999U) {
-    goto ldv_44919;
-  } else {
-  }
-  return (-19);
+  return (tmp != 0);
 }
 }
-static void w83977af_cleanup(void)
+extern int netif_rx(struct sk_buff * ) ;
+extern void netif_carrier_on(struct net_device * ) ;
+extern void netif_carrier_off(struct net_device * ) ;
+__inline static u32 netif_msg_init(int debug_value , int default_msg_enable_bits )
 {
-  int i ;
   {
-  if (irda_debug > 3U) {
-    {
-    printk("\017%s()\n", "w83977af_cleanup");
-    }
+  if ((unsigned int )debug_value > 31U) {
+    return ((u32 )default_msg_enable_bits);
   } else {
   }
-  i = 0;
-  goto ldv_44930;
-  ldv_44929: ;
-  if ((unsigned long )dev_self[i] != (unsigned long )((struct w83977af_ir *)0)) {
-    {
-    w83977af_close(dev_self[i]);
-    }
+  if (debug_value == 0) {
+    return (0U);
   } else {
   }
-  i = i + 1;
-  ldv_44930: ;
-  if ((unsigned int )i <= 3U) {
-    goto ldv_44929;
-  } else {
-  }
-  return;
+  return ((u32 )((1 << debug_value) + -1));
 }
 }
-static struct net_device_ops const w83977_netdev_ops =
-     {0, 0, & w83977af_net_open, & w83977af_net_close, & w83977af_hard_xmit, 0, 0, 0,
-    0, 0, & w83977af_net_ioctl, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0};
-static int w83977af_open(int i , unsigned int iobase , unsigned int irq___0 , unsigned int dma___0 )
+static int ldv_register_netdev_78(struct net_device *ldv_func_arg1 ) ;
+static void ldv_unregister_netdev_79(struct net_device *ldv_func_arg1 ) ;
+static void ldv_unregister_netdev_81(struct net_device *ldv_func_arg1 ) ;
+extern int netdev_err(struct net_device const * , char const * , ...) ;
+extern int netdev_warn(struct net_device const * , char const * , ...) ;
+extern int netdev_info(struct net_device const * , char const * , ...) ;
+extern struct resource *platform_get_resource(struct platform_device * , unsigned int ,
+                                              unsigned int ) ;
+extern int platform_get_irq(struct platform_device * , unsigned int ) ;
+static int ldv___platform_driver_register_83(struct platform_driver *ldv_func_arg1 ,
+                                             struct module *ldv_func_arg2 ) ;
+static void ldv_platform_driver_unregister_84(struct platform_driver *ldv_func_arg1 ) ;
+__inline static void *platform_get_drvdata(struct platform_device const *pdev )
 {
-  struct net_device *dev ;
-  struct w83977af_ir *self ;
-  int err ;
-  struct resource *tmp ;
-  int tmp___0 ;
-  void *tmp___1 ;
-  struct lock_class_key __key ;
-  void *tmp___2 ;
-  void *tmp___3 ;
-  int tmp___4 ;
-  int tmp___5 ;
-  {
-  {
-  printk("\017%s()\n", "w83977af_open");
-  tmp = __request_region(& ioport_resource, (resource_size_t )iobase, 8ULL, (char const *)driver_name,
-                         0);
-  }
-  if ((unsigned long )tmp == (unsigned long )((struct resource *)0)) {
-    {
-    printk("\017%s(), can\'t get iobase of 0x%03x\n", "w83977af_open", iobase);
-    }
-    return (-19);
-  } else {
-  }
-  {
-  tmp___0 = w83977af_probe((int )iobase, (int )irq___0, (int )dma___0);
-  }
-  if (tmp___0 == -1) {
-    err = -1;
-    goto err_out;
-  } else {
-  }
-  {
-  dev = alloc_irdadev(488);
-  }
-  if ((unsigned long )dev == (unsigned long )((struct net_device *)0)) {
-    {
-    printk("\vIrDA: Can\'t allocate memory for IrDA control block!\n");
-    err = -12;
-    }
-    goto err_out;
-  } else {
-  }
-  {
-  tmp___1 = netdev_priv((struct net_device const *)dev);
-  self = (struct w83977af_ir *)tmp___1;
-  spinlock_check(& self->lock);
-  __raw_spin_lock_init(& self->lock.__annonCompField19.rlock, "&(&self->lock)->rlock",
-                       & __key);
-  self->io.fir_base = (int )iobase;
-  self->io.irq = (int )irq___0;
-  self->io.fir_ext = 8;
-  self->io.dma = (int )dma___0;
-  self->io.fifo_size = 32;
-  irda_init_max_qos_capabilies(& self->qos);
-  self->qos.baud_rate.bits = 510U;
-  self->qos.min_turn_time.bits = (__u16 )qos_mtt_bits;
-  irda_qos_bits_to_value(& self->qos);
-  self->rx_buff.truesize = 14384;
-  self->tx_buff.truesize = 4000;
-  tmp___2 = dma_zalloc_coherent((struct device *)0, (size_t )self->rx_buff.truesize,
-                                & self->rx_buff_dma, 208U);
-  self->rx_buff.head = (__u8 *)tmp___2;
-  }
-  if ((unsigned long )self->rx_buff.head == (unsigned long )((__u8 *)0U)) {
-    err = -12;
-    goto err_out1;
-  } else {
-  }
-  {
-  tmp___3 = dma_zalloc_coherent((struct device *)0, (size_t )self->tx_buff.truesize,
-                                & self->tx_buff_dma, 208U);
-  self->tx_buff.head = (__u8 *)tmp___3;
-  }
-  if ((unsigned long )self->tx_buff.head == (unsigned long )((__u8 *)0U)) {
-    err = -12;
-    goto err_out2;
-  } else {
-  }
-  {
-  self->rx_buff.in_frame = 0;
-  self->rx_buff.state = 0;
-  self->tx_buff.data = self->tx_buff.head;
-  self->rx_buff.data = self->rx_buff.head;
-  self->netdev = dev;
-  dev->netdev_ops = & w83977_netdev_ops;
-  err = ldv_register_netdev_71(dev);
-  }
-  if (err != 0) {
-    {
-    tmp___4 = net_ratelimit();
-    }
-    if (tmp___4 != 0) {
-      {
-      printk("\v%s(), register_netdevice() failed!\n", "w83977af_open");
-      }
-    } else {
-    }
-    goto err_out3;
-  } else {
-  }
-  {
-  tmp___5 = net_ratelimit();
-  }
-  if (tmp___5 != 0) {
-    {
-    printk("\016IrDA: Registered device %s\n", (char *)(& dev->name));
-    }
-  } else {
-  }
-  dev_self[i] = self;
-  return (0);
-  err_out3:
-  {
-  dma_free_attrs((struct device *)0, (size_t )self->tx_buff.truesize, (void *)self->tx_buff.head,
-                 self->tx_buff_dma, (struct dma_attrs *)0);
-  }
-  err_out2:
-  {
-  dma_free_attrs((struct device *)0, (size_t )self->rx_buff.truesize, (void *)self->rx_buff.head,
-                 self->rx_buff_dma, (struct dma_attrs *)0);
-  }
-  err_out1:
-  {
-  ldv_free_netdev_72(dev);
-  }
-  err_out:
-  {
-  __release_region(& ioport_resource, (resource_size_t )iobase, 8ULL);
-  }
-  return (err);
-}
-}
-static int w83977af_close(struct w83977af_ir *self )
-{
-  int iobase ;
-  {
-  {
-  printk("\017%s()\n", "w83977af_close");
-  iobase = self->io.fir_base;
-  w977_efm_enter(efio);
-  w977_select_device(6, efio);
-  w977_write_reg(48, 0, efio);
-  w977_efm_exit(efio);
-  ldv_unregister_netdev_73(self->netdev);
-  printk("\017%s(), Releasing Region %03x\n", "w83977af_close", self->io.fir_base);
-  __release_region(& ioport_resource, (resource_size_t )self->io.fir_base, (resource_size_t )self->io.fir_ext);
-  }
-  if ((unsigned long )self->tx_buff.head != (unsigned long )((__u8 *)0U)) {
-    {
-    dma_free_attrs((struct device *)0, (size_t )self->tx_buff.truesize, (void *)self->tx_buff.head,
-                   self->tx_buff_dma, (struct dma_attrs *)0);
-    }
-  } else {
-  }
-  if ((unsigned long )self->rx_buff.head != (unsigned long )((__u8 *)0U)) {
-    {
-    dma_free_attrs((struct device *)0, (size_t )self->rx_buff.truesize, (void *)self->rx_buff.head,
-                   self->rx_buff_dma, (struct dma_attrs *)0);
-    }
-  } else {
-  }
-  {
-  ldv_free_netdev_74(self->netdev);
-  }
-  return (0);
-}
-}
-static int w83977af_probe(int iobase , int irq___0 , int dma___0 )
-{
-  int version ;
-  int i ;
-  unsigned char tmp ;
-  unsigned char tmp___0 ;
-  int tmp___1 ;
-  {
-  i = 0;
-  goto ldv_44962;
-  ldv_44961:
-  {
-  printk("\017%s()\n", "w83977af_probe");
-  w977_efm_enter(efbase[i]);
-  w977_select_device(6, efbase[i]);
-  w977_write_reg(96, (int )((__u8 )(iobase >> 8)), efbase[i]);
-  w977_write_reg(97, (int )((__u8 )iobase), efbase[i]);
-  w977_write_reg(112, (int )((__u8 )irq___0), efbase[i]);
-  w977_write_reg(116, (int )((__u8 )dma___0), efbase[i]);
-  w977_write_reg(117, 4, efbase[i]);
-  w977_write_reg(240, 3, efbase[i]);
-  w977_write_reg(48, 1, efbase[i]);
-  w977_efm_exit(efbase[i]);
-  switch_bank(iobase, 224);
-  outb((int )((unsigned int )((unsigned char )iobase) + 2U), 0);
-  switch_bank(iobase, 3);
-  outb(8, iobase + 4);
-  switch_bank(iobase, 224);
-  tmp = inb(iobase + 2);
-  outb((int )((unsigned int )tmp | 1U), iobase + 2);
-  switch_bank(iobase, 3);
-  outb(96, iobase + 4);
-  switch_bank(iobase, 228);
-  tmp___0 = inb(iobase);
-  version = (int )tmp___0;
-  }
-  if ((version & 240) == 16) {
-    {
-    efio = efbase[i];
-    switch_bank(iobase, 224);
-    outb(5, iobase + 4);
-    switch_bank(iobase, 3);
-    outb(167, iobase + 2);
-    switch_bank(iobase, 232);
-    outb(0, iobase + 6);
-    outb(8, iobase + 7);
-    switch_bank(iobase, 244);
-    outb(64, iobase + 7);
-    tmp___1 = net_ratelimit();
-    }
-    if (tmp___1 != 0) {
-      {
-      printk("\016W83977AF (IR) driver loaded. Version: 0x%02x\n", version);
-      }
-    } else {
-    }
-    return (0);
-  } else {
-    {
-    printk("\017%s(), Wrong chip version", "w83977af_probe");
-    }
-  }
-  i = i + 1;
-  ldv_44962: ;
-  if (i <= 1) {
-    goto ldv_44961;
-  } else {
-  }
-  return (-1);
-}
-}
-static void w83977af_change_speed(struct w83977af_ir *self , __u32 speed )
-{
-  int ir_mode ;
-  int iobase ;
-  __u8 set ;
-  {
-  {
-  ir_mode = 96;
-  iobase = self->io.fir_base;
-  self->io.speed = speed;
-  ldv_assert("", self->io.speed == speed);
-  set = inb(iobase + 3);
-  switch_bank(iobase, 3);
-  outb(0, iobase + 1);
-  switch_bank(iobase, 224);
-  outb(0, iobase + 1);
-  }
-  {
-  if (speed == 9600U) {
-    goto case_9600;
-  } else {
-  }
-  if (speed == 19200U) {
-    goto case_19200;
-  } else {
-  }
-  if (speed == 38400U) {
-    goto case_38400;
-  } else {
-  }
-  if (speed == 57600U) {
-    goto case_57600;
-  } else {
-  }
-  if (speed == 115200U) {
-    goto case_115200;
-  } else {
-  }
-  if (speed == 576000U) {
-    goto case_576000;
-  } else {
-  }
-  if (speed == 1152000U) {
-    goto case_1152000;
-  } else {
-  }
-  if (speed == 4000000U) {
-    goto case_4000000;
-  } else {
-  }
-  goto switch_default;
-  case_9600:
-  {
-  outb(12, iobase);
-  }
-  goto ldv_44972;
-  case_19200:
-  {
-  outb(6, iobase);
-  }
-  goto ldv_44972;
-  case_38400:
-  {
-  outb(3, iobase);
-  }
-  goto ldv_44972;
-  case_57600:
-  {
-  outb(2, iobase);
-  }
-  goto ldv_44972;
-  case_115200:
-  {
-  outb(1, iobase);
-  }
-  goto ldv_44972;
-  case_576000:
-  {
-  ir_mode = 32;
-  printk("\017%s(), handling baud of 576000\n", "w83977af_change_speed");
-  }
-  goto ldv_44972;
-  case_1152000:
-  {
-  ir_mode = 128;
-  printk("\017%s(), handling baud of 1152000\n", "w83977af_change_speed");
-  }
-  goto ldv_44972;
-  case_4000000:
-  {
-  ir_mode = 160;
-  printk("\017%s(), handling baud of 4000000\n", "w83977af_change_speed");
-  }
-  goto ldv_44972;
-  switch_default:
-  {
-  ir_mode = 160;
-  printk("\017%s(), unknown baud rate of %d\n", "w83977af_change_speed", speed);
-  }
-  goto ldv_44972;
-  switch_break: ;
-  }
-  ldv_44972:
-  {
-  switch_bank(iobase, 3);
-  outb((int )((unsigned char )ir_mode), iobase + 4);
-  switch_bank(iobase, 224);
-  outb(5, iobase + 4);
-  switch_bank(iobase, 3);
-  outb(0, iobase + 2);
-  outb(1, iobase + 2);
-  outb(167, iobase + 2);
-  netif_wake_queue(self->netdev);
-  switch_bank(iobase, 3);
-  }
-  if (speed > 115200U) {
-    {
-    outb(64, iobase + 1);
-    w83977af_dma_receive(self);
-    }
-  } else {
-    {
-    outb(1, iobase + 1);
-    }
-  }
-  {
-  outb((int )set, iobase + 3);
-  }
-  return;
-}
-}
-static netdev_tx_t w83977af_hard_xmit(struct sk_buff *skb , struct net_device *dev )
-{
-  struct w83977af_ir *self ;
-  __s32 speed ;
-  int iobase ;
-  __u8 set ;
-  int mtt ;
   void *tmp ;
-  __u32 tmp___0 ;
-  __u16 tmp___1 ;
   {
   {
-  tmp = netdev_priv((struct net_device const *)dev);
-  self = (struct w83977af_ir *)tmp;
-  iobase = self->io.fir_base;
+  tmp = ldv_dev_get_drvdata_65(& pdev->dev);
   }
-  if (irda_debug > 3U) {
-    {
-    printk("\017%s(%ld), skb->len=%d\n", "w83977af_hard_xmit", jiffies, (int )skb->len);
-    }
-  } else {
-  }
-  {
-  netif_stop_queue(dev);
-  tmp___0 = irda_get_next_speed((struct sk_buff const *)skb);
-  speed = (__s32 )tmp___0;
-  }
-  if ((__u32 )speed != self->io.speed && speed != -1) {
-    if (skb->len == 0U) {
-      {
-      w83977af_change_speed(self, (__u32 )speed);
-      consume_skb(skb);
-      }
-      return (0);
-    } else {
-      self->new_speed = (__u32 )speed;
-    }
-  } else {
-  }
-  {
-  set = inb(iobase + 3);
-  }
-  if (self->io.speed > 115200U) {
-    {
-    self->tx_buff.data = self->tx_buff.head;
-    skb_copy_from_linear_data((struct sk_buff const *)skb, (void *)self->tx_buff.data,
-                              skb->len);
-    self->tx_buff.len = (int )skb->len;
-    tmp___1 = irda_get_mtt((struct sk_buff const *)skb);
-    mtt = (int )tmp___1;
-    }
-    if (irda_debug > 3U) {
-      {
-      printk("\017%s(%ld), mtt=%d\n", "w83977af_hard_xmit", jiffies, mtt);
-      }
-    } else {
-    }
-    if (mtt != 0) {
-      {
-      __udelay((unsigned long )mtt);
-      }
-    } else {
-    }
-    {
-    switch_bank(iobase, 3);
-    outb(16, iobase + 1);
-    w83977af_dma_write(self, iobase);
-    }
-  } else {
-    {
-    self->tx_buff.data = self->tx_buff.head;
-    self->tx_buff.len = async_wrap_skb(skb, self->tx_buff.data, self->tx_buff.truesize);
-    switch_bank(iobase, 3);
-    outb(32, iobase + 1);
-    }
-  }
-  {
-  consume_skb(skb);
-  outb((int )set, iobase + 3);
-  }
-  return (0);
+  return (tmp);
 }
 }
-static void w83977af_dma_write(struct w83977af_ir *self , int iobase )
+__inline static void platform_set_drvdata(struct platform_device *pdev , void *data )
 {
-  __u8 set ;
-  unsigned char tmp ;
-  unsigned char tmp___0 ;
   {
-  if (irda_debug > 3U) {
-    {
-    printk("\017%s(), len=%d\n", "w83977af_dma_write", self->tx_buff.len);
-    }
-  } else {
-  }
   {
-  set = inb(iobase + 3);
-  switch_bank(iobase, 3);
-  tmp = inb(iobase + 4);
-  outb((int )tmp & 251, iobase + 4);
-  switch_bank(iobase, 224);
-  outb(9, iobase + 2);
-  irda_setup_dma(self->io.dma, self->tx_buff_dma, self->tx_buff.len, 72);
-  self->io.direction = 1;
-  switch_bank(iobase, 3);
-  tmp___0 = inb(iobase + 4);
-  outb((int )((unsigned int )tmp___0 | 12U), iobase + 4);
-  outb((int )set, iobase + 3);
+  ldv_dev_set_drvdata_66(& pdev->dev, data);
   }
   return;
 }
 }
-static int w83977af_pio_write(int iobase , __u8 *buf , int len , int fifo_size )
+__inline static int ldv_request_irq_67(unsigned int irq , irqreturn_t (*handler)(int ,
+                                                                                 void * ) ,
+                                       unsigned long flags , char const *name ,
+                                       void *dev ) ;
+static void ldv_free_irq_69(unsigned int ldv_func_arg1 , void *ldv_func_arg2 ) ;
+extern void disable_irq(unsigned int ) ;
+extern void enable_irq(unsigned int ) ;
+extern __be16 eth_type_trans(struct sk_buff * , struct net_device * ) ;
+extern int eth_change_mtu(struct net_device * , int ) ;
+extern int eth_validate_addr(struct net_device * ) ;
+static struct net_device *ldv_alloc_etherdev_mqs_77(int ldv_func_arg1 , unsigned int ldv_func_arg2 ,
+                                                    unsigned int ldv_func_arg3 ) ;
+__inline static bool is_zero_ether_addr(u8 const *addr )
 {
-  int actual ;
-  __u8 set ;
-  unsigned char tmp ;
+  {
+  return (((unsigned int )*((u32 const *)addr) | (unsigned int )*((u16 const *)(addr + 4U))) == 0U);
+}
+}
+__inline static bool is_multicast_ether_addr(u8 const *addr )
+{
+  {
+  return (((int )*addr & 1) != 0);
+}
+}
+__inline static bool is_valid_ether_addr(u8 const *addr )
+{
+  bool tmp ;
   int tmp___0 ;
-  int tmp___1 ;
+  bool tmp___1 ;
+  int tmp___2 ;
+  int tmp___3 ;
   {
-  actual = 0;
-  if (irda_debug > 3U) {
+  {
+  tmp = is_multicast_ether_addr(addr);
+  }
+  if (tmp) {
+    tmp___0 = 0;
+  } else {
+    tmp___0 = 1;
+  }
+  if (tmp___0) {
     {
-    printk("\017%s()\n", "w83977af_pio_write");
+    tmp___1 = is_zero_ether_addr(addr);
     }
-  } else {
-  }
-  {
-  set = inb(iobase + 3);
-  switch_bank(iobase, 3);
-  tmp = inb_p(iobase + 5);
-  }
-  if (((int )tmp & 64) == 0) {
-    if (irda_debug > 3U) {
-      {
-      printk("\017%s(), warning, FIFO not empty yet!\n", "w83977af_pio_write");
-      }
+    if (tmp___1) {
+      tmp___2 = 0;
     } else {
+      tmp___2 = 1;
     }
-    fifo_size = fifo_size + -17;
-    if (irda_debug > 3U) {
-      {
-      printk("\017%s(), %d bytes left in tx fifo\n", "w83977af_pio_write", fifo_size);
-      }
+    if (tmp___2) {
+      tmp___3 = 1;
     } else {
+      tmp___3 = 0;
     }
   } else {
+    tmp___3 = 0;
   }
-  goto ldv_45008;
-  ldv_45007:
-  {
-  tmp___0 = actual;
-  actual = actual + 1;
-  outb((int )*(buf + (unsigned long )tmp___0), iobase);
-  }
-  ldv_45008:
-  tmp___1 = fifo_size;
-  fifo_size = fifo_size - 1;
-  if (tmp___1 > 0 && actual < len) {
-    goto ldv_45007;
-  } else {
-  }
-  if (irda_debug > 3U) {
-    {
-    printk("\017%s(), fifo_size %d ; %d sent of %d\n", "w83977af_pio_write", fifo_size,
-           actual, len);
-    }
-  } else {
-  }
-  {
-  outb((int )set, iobase + 3);
-  }
-  return (actual);
+  return ((bool )tmp___3);
 }
 }
-static void w83977af_dma_xmit_complete(struct w83977af_ir *self )
+__inline static void eth_random_addr(u8 *addr )
 {
-  int iobase ;
-  __u8 set ;
-  unsigned char tmp ;
-  unsigned char tmp___0 ;
   {
-  if (irda_debug > 3U) {
-    {
-    printk("\017%s(%ld)\n", "w83977af_dma_xmit_complete", jiffies);
-    }
-  } else {
-  }
-  if ((unsigned long )self == (unsigned long )((struct w83977af_ir *)0)) {
-    {
-    printk("Assertion failed! %s:%s:%d %s\n", (char *)"drivers/net/irda/w83977af_ir.c",
-           "w83977af_dma_xmit_complete", 666, (char *)"self != NULL");
-    }
-    return;
-  } else {
-  }
   {
-  iobase = self->io.fir_base;
-  set = inb(iobase + 3);
-  switch_bank(iobase, 3);
-  tmp = inb(iobase + 4);
-  outb((int )tmp & 251, iobase + 4);
-  tmp___0 = inb(iobase + 7);
-  }
-  if (((int )tmp___0 & 64) != 0) {
-    {
-    printk("\017%s(), Transmit underrun!\n", "w83977af_dma_xmit_complete");
-    (self->netdev)->stats.tx_errors = (self->netdev)->stats.tx_errors + 1UL;
-    (self->netdev)->stats.tx_fifo_errors = (self->netdev)->stats.tx_fifo_errors + 1UL;
-    outb(64, iobase + 7);
-    }
-  } else {
-    (self->netdev)->stats.tx_packets = (self->netdev)->stats.tx_packets + 1UL;
-  }
-  if (self->new_speed != 0U) {
-    {
-    w83977af_change_speed(self, self->new_speed);
-    self->new_speed = 0U;
-    }
-  } else {
-  }
-  {
-  netif_wake_queue(self->netdev);
-  outb((int )set, iobase + 3);
+  get_random_bytes((void *)addr, 6);
+  *addr = (unsigned int )*addr & 254U;
+  *addr = (u8 )((unsigned int )*addr | 2U);
   }
   return;
 }
 }
-static int w83977af_dma_receive(struct w83977af_ir *self )
+extern int mii_link_ok(struct mii_if_info * ) ;
+extern int mii_nway_restart(struct mii_if_info * ) ;
+extern int mii_ethtool_gset(struct mii_if_info * , struct ethtool_cmd * ) ;
+extern int mii_ethtool_sset(struct mii_if_info * , struct ethtool_cmd * ) ;
+extern int generic_mii_ioctl(struct mii_if_info * , struct mii_ioctl_data * , int ,
+                             unsigned int * ) ;
+__inline static struct mii_ioctl_data *if_mii(struct ifreq *rq )
 {
-  int iobase ;
-  __u8 set ;
-  unsigned char tmp ;
-  unsigned char tmp___0 ;
-  int tmp___1 ;
-  int tmp___2 ;
-  unsigned char tmp___3 ;
   {
-  if ((unsigned long )self == (unsigned long )((struct w83977af_ir *)0)) {
-    {
-    printk("Assertion failed! %s:%s:%d %s\n", (char *)"drivers/net/irda/w83977af_ir.c",
-           "w83977af_dma_receive", 718, (char *)"self != NULL");
-    }
-    return (-1);
-  } else {
-  }
-  if (irda_debug > 3U) {
-    {
-    printk("\017%s\n", "w83977af_dma_receive");
-    }
-  } else {
-  }
-  {
-  iobase = self->io.fir_base;
-  set = inb(iobase + 3);
-  switch_bank(iobase, 3);
-  tmp = inb(iobase + 4);
-  outb((int )tmp & 251, iobase + 4);
-  switch_bank(iobase, 224);
-  tmp___0 = inb(iobase + 2);
-  outb((int )((unsigned char )(((int )((signed char )tmp___0) & -10) | 1)), iobase + 2);
-  self->io.direction = 2;
-  self->rx_buff.data = self->rx_buff.head;
-  irda_setup_dma(self->io.dma, self->rx_buff_dma, self->rx_buff.truesize, 68);
-  switch_bank(iobase, 3);
-  outb(163, iobase + 2);
-  tmp___2 = 0;
-  self->st_fifo.head = tmp___2;
-  tmp___1 = tmp___2;
-  self->st_fifo.tail = tmp___1;
-  self->st_fifo.len = tmp___1;
-  switch_bank(iobase, 3);
-  tmp___3 = inb(iobase + 4);
-  outb((int )((unsigned int )tmp___3 | 4U), iobase + 4);
-  outb((int )set, iobase + 3);
-  }
-  return (0);
+  return ((struct mii_ioctl_data *)(& rq->ifr_ifru));
 }
 }
-static int w83977af_dma_receive_complete(struct w83977af_ir *self )
+__inline static void const *of_get_mac_address(struct device_node *np )
 {
+  {
+  return ((void const *)0);
+}
+}
+static u8 KS_DEFAULT_MAC_ADDRESS[6U] = { 0U, 16U, 161U, 134U,
+        149U, 17U};
+static int msg_enable ;
+static u8 ks_rdreg8(struct ks_net *ks , int offset )
+{
+  u16 data ;
+  u8 shift_bit ;
+  u8 shift_data ;
+  unsigned int tmp ;
+  {
+  {
+  shift_bit = (unsigned int )((u8 )offset) & 3U;
+  shift_data = ((unsigned int )((u8 )offset) & 1U) << 3U;
+  ks->cmd_reg_cache = (u16 )((int )((unsigned short )offset) | (int )((unsigned short )(4096 << (int )shift_bit)));
+  iowrite16((int )ks->cmd_reg_cache, ks->hw_addr_cmd);
+  tmp = ioread16(ks->hw_addr);
+  data = (u16 )tmp;
+  }
+  return ((u8 )((int )data >> (int )shift_data));
+}
+}
+static u16 ks_rdreg16(struct ks_net *ks , int offset )
+{
+  unsigned int tmp ;
+  {
+  {
+  ks->cmd_reg_cache = (u16 )((int )((short )offset) | (int )((short )(12288 << (offset & 2))));
+  iowrite16((int )ks->cmd_reg_cache, ks->hw_addr_cmd);
+  tmp = ioread16(ks->hw_addr);
+  }
+  return ((u16 )tmp);
+}
+}
+static void ks_wrreg8(struct ks_net *ks , int offset , u8 value )
+{
+  u8 shift_bit ;
+  u16 value_write ;
+  {
+  {
+  shift_bit = (unsigned int )((u8 )offset) & 3U;
+  value_write = (unsigned short )((int )value << ((offset & 1) << 3));
+  ks->cmd_reg_cache = (u16 )((int )((short )offset) | (int )((short )(4096 << (int )shift_bit)));
+  iowrite16((int )ks->cmd_reg_cache, ks->hw_addr_cmd);
+  iowrite16((int )value_write, ks->hw_addr);
+  }
+  return;
+}
+}
+static void ks_wrreg16(struct ks_net *ks , int offset , u16 value )
+{
+  {
+  {
+  ks->cmd_reg_cache = (u16 )((int )((short )offset) | (int )((short )(12288 << (offset & 2))));
+  iowrite16((int )ks->cmd_reg_cache, ks->hw_addr_cmd);
+  iowrite16((int )value, ks->hw_addr);
+  }
+  return;
+}
+}
+__inline static void ks_inblk(struct ks_net *ks , u16 *wptr , u32 len )
+{
+  u16 *tmp ;
+  unsigned int tmp___0 ;
+  u32 tmp___1 ;
+  {
+  len = len >> 1;
+  goto ldv_42400;
+  ldv_42399:
+  {
+  tmp = wptr;
+  wptr = wptr + 1;
+  tmp___0 = ioread16(ks->hw_addr);
+  *tmp = (unsigned short )tmp___0;
+  }
+  ldv_42400:
+  tmp___1 = len;
+  len = len - 1U;
+  if (tmp___1 != 0U) {
+    goto ldv_42399;
+  } else {
+  }
+  return;
+}
+}
+__inline static void ks_outblk(struct ks_net *ks , u16 *wptr , u32 len )
+{
+  u16 *tmp ;
+  u32 tmp___0 ;
+  {
+  len = len >> 1;
+  goto ldv_42408;
+  ldv_42407:
+  {
+  tmp = wptr;
+  wptr = wptr + 1;
+  iowrite16((int )*tmp, ks->hw_addr);
+  }
+  ldv_42408:
+  tmp___0 = len;
+  len = len - 1U;
+  if (tmp___0 != 0U) {
+    goto ldv_42407;
+  } else {
+  }
+  return;
+}
+}
+static void ks_disable_int(struct ks_net *ks )
+{
+  {
+  {
+  ks_wrreg16(ks, 144, 0);
+  }
+  return;
+}
+}
+static void ks_enable_int(struct ks_net *ks )
+{
+  {
+  {
+  ks_wrreg16(ks, 144, (int )ks->rc_ier);
+  }
+  return;
+}
+}
+__inline static u16 ks_tx_fifo_space(struct ks_net *ks )
+{
+  u16 tmp ;
+  {
+  {
+  tmp = ks_rdreg16(ks, 120);
+  }
+  return ((unsigned int )tmp & 8191U);
+}
+}
+__inline static void ks_save_cmd_reg(struct ks_net *ks )
+{
+  {
+  ks->cmd_reg_cache_int = ks->cmd_reg_cache;
+  return;
+}
+}
+__inline static void ks_restore_cmd_reg(struct ks_net *ks )
+{
+  {
+  {
+  ks->cmd_reg_cache = ks->cmd_reg_cache_int;
+  iowrite16((int )ks->cmd_reg_cache, ks->hw_addr_cmd);
+  }
+  return;
+}
+}
+static void ks_set_powermode(struct ks_net *ks , unsigned int pwrmode )
+{
+  unsigned int pmecr ;
+  struct _ddebug descriptor ;
+  long tmp ;
+  u16 tmp___0 ;
+  {
+  if ((ks->msg_enable & 8192U) != 0U) {
+    {
+    descriptor.modname = "ks8851_mll";
+    descriptor.function = "ks_set_powermode";
+    descriptor.filename = "drivers/net/ethernet/micrel/ks8851_mll.c";
+    descriptor.format = "setting power mode %d\n";
+    descriptor.lineno = 625U;
+    descriptor.flags = 0U;
+    tmp = __builtin_expect((long )descriptor.flags & 1L, 0L);
+    }
+    if (tmp != 0L) {
+      {
+      __dynamic_netdev_dbg(& descriptor, (struct net_device const *)ks->netdev,
+                           "setting power mode %d\n", pwrmode);
+      }
+    } else {
+    }
+  } else {
+  }
+  {
+  ks_rdreg16(ks, 38);
+  tmp___0 = ks_rdreg16(ks, 212);
+  pmecr = (unsigned int )tmp___0;
+  pmecr = pmecr & 4294967292U;
+  pmecr = pmecr | pwrmode;
+  ks_wrreg16(ks, 212, (int )((u16 )pmecr));
+  }
+  return;
+}
+}
+static void ks_read_config(struct ks_net *ks )
+{
+  u16 reg_data ;
+  u8 tmp ;
+  u8 tmp___0 ;
+  {
+  {
+  reg_data = 0U;
+  tmp = ks_rdreg8(ks, 8);
+  reg_data = (u16 )tmp;
+  tmp___0 = ks_rdreg8(ks, 9);
+  reg_data = (u16 )((int )((short )reg_data) | (int )((short )((int )tmp___0 << 8)));
+  ks->sharedbus = ((int )reg_data & 16) != 0;
+  }
+  if (((int )reg_data & 128) != 0) {
+    ks->bus_width = 1;
+    ks->extra_byte = 1U;
+  } else
+  if (((int )reg_data & 64) != 0) {
+    ks->bus_width = 2;
+    ks->extra_byte = 2U;
+  } else {
+    ks->bus_width = 3;
+    ks->extra_byte = 4U;
+  }
+  return;
+}
+}
+static void ks_soft_reset(struct ks_net *ks , unsigned int op )
+{
+  unsigned long __ms ;
+  unsigned long tmp ;
+  unsigned long __ms___0 ;
+  unsigned long tmp___0 ;
+  {
+  {
+  ks_wrreg16(ks, 144, 0);
+  ks_wrreg16(ks, 38, (int )((u16 )op));
+  __ms = 10UL;
+  }
+  goto ldv_42442;
+  ldv_42441:
+  {
+  __const_udelay(4295000UL);
+  }
+  ldv_42442:
+  tmp = __ms;
+  __ms = __ms - 1UL;
+  if (tmp != 0UL) {
+    goto ldv_42441;
+  } else {
+  }
+  {
+  ks_wrreg16(ks, 38, 0);
+  }
+  if (1) {
+    {
+    __const_udelay(4295000UL);
+    }
+  } else {
+    __ms___0 = 1UL;
+    goto ldv_42446;
+    ldv_42445:
+    {
+    __const_udelay(4295000UL);
+    }
+    ldv_42446:
+    tmp___0 = __ms___0;
+    __ms___0 = __ms___0 - 1UL;
+    if (tmp___0 != 0UL) {
+      goto ldv_42445;
+    } else {
+    }
+  }
+  return;
+}
+}
+static void ks_enable_qmu(struct ks_net *ks )
+{
+  u16 w ;
+  {
+  {
+  w = ks_rdreg16(ks, 112);
+  ks_wrreg16(ks, 112, (int )((unsigned int )w | 1U));
+  w = ks_rdreg16(ks, 130);
+  ks_wrreg16(ks, 130, (int )((unsigned int )w | 32U));
+  w = ks_rdreg16(ks, 116);
+  ks_wrreg16(ks, 116, (int )((unsigned int )w | 1U));
+  ks->enabled = 1U;
+  }
+  return;
+}
+}
+static void ks_disable_qmu(struct ks_net *ks )
+{
+  u16 w ;
+  {
+  {
+  w = ks_rdreg16(ks, 112);
+  w = (unsigned int )w & 65534U;
+  ks_wrreg16(ks, 112, (int )w);
+  w = ks_rdreg16(ks, 116);
+  w = (unsigned int )w & 65534U;
+  ks_wrreg16(ks, 116, (int )w);
+  ks->enabled = 1U;
+  }
+  return;
+}
+}
+__inline static void ks_read_qmu(struct ks_net *ks , u16 *buf , u32 len )
+{
+  u32 r ;
+  u32 w ;
+  long tmp ;
+  {
+  {
+  r = (u32 )ks->extra_byte & 1U;
+  w = (u32 )ks->extra_byte - r;
+  ks_wrreg16(ks, 134, 16384);
+  ks_wrreg8(ks, 130, (int )((unsigned int )((u8 )ks->rc_rxqcr) | 8U));
+  tmp = __builtin_expect(r != 0U, 0L);
+  }
+  if (tmp != 0L) {
+    {
+    ioread8(ks->hw_addr);
+    }
+  } else {
+  }
+  {
+  ks_inblk(ks, buf, w + 4U);
+  ks_inblk(ks, buf, (len + 3U) & 4294967292U);
+  ks_wrreg8(ks, 130, (int )((u8 )ks->rc_rxqcr));
+  }
+  return;
+}
+}
+static void ks_rcv(struct ks_net *ks , struct net_device *netdev )
+{
+  u32 i ;
+  struct type_frame_head *frame_hdr ;
   struct sk_buff *skb ;
-  struct st_fifo *st_fifo ;
-  int len ;
-  int iobase ;
-  __u8 set ;
-  __u8 status ;
-  unsigned char tmp ;
-  unsigned char tmp___0 ;
-  unsigned char tmp___1 ;
+  u16 tmp ;
+  long tmp___0 ;
+  long tmp___1 ;
+  int tmp___2 ;
+  long tmp___3 ;
+  long tmp___4 ;
+  u32 tmp___5 ;
   {
-  if (irda_debug > 3U) {
-    {
-    printk("\017%s\n", "w83977af_dma_receive_complete");
-    }
+  {
+  frame_hdr = ks->frame_head_info;
+  tmp = ks_rdreg16(ks, 156);
+  ks->frame_cnt = (u32 )((int )tmp >> 8);
+  i = 0U;
+  }
+  goto ldv_42471;
+  ldv_42470:
+  {
+  frame_hdr->sts = ks_rdreg16(ks, 124);
+  frame_hdr->len = ks_rdreg16(ks, 126);
+  frame_hdr = frame_hdr + 1;
+  i = i + 1U;
+  }
+  ldv_42471: ;
+  if (i < ks->frame_cnt) {
+    goto ldv_42470;
   } else {
   }
+  frame_hdr = ks->frame_head_info;
+  goto ldv_42473;
+  ldv_42474:
   {
-  st_fifo = & self->st_fifo;
-  iobase = self->io.fir_base;
-  set = inb(iobase + 3);
-  iobase = self->io.fir_base;
-  switch_bank(iobase, 236);
+  tmp___0 = __builtin_expect((int )((short )frame_hdr->sts) >= 0, 0L);
   }
-  goto ldv_45033;
-  ldv_45032:
-  {
-  st_fifo->entries[st_fifo->tail].status = (int )status;
-  tmp = inb(iobase + 6);
-  st_fifo->entries[st_fifo->tail].len = (int )tmp;
-  tmp___0 = inb(iobase + 7);
-  st_fifo->entries[st_fifo->tail].len = st_fifo->entries[st_fifo->tail].len | ((int )tmp___0 << 8);
-  st_fifo->tail = st_fifo->tail + 1;
-  st_fifo->len = st_fifo->len + 1;
-  }
-  ldv_45033:
-  {
-  status = inb(iobase + 5);
-  }
-  if ((int )((signed char )status) < 0) {
-    goto ldv_45032;
-  } else {
-  }
-  goto ldv_45036;
-  ldv_45035:
-  status = (__u8 )st_fifo->entries[st_fifo->head].status;
-  len = st_fifo->entries[st_fifo->head].len;
-  st_fifo->head = st_fifo->head + 1;
-  st_fifo->len = st_fifo->len - 1;
-  if (((int )status & 95) != 0) {
-    if (((int )status & 64) != 0) {
-      (self->netdev)->stats.rx_errors = (self->netdev)->stats.rx_errors + (unsigned long )len;
-    } else {
-      (self->netdev)->stats.rx_errors = (self->netdev)->stats.rx_errors + 1UL;
-      self->rx_buff.data = self->rx_buff.data + (unsigned long )len;
-      if (((int )status & 16) != 0) {
-        (self->netdev)->stats.rx_length_errors = (self->netdev)->stats.rx_length_errors + 1UL;
-      } else {
-      }
-      if (((int )status & 8) != 0) {
-        (self->netdev)->stats.rx_frame_errors = (self->netdev)->stats.rx_frame_errors + 1UL;
-      } else {
-      }
-      if (((int )status & 4) != 0) {
-        (self->netdev)->stats.rx_crc_errors = (self->netdev)->stats.rx_crc_errors + 1UL;
-      } else {
-      }
-    }
-    if (((int )status & 2) != 0) {
-      (self->netdev)->stats.rx_fifo_errors = (self->netdev)->stats.rx_fifo_errors + 1UL;
-    } else {
-    }
-    if ((int )status & 1) {
-      (self->netdev)->stats.rx_fifo_errors = (self->netdev)->stats.rx_fifo_errors + 1UL;
-    } else {
-    }
+  if (tmp___0 != 0L) {
+    tmp___2 = 1;
   } else {
     {
-    switch_bank(iobase, 3);
-    tmp___1 = inb(iobase + 5);
+    tmp___1 = __builtin_expect((unsigned int )frame_hdr->len > 1999U, 0L);
     }
-    if ((int )tmp___1 & 1) {
+    if (tmp___1 != 0L) {
+      tmp___2 = 1;
+    } else {
+      tmp___2 = 0;
+    }
+  }
+  if (tmp___2 != 0) {
+    goto _L;
+  } else {
+    {
+    tmp___3 = __builtin_expect((unsigned int )frame_hdr->len == 0U, 0L);
+    }
+    if (tmp___3 != 0L) {
+      _L:
       {
-      __const_udelay(343600UL);
+      ks_wrreg16(ks, 130, (int )((unsigned int )ks->rc_rxqcr | 1U));
+      netdev->stats.rx_dropped = netdev->stats.rx_dropped + 1UL;
       }
+      if ((int )((short )frame_hdr->sts) >= 0) {
+        netdev->stats.rx_frame_errors = netdev->stats.rx_frame_errors + 1UL;
+      } else {
+        netdev->stats.rx_length_errors = netdev->stats.rx_length_errors + 1UL;
+      }
+      frame_hdr = frame_hdr + 1;
+      goto ldv_42473;
     } else {
     }
+  }
+  {
+  skb = netdev_alloc_skb(netdev, (unsigned int )((int )frame_hdr->len + 16));
+  tmp___4 = __builtin_expect((unsigned long )skb != (unsigned long )((struct sk_buff *)0),
+                             1L);
+  }
+  if (tmp___4 != 0L) {
     {
-    skb = dev_alloc_skb((unsigned int )(len + 1));
-    }
-    if ((unsigned long )skb == (unsigned long )((struct sk_buff *)0)) {
-      {
-      printk("\016%s(), memory squeeze, dropping frame.\n", "w83977af_dma_receive_complete");
-      outb((int )set, iobase + 3);
-      }
-      return (0);
-    } else {
-    }
-    {
-    skb_reserve(skb, 1);
-    }
-    if (self->io.speed <= 3999999U) {
-      {
-      skb_put(skb, (unsigned int )(len + -2));
-      skb_copy_to_linear_data(skb, (void const *)self->rx_buff.data, (unsigned int const )(len + -2));
-      }
-    } else {
-      {
-      skb_put(skb, (unsigned int )(len + -4));
-      skb_copy_to_linear_data(skb, (void const *)self->rx_buff.data, (unsigned int const )(len + -4));
-      }
-    }
-    {
-    self->rx_buff.data = self->rx_buff.data + (unsigned long )len;
-    (self->netdev)->stats.rx_packets = (self->netdev)->stats.rx_packets + 1UL;
-    skb->dev = self->netdev;
-    skb_reset_mac_header(skb);
-    skb->protocol = 5888U;
+    skb_reserve(skb, 2);
+    ks_read_qmu(ks, (u16 *)skb->data, (u32 )frame_hdr->len);
+    skb_put(skb, (unsigned int )((int )frame_hdr->len + -4));
+    skb->protocol = eth_type_trans(skb, netdev);
     netif_rx(skb);
+    netdev->stats.rx_bytes = netdev->stats.rx_bytes + (unsigned long )((int )frame_hdr->len + -4);
+    netdev->stats.rx_packets = netdev->stats.rx_packets + 1UL;
+    }
+  } else {
+    {
+    ks_wrreg16(ks, 130, (int )((unsigned int )ks->rc_rxqcr | 1U));
+    netdev->stats.rx_dropped = netdev->stats.rx_dropped + 1UL;
     }
   }
-  ldv_45036: ;
-  if (st_fifo->len != 0) {
-    goto ldv_45035;
+  frame_hdr = frame_hdr + 1;
+  ldv_42473:
+  tmp___5 = ks->frame_cnt;
+  ks->frame_cnt = ks->frame_cnt - 1U;
+  if (tmp___5 != 0U) {
+    goto ldv_42474;
+  } else {
+  }
+  return;
+}
+}
+static void ks_update_link_status(struct net_device *netdev , struct ks_net *ks )
+{
+  u32 link_up_status ;
+  u16 tmp ;
+  struct _ddebug descriptor ;
+  long tmp___0 ;
+  {
+  {
+  tmp = ks_rdreg16(ks, 248);
+  }
+  if (((int )tmp & 32) != 0) {
+    {
+    netif_carrier_on(netdev);
+    link_up_status = 1U;
+    }
+  } else {
+    {
+    netif_carrier_off(netdev);
+    link_up_status = 0U;
+    }
+  }
+  if ((ks->msg_enable & 4U) != 0U) {
+    {
+    descriptor.modname = "ks8851_mll";
+    descriptor.function = "ks_update_link_status";
+    descriptor.filename = "drivers/net/ethernet/micrel/ks8851_mll.c";
+    descriptor.format = "%s: %s\n";
+    descriptor.lineno = 851U;
+    descriptor.flags = 0U;
+    tmp___0 = __builtin_expect((long )descriptor.flags & 1L, 0L);
+    }
+    if (tmp___0 != 0L) {
+      {
+      __dynamic_netdev_dbg(& descriptor, (struct net_device const *)ks->netdev,
+                           "%s: %s\n", "ks_update_link_status", link_up_status != 0U ? (char *)"UP" : (char *)"DOWN");
+      }
+    } else {
+    }
+  } else {
+  }
+  return;
+}
+}
+static irqreturn_t ks_irq(int irq , void *pw )
+{
+  struct net_device *netdev ;
+  struct ks_net *ks ;
+  void *tmp ;
+  u16 status ;
+  long tmp___0 ;
+  long tmp___1 ;
+  long tmp___2 ;
+  long tmp___3 ;
+  u16 pmecr ;
+  u16 tmp___4 ;
+  long tmp___5 ;
+  long tmp___6 ;
+  {
+  {
+  netdev = (struct net_device *)pw;
+  tmp = netdev_priv((struct net_device const *)netdev);
+  ks = (struct ks_net *)tmp;
+  ks_save_cmd_reg(ks);
+  status = ks_rdreg16(ks, 146);
+  tmp___0 = __builtin_expect((unsigned int )status == 0U, 0L);
+  }
+  if (tmp___0 != 0L) {
+    {
+    ks_restore_cmd_reg(ks);
+    }
+    return (0);
   } else {
   }
   {
-  outb((int )set, iobase + 3);
+  ks_wrreg16(ks, 146, (int )status);
+  tmp___1 = __builtin_expect(((int )status & 8192) != 0, 1L);
+  }
+  if (tmp___1 != 0L) {
+    {
+    ks_rcv(ks, netdev);
+    }
+  } else {
+  }
+  {
+  tmp___2 = __builtin_expect((int )((short )status) < 0, 0L);
+  }
+  if (tmp___2 != 0L) {
+    {
+    ks_update_link_status(netdev, ks);
+    }
+  } else {
+  }
+  {
+  tmp___3 = __builtin_expect(((int )status & 16384) != 0, 0L);
+  }
+  if (tmp___3 != 0L) {
+    {
+    netif_wake_queue(netdev);
+    }
+  } else {
+  }
+  {
+  tmp___5 = __builtin_expect(((int )status & 8) != 0, 0L);
+  }
+  if (tmp___5 != 0L) {
+    {
+    tmp___4 = ks_rdreg16(ks, 212);
+    pmecr = tmp___4;
+    pmecr = (unsigned int )pmecr & 65475U;
+    ks_wrreg16(ks, 212, (int )((unsigned int )pmecr | 8U));
+    }
+  } else {
+  }
+  {
+  tmp___6 = __builtin_expect(((int )status & 2048) != 0, 0L);
+  }
+  if (tmp___6 != 0L) {
+    (ks->netdev)->stats.rx_over_errors = (ks->netdev)->stats.rx_over_errors + 1UL;
+  } else {
+  }
+  {
+  ks_restore_cmd_reg(ks);
   }
   return (1);
 }
 }
-static void w83977af_pio_receive(struct w83977af_ir *self )
+static int ks_net_open(struct net_device *netdev )
 {
-  __u8 byte ;
-  int iobase ;
-  unsigned char tmp ;
+  struct ks_net *ks ;
+  void *tmp ;
+  int err ;
+  struct _ddebug descriptor ;
+  long tmp___0 ;
+  unsigned long __ms ;
+  unsigned long tmp___1 ;
+  struct _ddebug descriptor___0 ;
+  long tmp___2 ;
   {
-  byte = 0U;
-  if (irda_debug > 3U) {
+  {
+  tmp = netdev_priv((struct net_device const *)netdev);
+  ks = (struct ks_net *)tmp;
+  }
+  if ((ks->msg_enable & 32U) != 0U) {
     {
-    printk("\017%s()\n", "w83977af_pio_receive");
+    descriptor.modname = "ks8851_mll";
+    descriptor.function = "ks_net_open";
+    descriptor.filename = "drivers/net/ethernet/micrel/ks8851_mll.c";
+    descriptor.format = "%s - entry\n";
+    descriptor.lineno = 923U;
+    descriptor.flags = 0U;
+    tmp___0 = __builtin_expect((long )descriptor.flags & 1L, 0L);
+    }
+    if (tmp___0 != 0L) {
+      {
+      __dynamic_netdev_dbg(& descriptor, (struct net_device const *)ks->netdev,
+                           "%s - entry\n", "ks_net_open");
+      }
+    } else {
     }
   } else {
   }
-  if ((unsigned long )self == (unsigned long )((struct w83977af_ir *)0)) {
+  {
+  err = ldv_request_irq_67((unsigned int )netdev->irq, & ks_irq, 8UL, "ks8851_mll",
+                           (void *)netdev);
+  }
+  if (err != 0) {
     {
-    printk("Assertion failed! %s:%s:%d %s\n", (char *)"drivers/net/irda/w83977af_ir.c",
-           "w83977af_pio_receive", 910, (char *)"self != NULL");
+    printk("\vks8851_mll: Failed to request IRQ: %d: %d\n", netdev->irq, err);
     }
-    return;
+    return (err);
   } else {
   }
-  iobase = self->io.fir_base;
-  ldv_45044:
   {
-  byte = inb(iobase);
-  async_unwrap_char(self->netdev, & (self->netdev)->stats, & self->rx_buff, (int )byte);
-  tmp = inb(iobase + 5);
+  ks_set_powermode(ks, 0U);
+  }
+  if (1) {
+    {
+    __const_udelay(4295000UL);
+    }
+  } else {
+    __ms = 1UL;
+    goto ldv_42500;
+    ldv_42499:
+    {
+    __const_udelay(4295000UL);
+    }
+    ldv_42500:
+    tmp___1 = __ms;
+    __ms = __ms - 1UL;
+    if (tmp___1 != 0UL) {
+      goto ldv_42499;
+    } else {
+    }
+  }
+  {
+  ks_wrreg16(ks, 146, 65535);
+  ks_enable_int(ks);
+  ks_enable_qmu(ks);
+  netif_start_queue(ks->netdev);
+  }
+  if ((ks->msg_enable & 32U) != 0U) {
+    {
+    descriptor___0.modname = "ks8851_mll";
+    descriptor___0.function = "ks_net_open";
+    descriptor___0.filename = "drivers/net/ethernet/micrel/ks8851_mll.c";
+    descriptor___0.format = "network device up\n";
+    descriptor___0.lineno = 942U;
+    descriptor___0.flags = 0U;
+    tmp___2 = __builtin_expect((long )descriptor___0.flags & 1L, 0L);
+    }
+    if (tmp___2 != 0L) {
+      {
+      __dynamic_netdev_dbg(& descriptor___0, (struct net_device const *)ks->netdev,
+                           "network device up\n");
+      }
+    } else {
+    }
+  } else {
+  }
+  return (0);
+}
+}
+static int ks_net_stop(struct net_device *netdev )
+{
+  struct ks_net *ks ;
+  void *tmp ;
+  {
+  {
+  tmp = netdev_priv((struct net_device const *)netdev);
+  ks = (struct ks_net *)tmp;
+  }
+  if ((ks->msg_enable & 16U) != 0U) {
+    {
+    netdev_info((struct net_device const *)netdev, "shutting down\n");
+    }
+  } else {
+  }
+  {
+  netif_stop_queue(netdev);
+  ldv_mutex_lock_68(& ks->lock);
+  ks_wrreg16(ks, 144, 0);
+  ks_wrreg16(ks, 146, 65535);
+  ks_disable_qmu(ks);
+  ks_set_powermode(ks, 2U);
+  ldv_free_irq_69((unsigned int )netdev->irq, (void *)netdev);
+  ldv_mutex_unlock_70(& ks->lock);
+  }
+  return (0);
+}
+}
+static void ks_write_qmu(struct ks_net *ks , u8 *pdata , u16 len )
+{
+  u16 tmp ;
+  {
+  {
+  ks->txh.txw[0] = 0U;
+  ks->txh.txw[1] = len;
+  ks_wrreg8(ks, 130, (int )((unsigned int )((u8 )ks->rc_rxqcr) | 8U));
+  ks_outblk(ks, (u16 *)(& ks->txh.txw), 4U);
+  ks_outblk(ks, (u16 *)pdata, (u32 )((int )len + 3) & 4294967292U);
+  ks_wrreg8(ks, 130, (int )((u8 )ks->rc_rxqcr));
+  ks_wrreg16(ks, 128, 1);
+  }
+  goto ldv_42513;
+  ldv_42512: ;
+  ldv_42513:
+  {
+  tmp = ks_rdreg16(ks, 128);
   }
   if ((int )tmp & 1) {
-    goto ldv_45044;
+    goto ldv_42512;
   } else {
   }
   return;
 }
 }
-static __u8 w83977af_sir_interrupt(struct w83977af_ir *self , int isr )
+static int ks_start_xmit(struct sk_buff *skb , struct net_device *netdev )
 {
-  int actual ;
-  __u8 new_icr ;
-  __u8 set ;
-  int iobase ;
+  int retv ;
+  struct ks_net *ks ;
+  void *tmp ;
+  u16 tmp___0 ;
+  long tmp___1 ;
   {
-  new_icr = 0U;
-  if (irda_debug > 3U) {
+  {
+  retv = 0;
+  tmp = netdev_priv((struct net_device const *)netdev);
+  ks = (struct ks_net *)tmp;
+  disable_irq((unsigned int )netdev->irq);
+  ks_disable_int(ks);
+  ldv_spin_lock_71(& ks->statelock);
+  tmp___0 = ks_tx_fifo_space(ks);
+  tmp___1 = __builtin_expect((unsigned int )tmp___0 >= skb->len + 12U, 1L);
+  }
+  if (tmp___1 != 0L) {
     {
-    printk("\017%s(), isr=%#x\n", "w83977af_sir_interrupt", isr);
+    ks_write_qmu(ks, skb->data, (int )((u16 )skb->len));
+    netdev->stats.tx_bytes = netdev->stats.tx_bytes + (unsigned long )skb->len;
+    netdev->stats.tx_packets = netdev->stats.tx_packets + 1UL;
+    consume_skb(skb);
+    }
+  } else {
+    retv = 16;
+  }
+  {
+  ldv_spin_unlock_72(& ks->statelock);
+  ks_enable_int(ks);
+  enable_irq((unsigned int )netdev->irq);
+  }
+  return (retv);
+}
+}
+static void ks_start_rx(struct ks_net *ks )
+{
+  u16 cntl ;
+  {
+  {
+  cntl = ks_rdreg16(ks, 116);
+  cntl = (u16 )((unsigned int )cntl | 1U);
+  ks_wrreg16(ks, 116, (int )cntl);
+  }
+  return;
+}
+}
+static void ks_stop_rx(struct ks_net *ks )
+{
+  u16 cntl ;
+  {
+  {
+  cntl = ks_rdreg16(ks, 116);
+  cntl = (unsigned int )cntl & 65534U;
+  ks_wrreg16(ks, 116, (int )cntl);
+  }
+  return;
+}
+}
+static unsigned long ether_gen_crc(int length , u8 *data )
+{
+  long crc ;
+  u8 current_octet ;
+  u8 *tmp ;
+  int bit ;
+  {
+  crc = -1L;
+  goto ldv_42541;
+  ldv_42540:
+  tmp = data;
+  data = data + 1;
+  current_octet = *tmp;
+  bit = 0;
+  goto ldv_42538;
+  ldv_42537:
+  crc = (long )((unsigned long )(crc << 1) ^ ((crc < 0L) ^ (int )((_Bool )((int )current_octet & 1)) ? 79764919UL : 0UL));
+  bit = bit + 1;
+  current_octet = (u8 )((int )current_octet >> 1);
+  ldv_42538: ;
+  if (bit <= 7) {
+    goto ldv_42537;
+  } else {
+  }
+  ldv_42541:
+  length = length - 1;
+  if (length >= 0) {
+    goto ldv_42540;
+  } else {
+  }
+  return ((unsigned long )crc);
+}
+}
+static void ks_set_grpaddr(struct ks_net *ks )
+{
+  u8 i ;
+  u32 index ;
+  u32 position ;
+  u32 value ;
+  unsigned long tmp ;
+  {
+  {
+  memset((void *)(& ks->mcast_bits), 0, 8UL);
+  i = 0U;
+  }
+  goto ldv_42551;
+  ldv_42550:
+  {
+  tmp = ether_gen_crc(6, (u8 *)(& ks->mcast_lst + (unsigned long )i));
+  position = (u32 )(tmp >> 26) & 63U;
+  index = position >> 3;
+  value = (u32 )(1 << ((int )position & 7));
+  ks->mcast_bits[index] = (u8 )((int )ks->mcast_bits[index] | (int )((unsigned char )value));
+  i = (u8 )((int )i + 1);
+  }
+  ldv_42551: ;
+  if ((int )((unsigned short )i) < (int )ks->mcast_lst_size) {
+    goto ldv_42550;
+  } else {
+  }
+  i = 0U;
+  goto ldv_42554;
+  ldv_42553: ;
+  if ((int )i & 1) {
+    {
+    ks_wrreg16(ks, (int )((unsigned int )((unsigned short )i) + 160U) & 65534, (int )((u16 )((int )((short )((int )ks->mcast_bits[(int )i] << 8)) | (int )((short )ks->mcast_bits[(int )i + -1]))));
     }
   } else {
   }
-  iobase = self->io.fir_base;
-  if ((isr & 32) != 0) {
+  i = (u8 )((int )i + 1);
+  ldv_42554: ;
+  if ((unsigned int )i <= 7U) {
+    goto ldv_42553;
+  } else {
+  }
+  return;
+}
+}
+static void ks_clear_mcast(struct ks_net *ks )
+{
+  u16 i ;
+  u16 mcast_size ;
+  {
+  i = 0U;
+  goto ldv_42562;
+  ldv_42561:
+  ks->mcast_bits[(int )i] = 0U;
+  i = (u16 )((int )i + 1);
+  ldv_42562: ;
+  if ((unsigned int )i <= 7U) {
+    goto ldv_42561;
+  } else {
+  }
+  mcast_size = 2U;
+  i = 0U;
+  goto ldv_42565;
+  ldv_42564:
+  {
+  ks_wrreg16(ks, ((int )i + 80) * 2, 0);
+  i = (u16 )((int )i + 1);
+  }
+  ldv_42565: ;
+  if ((int )i < (int )mcast_size) {
+    goto ldv_42564;
+  } else {
+  }
+  return;
+}
+}
+static void ks_set_promis(struct ks_net *ks , u16 promiscuous_mode )
+{
+  u16 cntl ;
+  {
+  {
+  ks->promiscuous = promiscuous_mode;
+  ks_stop_rx(ks);
+  cntl = ks_rdreg16(ks, 116);
+  cntl = (unsigned int )cntl & 63213U;
+  }
+  if ((unsigned int )promiscuous_mode != 0U) {
+    cntl = (u16 )((unsigned int )cntl | 18U);
+  } else {
+    cntl = (u16 )((unsigned int )cntl | 2048U);
+  }
+  {
+  ks_wrreg16(ks, 116, (int )cntl);
+  }
+  if ((unsigned int )ks->enabled != 0U) {
     {
-    actual = w83977af_pio_write(self->io.fir_base, self->tx_buff.data, self->tx_buff.len,
-                                self->io.fifo_size);
-    self->tx_buff.data = self->tx_buff.data + (unsigned long )actual;
-    self->tx_buff.len = self->tx_buff.len - actual;
-    self->io.direction = 1;
-    }
-    if (self->tx_buff.len > 0) {
-      new_icr = (__u8 )((unsigned int )new_icr | 32U);
-    } else {
-      {
-      set = inb(iobase + 3);
-      switch_bank(iobase, 3);
-      outb(8, iobase + 7);
-      outb((int )set, iobase + 3);
-      (self->netdev)->stats.tx_packets = (self->netdev)->stats.tx_packets + 1UL;
-      netif_wake_queue(self->netdev);
-      new_icr = (__u8 )((unsigned int )new_icr | 2U);
-      }
+    ks_start_rx(ks);
     }
   } else {
   }
-  if ((isr & 2) != 0) {
-    if (self->new_speed != 0U) {
-      if (irda_debug > 1U) {
-        {
-        printk("\017%s(), Changing speed!\n", "w83977af_sir_interrupt");
-        }
+  return;
+}
+}
+static void ks_set_mcast(struct ks_net *ks , u16 mcast )
+{
+  u16 cntl ;
+  {
+  {
+  ks->all_mcast = mcast;
+  ks_stop_rx(ks);
+  cntl = ks_rdreg16(ks, 116);
+  cntl = (unsigned int )cntl & 63213U;
+  }
+  if ((unsigned int )mcast != 0U) {
+    cntl = (u16 )((unsigned int )cntl | 2320U);
+  } else {
+    cntl = (u16 )((unsigned int )cntl | 2048U);
+  }
+  {
+  ks_wrreg16(ks, 116, (int )cntl);
+  }
+  if ((unsigned int )ks->enabled != 0U) {
+    {
+    ks_start_rx(ks);
+    }
+  } else {
+  }
+  return;
+}
+}
+static void ks_set_rx_mode(struct net_device *netdev )
+{
+  struct ks_net *ks ;
+  void *tmp ;
+  struct netdev_hw_addr *ha ;
+  int i ;
+  struct list_head const *__mptr ;
+  int tmp___0 ;
+  struct list_head const *__mptr___0 ;
+  {
+  {
+  tmp = netdev_priv((struct net_device const *)netdev);
+  ks = (struct ks_net *)tmp;
+  }
+  if ((netdev->flags & 256U) != 0U) {
+    {
+    ks_set_promis(ks, (netdev->flags & 256U) != 0U);
+    }
+  } else
+  if ((netdev->flags & 512U) != 0U) {
+    {
+    ks_set_mcast(ks, (netdev->flags & 512U) != 0U);
+    }
+  } else {
+    {
+    ks_set_promis(ks, 0);
+    }
+  }
+  if ((netdev->flags & 4096U) != 0U && netdev->mc.count != 0) {
+    if (netdev->mc.count <= 32) {
+      i = 0;
+      __mptr = (struct list_head const *)netdev->mc.list.next;
+      ha = (struct netdev_hw_addr *)__mptr;
+      goto ldv_42589;
+      ldv_42588: ;
+      if (i > 31) {
+        goto ldv_42587;
       } else {
       }
       {
-      w83977af_change_speed(self, self->new_speed);
-      self->new_speed = 0U;
+      tmp___0 = i;
+      i = i + 1;
+      memcpy((void *)(& ks->mcast_lst + (unsigned long )tmp___0), (void const *)(& ha->addr),
+             6UL);
+      __mptr___0 = (struct list_head const *)ha->list.next;
+      ha = (struct netdev_hw_addr *)__mptr___0;
+      }
+      ldv_42589: ;
+      if ((unsigned long )(& ha->list) != (unsigned long )(& netdev->mc.list)) {
+        goto ldv_42588;
+      } else {
+      }
+      ldv_42587:
+      {
+      ks->mcast_lst_size = (u16 )((unsigned char )i);
+      ks_set_grpaddr(ks);
       }
     } else {
+      {
+      ks->mcast_lst_size = 32U;
+      ks_set_mcast(ks, 1);
+      }
     }
-    self->io.direction = 2;
-    new_icr = (__u8 )((unsigned int )new_icr | 1U);
   } else {
-  }
-  if (isr & 1) {
     {
-    w83977af_pio_receive(self);
-    new_icr = (__u8 )((unsigned int )new_icr | 1U);
+    ks->mcast_lst_size = 0U;
+    ks_clear_mcast(ks);
     }
-  } else {
   }
-  return (new_icr);
+  return;
 }
 }
-static __u8 w83977af_fir_interrupt(struct w83977af_ir *self , int isr )
+static void ks_set_mac(struct ks_net *ks , u8 *data )
 {
-  __u8 new_icr ;
-  __u8 set ;
-  int iobase ;
-  int tmp ;
+  u16 *pw ;
+  u16 w ;
+  u16 u ;
+  u16 *tmp ;
+  u16 *tmp___0 ;
+  int tmp_ks;
   {
   {
-  new_icr = 0U;
-  iobase = self->io.fir_base;
-  set = inb(iobase + 3);
+  pw = (u16 *)data;
+  ks_stop_rx(ks);
+  tmp = pw;
+  pw = pw + 1;
+  u = *tmp;
+  w = (u16 )((int )((short )((int )u << 8)) | (int )((short )((int )u >> 8)));
+  ks_wrreg16(ks, 20, (int )w);
+  tmp___0 = pw;
+  pw = pw + 1;
+  u = *tmp___0;
+  w = (u16 )((int )((short )((int )u << 8)) | (int )((short )((int )u >> 8)));
+  ks_wrreg16(ks, 18, (int )w);
+  u = *pw;
+  w = (u16 )((int )((short )((int )u << 8)) | (int )((short )((int )u >> 8)));
+  ks_wrreg16(ks, 16, (int )w);
+  memcpy((void *)(& ks->mac_addr), (void const *)data, 6UL);
   }
-  if ((isr & 68) != 0) {
+  ldv_mutex_lock_68(& ks->lock);
+  tmp_ks = ks->enabled;
+  ldv_assert("", tmp_ks == ks->enabled);
+  ldv_mutex_unlock_70(& ks->lock);
+  if ((unsigned int )ks->enabled != 0U) {
     {
-    tmp = w83977af_dma_receive_complete(self);
-    }
-    if (tmp != 0) {
-      new_icr = (__u8 )((unsigned int )new_icr | 64U);
-    } else {
-      {
-      switch_bank(iobase, 232);
-      outb(1, iobase);
-      outb(0, iobase + 1);
-      outb(1, iobase + 2);
-      new_icr = (__u8 )((unsigned int )new_icr | 128U);
-      }
+    ks_start_rx(ks);
     }
   } else {
   }
-  if ((isr & 128) != 0) {
-    {
-    switch_bank(iobase, 232);
-    outb(0, iobase + 2);
-    }
-    if (self->io.direction == 1) {
-      {
-      w83977af_dma_write(self, iobase);
-      new_icr = (__u8 )((unsigned int )new_icr | 16U);
-      }
-    } else {
-      {
-      w83977af_dma_receive_complete(self);
-      new_icr = (__u8 )((unsigned int )new_icr | 64U);
-      }
-    }
-  } else {
-  }
-  if ((isr & 16) != 0) {
-    {
-    w83977af_dma_xmit_complete(self);
-    w83977af_dma_receive(self);
-    new_icr = 64U;
-    }
-  } else {
-  }
-  {
-  outb((int )set, iobase + 3);
-  }
-  return (new_icr);
+  return;
 }
 }
-static irqreturn_t w83977af_interrupt(int irq___0 , void *dev_id )
+static int ks_set_mac_address(struct net_device *netdev , void *paddr )
 {
-  struct net_device *dev ;
-  struct w83977af_ir *self ;
-  __u8 set ;
-  __u8 icr ;
-  __u8 isr ;
-  int iobase ;
+  struct ks_net *ks ;
   void *tmp ;
-  unsigned char tmp___0 ;
+  struct sockaddr *addr ;
+  u8 *da ;
   {
   {
-  dev = (struct net_device *)dev_id;
-  tmp = netdev_priv((struct net_device const *)dev);
-  self = (struct w83977af_ir *)tmp;
-  iobase = self->io.fir_base;
-  set = inb(iobase + 3);
-  switch_bank(iobase, 3);
-  icr = inb(iobase + 1);
-  tmp___0 = inb(iobase + 2);
-  isr = (__u8 )((int )tmp___0 & (int )icr);
-  outb(0, iobase + 1);
-  }
-  if ((unsigned int )isr != 0U) {
-    if (self->io.speed > 115200U) {
-      {
-      icr = w83977af_fir_interrupt(self, (int )isr);
-      }
-    } else {
-      {
-      icr = w83977af_sir_interrupt(self, (int )isr);
-      }
-    }
-  } else {
-  }
-  {
-  outb((int )icr, iobase + 1);
-  outb((int )set, iobase + 3);
-  }
-  return ((unsigned int )isr != 0U);
-}
-}
-static int w83977af_is_receiving(struct w83977af_ir *self )
-{
-  int status ;
-  int iobase ;
-  __u8 set ;
-  unsigned char tmp ;
-  {
-  status = 0;
-  if ((unsigned long )self == (unsigned long )((struct w83977af_ir *)0)) {
-    {
-    printk("Assertion failed! %s:%s:%d %s\n", (char *)"drivers/net/irda/w83977af_ir.c",
-           "w83977af_is_receiving", 1122, (char *)"self != NULL");
-    }
-    return (0);
-  } else {
-  }
-  if (self->io.speed > 115200U) {
-    {
-    iobase = self->io.fir_base;
-    set = inb(iobase + 3);
-    switch_bank(iobase, 224);
-    tmp = inb(iobase + 7);
-    }
-    if (((int )tmp & 63) != 0) {
-      status = 1;
-    } else {
-    }
-    {
-    outb((int )set, iobase + 3);
-    }
-  } else {
-    status = self->rx_buff.state != 0;
-  }
-  return (status);
-}
-}
-static int w83977af_net_open(struct net_device *dev )
-{
-  struct w83977af_ir *self ;
-  int iobase ;
-  char hwname[32U] ;
-  __u8 set ;
-  void *tmp ;
-  int tmp___0 ;
-  int tmp___1 ;
-  {
-  {
-  printk("\017%s()\n", "w83977af_net_open");
-  }
-  if ((unsigned long )dev == (unsigned long )((struct net_device *)0)) {
-    {
-    printk("Assertion failed! %s:%s:%d %s\n", (char *)"drivers/net/irda/w83977af_ir.c",
-           "w83977af_net_open", 1156, (char *)"dev != NULL");
-    }
-    return (-1);
-  } else {
-  }
-  {
-  tmp = netdev_priv((struct net_device const *)dev);
-  self = (struct w83977af_ir *)tmp;
-  }
-  if ((unsigned long )self == (unsigned long )((struct w83977af_ir *)0)) {
-    {
-    printk("Assertion failed! %s:%s:%d %s\n", (char *)"drivers/net/irda/w83977af_ir.c",
-           "w83977af_net_open", 1159, (char *)"self != NULL");
-    }
-    return (0);
-  } else {
-  }
-  {
-  iobase = self->io.fir_base;
-  tmp___0 = ldv_request_irq_75((unsigned int )self->io.irq, & w83977af_interrupt,
-                               0UL, (char const *)(& dev->name), (void *)dev);
-  }
-  if (tmp___0 != 0) {
-    return (-11);
-  } else {
-  }
-  {
-  tmp___1 = request_dma((unsigned int )self->io.dma, (char const *)(& dev->name));
-  }
-  if (tmp___1 != 0) {
-    {
-    ldv_free_irq_76((unsigned int )self->io.irq, (void *)dev);
-    }
-    return (-11);
-  } else {
-  }
-  {
-  set = inb(iobase + 3);
-  switch_bank(iobase, 3);
-  }
-  if (self->io.speed > 115200U) {
-    {
-    outb(64, iobase + 1);
-    w83977af_dma_receive(self);
-    }
-  } else {
-    {
-    outb(1, iobase + 1);
-    }
-  }
-  {
-  outb((int )set, iobase + 3);
-  netif_start_queue(dev);
-  sprintf((char *)(& hwname), "w83977af @ 0x%03x", self->io.fir_base);
-  self->irlap = irlap_open(dev, & self->qos, (char const *)(& hwname));
+  tmp = netdev_priv((struct net_device const *)netdev);
+  ks = (struct ks_net *)tmp;
+  addr = (struct sockaddr *)paddr;
+  memcpy((void *)netdev->dev_addr, (void const *)(& addr->sa_data), (size_t )netdev->addr_len);
+  da = netdev->dev_addr;
+  ks_set_mac(ks, da);
   }
   return (0);
 }
 }
-static int w83977af_net_close(struct net_device *dev )
+static int ks_net_ioctl(struct net_device *netdev , struct ifreq *req , int cmd )
 {
-  struct w83977af_ir *self ;
-  int iobase ;
-  __u8 set ;
-  void *tmp ;
-  {
-  {
-  printk("\017%s()\n", "w83977af_net_close");
-  }
-  if ((unsigned long )dev == (unsigned long )((struct net_device *)0)) {
-    {
-    printk("Assertion failed! %s:%s:%d %s\n", (char *)"drivers/net/irda/w83977af_ir.c",
-           "w83977af_net_close", 1219, (char *)"dev != NULL");
-    }
-    return (-1);
-  } else {
-  }
-  {
-  tmp = netdev_priv((struct net_device const *)dev);
-  self = (struct w83977af_ir *)tmp;
-  }
-  if ((unsigned long )self == (unsigned long )((struct w83977af_ir *)0)) {
-    {
-    printk("Assertion failed! %s:%s:%d %s\n", (char *)"drivers/net/irda/w83977af_ir.c",
-           "w83977af_net_close", 1223, (char *)"self != NULL");
-    }
-    return (0);
-  } else {
-  }
-  {
-  iobase = self->io.fir_base;
-  netif_stop_queue(dev);
-  }
-  if ((unsigned long )self->irlap != (unsigned long )((struct irlap_cb *)0)) {
-    {
-    irlap_close(self->irlap);
-    }
-  } else {
-  }
-  {
-  self->irlap = (struct irlap_cb *)0;
-  disable_dma((unsigned int )self->io.dma);
-  set = inb(iobase + 3);
-  switch_bank(iobase, 3);
-  outb(0, iobase + 1);
-  ldv_free_irq_77((unsigned int )self->io.irq, (void *)dev);
-  free_dma((unsigned int )self->io.dma);
-  outb((int )set, iobase + 3);
-  }
-  return (0);
-}
-}
-static int w83977af_net_ioctl(struct net_device *dev , struct ifreq *rq , int cmd )
-{
-  struct if_irda_req *irq___0 ;
-  struct w83977af_ir *self ;
-  unsigned long flags = 0 ;
-  int ret ;
+  struct ks_net *ks ;
   void *tmp ;
   bool tmp___0 ;
   int tmp___1 ;
-  bool tmp___2 ;
+  struct mii_ioctl_data *tmp___2 ;
   int tmp___3 ;
-  int tmp___4 ;
   {
-  irq___0 = (struct if_irda_req *)rq;
-  ret = 0;
-  if ((unsigned long )dev == (unsigned long )((struct net_device *)0)) {
-    {
-    printk("Assertion failed! %s:%s:%d %s\n", (char *)"drivers/net/irda/w83977af_ir.c",
-           "w83977af_net_ioctl", 1266, (char *)"dev != NULL");
-    }
-    return (-1);
-  } else {
-  }
   {
-  tmp = netdev_priv((struct net_device const *)dev);
-  self = (struct w83977af_ir *)tmp;
-  }
-  if ((unsigned long )self == (unsigned long )((struct w83977af_ir *)0)) {
-    {
-    printk("Assertion failed! %s:%s:%d %s\n", (char *)"drivers/net/irda/w83977af_ir.c",
-           "w83977af_net_ioctl", 1270, (char *)"self != NULL");
-    }
-    return (-1);
-  } else {
-  }
-  if (irda_debug > 1U) {
-    {
-    printk("\017%s(), %s, (cmd=0x%X)\n", "w83977af_net_ioctl", (char *)(& dev->name),
-           cmd);
-    }
-  } else {
-  }
-  {
-  ldv___ldv_spin_lock_78(& self->lock);
-  }
-  {
-  if (cmd == 35314) {
-    goto case_35314;
-  } else {
-  }
-  if (cmd == 35315) {
-    goto case_35315;
-  } else {
-  }
-  if (cmd == 35317) {
-    goto case_35317;
-  } else {
-  }
-  goto switch_default;
-  case_35314:
-  {
-  tmp___0 = capable(12);
+  tmp = netdev_priv((struct net_device const *)netdev);
+  ks = (struct ks_net *)tmp;
+  tmp___0 = netif_running((struct net_device const *)netdev);
   }
   if (tmp___0) {
     tmp___1 = 0;
@@ -7513,96 +6647,665 @@ static int w83977af_net_ioctl(struct net_device *dev , struct ifreq *rq , int cm
     tmp___1 = 1;
   }
   if (tmp___1) {
-    ret = -1;
-    goto out;
+    return (-22);
   } else {
   }
   {
-  w83977af_change_speed(self, (__u32 )irq___0->ifr_ifru.ifru_qos.baudrate);
+  tmp___2 = if_mii(req);
+  tmp___3 = generic_mii_ioctl(& ks->mii, tmp___2, cmd, (unsigned int *)0U);
   }
-  goto ldv_45106;
-  case_35315:
-  {
-  tmp___2 = capable(12);
-  }
-  if (tmp___2) {
-    tmp___3 = 0;
-  } else {
-    tmp___3 = 1;
-  }
-  if (tmp___3) {
-    ret = -1;
-    goto out;
-  } else {
-  }
-  {
-  irda_device_set_media_busy(self->netdev, 1);
-  }
-  goto ldv_45106;
-  case_35317:
-  {
-  tmp___4 = w83977af_is_receiving(self);
-  irq___0->ifr_ifru.ifru_receiving = (unsigned int )tmp___4;
-  }
-  goto ldv_45106;
-  switch_default:
-  ret = -95;
-  switch_break: ;
-  }
-  ldv_45106: ;
-  out:
-  {
-  ldv_spin_unlock_irqrestore_79(& self->lock, flags);
-  }
-  return (ret);
+  return (tmp___3);
 }
 }
-void ldv_dispatch_deregister_9_1(struct net_device *arg0 ) ;
-void ldv_dispatch_insmod_deregister_10_2(void) ;
-void ldv_dispatch_insmod_register_10_3(void) ;
-void ldv_dispatch_irq_deregister_5_1(int arg0 ) ;
-void ldv_dispatch_irq_register_8_3(int arg0 , irqreturn_t (*arg1)(int , void * ) ,
-                                   irqreturn_t (*arg2)(int , void * ) , void *arg3 ) ;
-void ldv_dispatch_register_7_4(struct net_device *arg0 ) ;
-void ldv_emg_free_irq(int arg0 , void *arg1 ) ;
-void ldv_emg_free_netdev(struct net_device *arg0 ) ;
-int ldv_emg_register_netdev(struct net_device *arg0 ) ;
-int ldv_emg_request_irq(unsigned int arg0 , irqreturn_t (*arg1)(int , void * ) ,
-                        unsigned long arg2 , char *arg3 , void *arg4 ) ;
-void ldv_emg_unregister_netdev(struct net_device *arg0 ) ;
-void *ldv_insmod_4(void *arg0 ) ;
-void ldv_insmod_w83977af_cleanup_4_2(void (*arg0)(void) ) ;
-int ldv_insmod_w83977af_init_4_6(int (*arg0)(void) ) ;
-void *ldv_interrupt_scenario_2(void *arg0 ) ;
-enum irqreturn ldv_interrupt_scenario_handler_2_5(irqreturn_t (*arg0)(int , void * ) ,
-                                                  int arg1 , void *arg2 ) ;
-void *ldv_main_10(void *arg0 ) ;
-void *ldv_random_allocationless_scenario_3(void *arg0 ) ;
-void ldv_random_allocationless_scenario_callback_3_3(int (*arg0)(struct net_device * ,
-                                                                 struct ifreq * ,
-                                                                 int ) , struct net_device *arg1 ,
-                                                     struct ifreq *arg2 , int arg3 ) ;
-void ldv_random_allocationless_scenario_callback_3_8(netdev_tx_t (*arg0)(struct sk_buff * ,
-                                                                         struct net_device * ) ,
-                                                     struct sk_buff *arg1 , struct net_device *arg2 ) ;
-int ldv_register_netdev_open_7_6(int (*arg0)(struct net_device * ) , struct net_device *arg1 ) ;
-void ldv_unregister_netdev_stop_9_2(int (*arg0)(struct net_device * ) , struct net_device *arg1 ) ;
-int main(void) ;
-pthread_t ldv_thread_2 ;
-pthread_t ldv_thread_3 ;
-pthread_t ldv_thread_4 ;
-void ldv_dispatch_deregister_9_1(struct net_device *arg0 )
+static struct net_device_ops const ks_netdev_ops =
+     {0, 0, & ks_net_open, & ks_net_stop, (netdev_tx_t (*)(struct sk_buff * , struct net_device * ))(& ks_start_xmit),
+    0, 0, & ks_set_rx_mode, & ks_set_mac_address, & eth_validate_addr, & ks_net_ioctl,
+    0, & eth_change_mtu, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0};
+static void ks_get_drvinfo(struct net_device *netdev , struct ethtool_drvinfo *di )
 {
-  int ret ;
+  char const *tmp ;
   {
   {
-  ret = pthread_join(ldv_thread_3, (void **)0);
-  __VERIFIER_assume(ret == 0);
+  strlcpy((char *)(& di->driver), "ks8851_mll", 32UL);
+  strlcpy((char *)(& di->version), "1.00", 32UL);
+  tmp = dev_name((struct device const *)netdev->dev.parent);
+  strlcpy((char *)(& di->bus_info), tmp, 32UL);
   }
   return;
 }
 }
-void ldv_dispatch_insmod_deregister_10_2(void)
+static u32 ks_get_msglevel(struct net_device *netdev )
+{
+  struct ks_net *ks ;
+  void *tmp ;
+  {
+  {
+  tmp = netdev_priv((struct net_device const *)netdev);
+  ks = (struct ks_net *)tmp;
+  }
+  return (ks->msg_enable);
+}
+}
+static void ks_set_msglevel(struct net_device *netdev , u32 to )
+{
+  struct ks_net *ks ;
+  void *tmp ;
+  {
+  {
+  tmp = netdev_priv((struct net_device const *)netdev);
+  ks = (struct ks_net *)tmp;
+  ks->msg_enable = to;
+  }
+  return;
+}
+}
+static int ks_get_settings(struct net_device *netdev , struct ethtool_cmd *cmd )
+{
+  struct ks_net *ks ;
+  void *tmp ;
+  int tmp___0 ;
+  {
+  {
+  tmp = netdev_priv((struct net_device const *)netdev);
+  ks = (struct ks_net *)tmp;
+  tmp___0 = mii_ethtool_gset(& ks->mii, cmd);
+  }
+  return (tmp___0);
+}
+}
+static int ks_set_settings(struct net_device *netdev , struct ethtool_cmd *cmd )
+{
+  struct ks_net *ks ;
+  void *tmp ;
+  int tmp___0 ;
+  {
+  {
+  tmp = netdev_priv((struct net_device const *)netdev);
+  ks = (struct ks_net *)tmp;
+  tmp___0 = mii_ethtool_sset(& ks->mii, cmd);
+  }
+  return (tmp___0);
+}
+}
+static u32 ks_get_link(struct net_device *netdev )
+{
+  struct ks_net *ks ;
+  void *tmp ;
+  int tmp___0 ;
+  {
+  {
+  tmp = netdev_priv((struct net_device const *)netdev);
+  ks = (struct ks_net *)tmp;
+  tmp___0 = mii_link_ok(& ks->mii);
+  }
+  return ((u32 )tmp___0);
+}
+}
+static int ks_nway_reset(struct net_device *netdev )
+{
+  struct ks_net *ks ;
+  void *tmp ;
+  int tmp___0 ;
+  {
+  {
+  tmp = netdev_priv((struct net_device const *)netdev);
+  ks = (struct ks_net *)tmp;
+  tmp___0 = mii_nway_restart(& ks->mii);
+  }
+  return (tmp___0);
+}
+}
+static struct ethtool_ops const ks_ethtool_ops =
+     {& ks_get_settings, & ks_set_settings, & ks_get_drvinfo, 0, 0, 0, 0, & ks_get_msglevel,
+    & ks_set_msglevel, & ks_nway_reset, & ks_get_link, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+static int ks_phy_reg(int reg )
+{
+  {
+  {
+  if (reg == 0) {
+    goto case_0;
+  } else {
+  }
+  if (reg == 1) {
+    goto case_1;
+  } else {
+  }
+  if (reg == 2) {
+    goto case_2;
+  } else {
+  }
+  if (reg == 3) {
+    goto case_3;
+  } else {
+  }
+  if (reg == 4) {
+    goto case_4;
+  } else {
+  }
+  if (reg == 5) {
+    goto case_5;
+  } else {
+  }
+  goto switch_break;
+  case_0: ;
+  return (228);
+  case_1: ;
+  return (230);
+  case_2: ;
+  return (232);
+  case_3: ;
+  return (234);
+  case_4: ;
+  return (236);
+  case_5: ;
+  return (238);
+  switch_break: ;
+  }
+  return (0);
+}
+}
+static int ks_phy_read(struct net_device *netdev , int phy_addr , int reg )
+{
+  struct ks_net *ks ;
+  void *tmp ;
+  int ksreg ;
+  int result ;
+  u16 tmp___0 ;
+  {
+  {
+  tmp = netdev_priv((struct net_device const *)netdev);
+  ks = (struct ks_net *)tmp;
+  ksreg = ks_phy_reg(reg);
+  }
+  if (ksreg == 0) {
+    return (0);
+  } else {
+  }
+  {
+  ldv_mutex_lock_73(& ks->lock);
+  tmp___0 = ks_rdreg16(ks, ksreg);
+  result = (int )tmp___0;
+  ldv_mutex_unlock_74(& ks->lock);
+  }
+  return (result);
+}
+}
+static void ks_phy_write(struct net_device *netdev , int phy , int reg , int value )
+{
+  struct ks_net *ks ;
+  void *tmp ;
+  int ksreg ;
+  {
+  {
+  tmp = netdev_priv((struct net_device const *)netdev);
+  ks = (struct ks_net *)tmp;
+  ksreg = ks_phy_reg(reg);
+  }
+  if (ksreg != 0) {
+    {
+    ldv_mutex_lock_75(& ks->lock);
+    ks_wrreg16(ks, ksreg, (int )((u16 )value));
+    ldv_mutex_unlock_76(& ks->lock);
+    }
+  } else {
+  }
+  return;
+}
+}
+static int ks_read_selftest(struct ks_net *ks )
+{
+  unsigned int both_done ;
+  int ret ;
+  unsigned int rd ;
+  u16 tmp ;
+  {
+  {
+  both_done = 4112U;
+  ret = 0;
+  tmp = ks_rdreg16(ks, 36);
+  rd = (unsigned int )tmp;
+  }
+  if ((rd & both_done) != both_done) {
+    {
+    netdev_warn((struct net_device const *)ks->netdev, "Memory selftest not finished\n");
+    }
+    return (0);
+  } else {
+  }
+  if ((rd & 2048U) != 0U) {
+    {
+    netdev_err((struct net_device const *)ks->netdev, "TX memory selftest fails\n");
+    ret = ret | 1;
+    }
+  } else {
+  }
+  if ((rd & 8U) != 0U) {
+    {
+    netdev_err((struct net_device const *)ks->netdev, "RX memory selftest fails\n");
+    ret = ret | 2;
+    }
+  } else {
+  }
+  {
+  netdev_info((struct net_device const *)ks->netdev, "the selftest passes\n");
+  }
+  return (ret);
+}
+}
+static void ks_setup(struct ks_net *ks )
+{
+  u16 w ;
+  {
+  {
+  ks_wrreg16(ks, 132, 16384);
+  ks_wrreg16(ks, 134, 16384);
+  ks_wrreg16(ks, 156, 1);
+  ks->rc_rxqcr = 48U;
+  ks_wrreg16(ks, 130, (int )ks->rc_rxqcr);
+  w = ks_rdreg16(ks, 228);
+  w = (unsigned int )w & 65279U;
+  ks_wrreg16(ks, 228, (int )w);
+  w = 46U;
+  ks_wrreg16(ks, 112, (int )w);
+  w = 5344U;
+  }
+  if ((unsigned int )ks->promiscuous != 0U) {
+    w = (u16 )((unsigned int )w | 18U);
+  } else
+  if ((unsigned int )ks->all_mcast != 0U) {
+    w = (u16 )((unsigned int )w | 2320U);
+  } else {
+    w = (u16 )((unsigned int )w | 2048U);
+  }
+  {
+  ks_wrreg16(ks, 116, (int )w);
+  }
+  return;
+}
+}
+static void ks_setup_int(struct ks_net *ks )
+{
+  {
+  {
+  ks->rc_ier = 0U;
+  ks_wrreg16(ks, 146, 65535);
+  ks->rc_ier = 57344U;
+  }
+  return;
+}
+}
+static int ks_hw_init(struct ks_net *ks )
+{
+  void *tmp ;
+  {
+  {
+  ks->promiscuous = 0U;
+  ks->all_mcast = 0U;
+  ks->mcast_lst_size = 0U;
+  tmp = kmalloc(1020UL, 208U);
+  ks->frame_head_info = (struct type_frame_head *)tmp;
+  }
+  if ((unsigned long )ks->frame_head_info == (unsigned long )((struct type_frame_head *)0)) {
+    return (0);
+  } else {
+  }
+  {
+  ks_set_mac(ks, (u8 *)(& KS_DEFAULT_MAC_ADDRESS));
+  }
+  return (1);
+}
+}
+static int ks8851_probe(struct platform_device *pdev )
+{
+  int err ;
+  struct resource *io_d ;
+  struct resource *io_c ;
+  struct net_device *netdev ;
+  struct ks_net *ks ;
+  u16 id ;
+  u16 data ;
+  char const *mac ;
+  resource_size_t tmp ;
+  struct resource *tmp___0 ;
+  resource_size_t tmp___1 ;
+  struct resource *tmp___2 ;
+  void *tmp___3 ;
+  resource_size_t tmp___4 ;
+  resource_size_t tmp___5 ;
+  struct lock_class_key __key ;
+  struct lock_class_key __key___0 ;
+  u16 tmp___6 ;
+  int tmp___7 ;
+  void const *tmp___8 ;
+  struct ks8851_mll_platform_data *pdata ;
+  void *tmp___9 ;
+  bool tmp___10 ;
+  int tmp___11 ;
+  resource_size_t tmp___12 ;
+  resource_size_t tmp___13 ;
+  {
+  {
+  err = -12;
+  io_d = platform_get_resource(pdev, 512U, 0U);
+  io_c = platform_get_resource(pdev, 512U, 1U);
+  tmp = resource_size((struct resource const *)io_d);
+  tmp___0 = __request_region(& iomem_resource, io_d->start, tmp, "ks8851_mll", 0);
+  }
+  if ((unsigned long )tmp___0 == (unsigned long )((struct resource *)0)) {
+    goto err_mem_region;
+  } else {
+  }
+  {
+  tmp___1 = resource_size((struct resource const *)io_c);
+  tmp___2 = __request_region(& iomem_resource, io_c->start, tmp___1, "ks8851_mll",
+                             0);
+  }
+  if ((unsigned long )tmp___2 == (unsigned long )((struct resource *)0)) {
+    goto err_mem_region1;
+  } else {
+  }
+  {
+  netdev = ldv_alloc_etherdev_mqs_77(640, 1U, 1U);
+  }
+  if ((unsigned long )netdev == (unsigned long )((struct net_device *)0)) {
+    goto err_alloc_etherdev;
+  } else {
+  }
+  {
+  netdev->dev.parent = & pdev->dev;
+  tmp___3 = netdev_priv((struct net_device const *)netdev);
+  ks = (struct ks_net *)tmp___3;
+  ks->netdev = netdev;
+  tmp___4 = resource_size((struct resource const *)io_d);
+  ks->hw_addr = ioremap(io_d->start, (unsigned long )tmp___4);
+  }
+  if ((unsigned long )ks->hw_addr == (unsigned long )((void *)0)) {
+    goto err_ioremap;
+  } else {
+  }
+  {
+  tmp___5 = resource_size((struct resource const *)io_c);
+  ks->hw_addr_cmd = ioremap(io_c->start, (unsigned long )tmp___5);
+  }
+  if ((unsigned long )ks->hw_addr_cmd == (unsigned long )((void *)0)) {
+    goto err_ioremap1;
+  } else {
+  }
+  {
+  netdev->irq = platform_get_irq(pdev, 0U);
+  }
+  if (netdev->irq < 0) {
+    err = netdev->irq;
+    goto err_get_irq;
+  } else {
+  }
+  {
+  ks->pdev = pdev;
+  __mutex_init(& ks->lock, "&ks->lock", & __key);
+  spinlock_check(& ks->statelock);
+  __raw_spin_lock_init(& ks->statelock.__annonCompField19.rlock, "&(&ks->statelock)->rlock",
+                       & __key___0);
+  netdev->netdev_ops = & ks_netdev_ops;
+  netdev->ethtool_ops = & ks_ethtool_ops;
+  ks->mii.dev = netdev;
+  ks->mii.phy_id = 1;
+  ks->mii.phy_id_mask = 1;
+  ks->mii.reg_num_mask = 15;
+  ks->mii.mdio_read = & ks_phy_read;
+  ks->mii.mdio_write = & ks_phy_write;
+  netdev_info((struct net_device const *)netdev, "message enable is %d\n", msg_enable);
+  ks->msg_enable = netif_msg_init(msg_enable, 7);
+  ks_read_config(ks);
+  tmp___6 = ks_rdreg16(ks, 192);
+  }
+  if (((int )tmp___6 & -15) != 34928) {
+    {
+    netdev_err((struct net_device const *)netdev, "failed to read device ID\n");
+    err = -19;
+    }
+    goto err_register;
+  } else {
+  }
+  {
+  tmp___7 = ks_read_selftest(ks);
+  }
+  if (tmp___7 != 0) {
+    {
+    netdev_err((struct net_device const *)netdev, "failed to read device ID\n");
+    err = -19;
+    }
+    goto err_register;
+  } else {
+  }
+  {
+  err = ldv_register_netdev_78(netdev);
+  }
+  if (err != 0) {
+    goto err_register;
+  } else {
+  }
+  {
+  platform_set_drvdata(pdev, (void *)netdev);
+  ks_soft_reset(ks, 1U);
+  ks_hw_init(ks);
+  ks_disable_qmu(ks);
+  ks_setup(ks);
+  ks_setup_int(ks);
+  data = ks_rdreg16(ks, 32);
+  ks_wrreg16(ks, 32, (int )((unsigned int )data | 64U));
+  }
+  if ((unsigned long )pdev->dev.of_node != (unsigned long )((struct device_node *)0)) {
+    {
+    tmp___8 = of_get_mac_address(pdev->dev.of_node);
+    mac = (char const *)tmp___8;
+    }
+    if ((unsigned long )mac != (unsigned long )((char const *)0)) {
+      {
+      memcpy((void *)(& ks->mac_addr), (void const *)mac, 6UL);
+      }
+    } else {
+    }
+  } else {
+    {
+    tmp___9 = dev_get_platdata((struct device const *)(& pdev->dev));
+    pdata = (struct ks8851_mll_platform_data *)tmp___9;
+    }
+    if ((unsigned long )pdata == (unsigned long )((struct ks8851_mll_platform_data *)0)) {
+      {
+      netdev_err((struct net_device const *)netdev, "No platform data\n");
+      err = -19;
+      }
+      goto err_pdata;
+    } else {
+    }
+    {
+    memcpy((void *)(& ks->mac_addr), (void const *)(& pdata->mac_addr), 6UL);
+    }
+  }
+  {
+  tmp___10 = is_valid_ether_addr((u8 const *)(& ks->mac_addr));
+  }
+  if (tmp___10) {
+    tmp___11 = 0;
+  } else {
+    tmp___11 = 1;
+  }
+  if (tmp___11) {
+    {
+    eth_random_addr((u8 *)(& ks->mac_addr));
+    netdev_info((struct net_device const *)netdev, "Using random mac address\n");
+    }
+  } else {
+  }
+  {
+  netdev_info((struct net_device const *)netdev, "Mac address is: %pM\n", (u8 *)(& ks->mac_addr));
+  memcpy((void *)netdev->dev_addr, (void const *)(& ks->mac_addr), 6UL);
+  ks_set_mac(ks, netdev->dev_addr);
+  id = ks_rdreg16(ks, 192);
+  netdev_info((struct net_device const *)netdev, "Found chip, family: 0x%x, id: 0x%x, rev: 0x%x\n",
+              ((int )id >> 8) & 255, ((int )id >> 4) & 15, ((int )id >> 1) & 7);
+  }
+  return (0);
+  err_pdata:
+  {
+  ldv_unregister_netdev_79(netdev);
+  }
+  err_register: ;
+  err_get_irq:
+  {
+  iounmap((void volatile *)ks->hw_addr_cmd);
+  }
+  err_ioremap1:
+  {
+  iounmap((void volatile *)ks->hw_addr);
+  }
+  err_ioremap:
+  {
+  ldv_free_netdev_80(netdev);
+  }
+  err_alloc_etherdev:
+  {
+  tmp___12 = resource_size((struct resource const *)io_c);
+  __release_region(& iomem_resource, io_c->start, tmp___12);
+  }
+  err_mem_region1:
+  {
+  tmp___13 = resource_size((struct resource const *)io_d);
+  __release_region(& iomem_resource, io_d->start, tmp___13);
+  }
+  err_mem_region: ;
+  return (err);
+}
+}
+static int ks8851_remove(struct platform_device *pdev )
+{
+  struct net_device *netdev ;
+  void *tmp ;
+  struct ks_net *ks ;
+  void *tmp___0 ;
+  struct resource *iomem ;
+  struct resource *tmp___1 ;
+  resource_size_t tmp___2 ;
+  {
+  {
+  tmp = platform_get_drvdata((struct platform_device const *)pdev);
+  netdev = (struct net_device *)tmp;
+  tmp___0 = netdev_priv((struct net_device const *)netdev);
+  ks = (struct ks_net *)tmp___0;
+  tmp___1 = platform_get_resource(pdev, 512U, 0U);
+  iomem = tmp___1;
+  kfree((void const *)ks->frame_head_info);
+  ldv_unregister_netdev_81(netdev);
+  iounmap((void volatile *)ks->hw_addr);
+  ldv_free_netdev_82(netdev);
+  tmp___2 = resource_size((struct resource const *)iomem);
+  __release_region(& iomem_resource, iomem->start, tmp___2);
+  }
+  return (0);
+}
+}
+static struct platform_driver ks8851_platform_driver =
+     {& ks8851_probe, & ks8851_remove, 0, 0, 0, {"ks8851_mll", 0, & __this_module, 0,
+                                               (_Bool)0, (struct of_device_id const *)0,
+                                               0, 0, 0, 0, 0, 0, 0, 0, 0}, 0, (_Bool)0};
+static int ks8851_platform_driver_init(void)
+{
+  int tmp ;
+  {
+  {
+  tmp = ldv___platform_driver_register_83(& ks8851_platform_driver, & __this_module);
+  }
+  return (tmp);
+}
+}
+static void ks8851_platform_driver_exit(void)
+{
+  {
+  {
+  ldv_platform_driver_unregister_84(& ks8851_platform_driver);
+  }
+  return;
+}
+}
+void ldv_dispatch_deregister_11_1(struct platform_driver *arg0 ) ;
+void ldv_dispatch_deregister_14_1(struct net_device *arg0 ) ;
+void ldv_dispatch_insmod_deregister_15_2(void) ;
+void ldv_dispatch_insmod_register_15_3(void) ;
+void ldv_dispatch_irq_deregister_9_1(int arg0 ) ;
+void ldv_dispatch_irq_register_13_3(int arg0 , irqreturn_t (*arg1)(int , void * ) ,
+                                    irqreturn_t (*arg2)(int , void * ) , void *arg3 ) ;
+void ldv_dispatch_pm_deregister_4_5(void) ;
+void ldv_dispatch_pm_register_4_6(void) ;
+void ldv_dispatch_register_12_4(struct net_device *arg0 ) ;
+void ldv_dispatch_register_7_3(struct platform_driver *arg0 ) ;
+int ldv_emg___platform_driver_register(struct platform_driver *arg0 , struct module *arg1 ) ;
+struct net_device *ldv_emg_alloc_etherdev_mqs(int arg0 , unsigned int arg1 , unsigned int arg2 ) ;
+void ldv_emg_free_irq(int arg0 , void *arg1 ) ;
+void ldv_emg_free_netdev(struct net_device *arg0 ) ;
+void ldv_emg_platform_driver_unregister(struct platform_driver *arg0 ) ;
+int ldv_emg_register_netdev(struct net_device *arg0 ) ;
+int ldv_emg_request_irq(unsigned int arg0 , irqreturn_t (*arg1)(int , void * ) ,
+                        unsigned long arg2 , char *arg3 , void *arg4 ) ;
+void ldv_emg_unregister_netdev(struct net_device *arg0 ) ;
+void *ldv_insmod_6(void *arg0 ) ;
+void ldv_insmod_ks8851_platform_driver_exit_6_2(void (*arg0)(void) ) ;
+int ldv_insmod_ks8851_platform_driver_init_6_6(int (*arg0)(void) ) ;
+void *ldv_interrupt_scenario_2(void *arg0 ) ;
+enum irqreturn ldv_interrupt_scenario_handler_2_5(irqreturn_t (*arg0)(int , void * ) ,
+                                                  int arg1 , void *arg2 ) ;
+void *ldv_main_15(void *arg0 ) ;
+void *ldv_platform_instance_4(void *arg0 ) ;
+int ldv_platform_instance_probe_4_14(int (*arg0)(struct platform_device * ) , struct platform_device *arg1 ) ;
+void ldv_platform_instance_release_4_3(int (*arg0)(struct platform_device * ) , struct platform_device *arg1 ) ;
+void *ldv_pm_ops_scenario_5(void *arg0 ) ;
+void *ldv_random_allocationless_scenario_3(void *arg0 ) ;
+void ldv_random_allocationless_scenario_callback_3_10(int (*arg0)(struct net_device * ,
+                                                                  struct ethtool_cmd * ) ,
+                                                      struct net_device *arg1 , struct ethtool_cmd *arg2 ) ;
+void ldv_random_allocationless_scenario_callback_3_11(int (*arg0)(struct net_device * ,
+                                                                  int ) , struct net_device *arg1 ,
+                                                      int arg2 ) ;
+void ldv_random_allocationless_scenario_callback_3_14(int (*arg0)(struct net_device * ,
+                                                                  struct ifreq * ,
+                                                                  int ) , struct net_device *arg1 ,
+                                                      struct ifreq *arg2 , int arg3 ) ;
+void ldv_random_allocationless_scenario_callback_3_17(int (*arg0)(struct net_device * ,
+                                                                  void * ) , struct net_device *arg1 ,
+                                                      void *arg2 ) ;
+void ldv_random_allocationless_scenario_callback_3_18(void (*arg0)(struct net_device * ) ,
+                                                      struct net_device *arg1 ) ;
+void ldv_random_allocationless_scenario_callback_3_19(netdev_tx_t (*arg0)(struct sk_buff * ,
+                                                                          struct net_device * ) ,
+                                                      struct sk_buff *arg1 , struct net_device *arg2 ) ;
+void ldv_random_allocationless_scenario_callback_3_22(int (*arg0)(struct net_device * ) ,
+                                                      struct net_device *arg1 ) ;
+void ldv_random_allocationless_scenario_callback_3_23(int (*arg0)(struct net_device * ) ,
+                                                      struct net_device *arg1 ) ;
+void ldv_random_allocationless_scenario_callback_3_24(void (*arg0)(struct net_device * ,
+                                                                   u32 ) , struct net_device *arg1 ,
+                                                      unsigned int arg2 ) ;
+void ldv_random_allocationless_scenario_callback_3_27(int (*arg0)(struct net_device * ,
+                                                                  struct ethtool_cmd * ) ,
+                                                      struct net_device *arg1 , struct ethtool_cmd *arg2 ) ;
+void ldv_random_allocationless_scenario_callback_3_3(void (*arg0)(struct net_device * ,
+                                                                  struct ethtool_drvinfo * ) ,
+                                                     struct net_device *arg1 , struct ethtool_drvinfo *arg2 ) ;
+void ldv_random_allocationless_scenario_callback_3_8(u32 (*arg0)(struct net_device * ) ,
+                                                     struct net_device *arg1 ) ;
+void ldv_random_allocationless_scenario_callback_3_9(u32 (*arg0)(struct net_device * ) ,
+                                                     struct net_device *arg1 ) ;
+int ldv_register_netdev_open_12_6(int (*arg0)(struct net_device * ) , struct net_device *arg1 ) ;
+void ldv_unregister_netdev_stop_14_2(int (*arg0)(struct net_device * ) , struct net_device *arg1 ) ;
+int main(void) ;
+pthread_t ldv_thread_2 ;
+pthread_t ldv_thread_3 ;
+pthread_t ldv_thread_4 ;
+pthread_t ldv_thread_5 ;
+pthread_t ldv_thread_6 ;
+void ldv_dispatch_deregister_11_1(struct platform_driver *arg0 )
 {
   int ret ;
   {
@@ -7613,23 +7316,45 @@ void ldv_dispatch_insmod_deregister_10_2(void)
   return;
 }
 }
-void ldv_dispatch_insmod_register_10_3(void)
+void ldv_dispatch_deregister_14_1(struct net_device *arg0 )
 {
   int ret ;
-  struct ldv_struct_main_10 *cf_arg_4 ;
-  void *tmp ;
   {
   {
-  tmp = ldv_xmalloc(4UL);
-  cf_arg_4 = (struct ldv_struct_main_10 *)tmp;
-  ret = pthread_create(& ldv_thread_4, (pthread_attr_t const *)0, & ldv_insmod_4,
-                       (void *)cf_arg_4);
+  ret = pthread_join(ldv_thread_3, (void **)0);
   __VERIFIER_assume(ret == 0);
   }
   return;
 }
 }
-void ldv_dispatch_irq_deregister_5_1(int arg0 )
+void ldv_dispatch_insmod_deregister_15_2(void)
+{
+  int ret ;
+  {
+  {
+  ret = pthread_join(ldv_thread_6, (void **)0);
+  __VERIFIER_assume(ret == 0);
+  }
+  return;
+}
+}
+void ldv_dispatch_insmod_register_15_3(void)
+{
+  int ret ;
+  struct ldv_struct_platform_instance_4 *cf_arg_6 ;
+  void *tmp ;
+  {
+  {
+  tmp = ldv_xmalloc(16UL);
+  cf_arg_6 = (struct ldv_struct_platform_instance_4 *)tmp;
+  ret = pthread_create(& ldv_thread_6, (pthread_attr_t const *)0, & ldv_insmod_6,
+                       (void *)cf_arg_6);
+  __VERIFIER_assume(ret == 0);
+  }
+  return;
+}
+}
+void ldv_dispatch_irq_deregister_9_1(int arg0 )
 {
   int ret ;
   {
@@ -7640,8 +7365,8 @@ void ldv_dispatch_irq_deregister_5_1(int arg0 )
   return;
 }
 }
-void ldv_dispatch_irq_register_8_3(int arg0 , irqreturn_t (*arg1)(int , void * ) ,
-                                   irqreturn_t (*arg2)(int , void * ) , void *arg3 )
+void ldv_dispatch_irq_register_13_3(int arg0 , irqreturn_t (*arg1)(int , void * ) ,
+                                    irqreturn_t (*arg2)(int , void * ) , void *arg3 )
 {
   int ret ;
   struct ldv_struct_interrupt_scenario_2 *cf_arg_2 ;
@@ -7661,7 +7386,34 @@ void ldv_dispatch_irq_register_8_3(int arg0 , irqreturn_t (*arg1)(int , void * )
   return;
 }
 }
-void ldv_dispatch_register_7_4(struct net_device *arg0 )
+void ldv_dispatch_pm_deregister_4_5(void)
+{
+  int ret ;
+  {
+  {
+  ret = pthread_join(ldv_thread_5, (void **)0);
+  __VERIFIER_assume(ret == 0);
+  }
+  return;
+}
+}
+void ldv_dispatch_pm_register_4_6(void)
+{
+  int ret ;
+  struct ldv_struct_platform_instance_4 *cf_arg_5 ;
+  void *tmp ;
+  {
+  {
+  tmp = ldv_xmalloc(16UL);
+  cf_arg_5 = (struct ldv_struct_platform_instance_4 *)tmp;
+  ret = pthread_create(& ldv_thread_5, (pthread_attr_t const *)0, & ldv_pm_ops_scenario_5,
+                       (void *)cf_arg_5);
+  __VERIFIER_assume(ret == 0);
+  }
+  return;
+}
+}
+void ldv_dispatch_register_12_4(struct net_device *arg0 )
 {
   int ret ;
   struct ldv_struct_random_allocationless_scenario_3 *cf_arg_3 ;
@@ -7678,13 +7430,88 @@ void ldv_dispatch_register_7_4(struct net_device *arg0 )
   return;
 }
 }
+void ldv_dispatch_register_7_3(struct platform_driver *arg0 )
+{
+  int ret ;
+  struct ldv_struct_platform_instance_4 *cf_arg_4 ;
+  void *tmp ;
+  {
+  {
+  tmp = ldv_xmalloc(16UL);
+  cf_arg_4 = (struct ldv_struct_platform_instance_4 *)tmp;
+  cf_arg_4->arg0 = arg0;
+  ret = pthread_create(& ldv_thread_4, (pthread_attr_t const *)0, & ldv_platform_instance_4,
+                       (void *)cf_arg_4);
+  __VERIFIER_assume(ret == 0);
+  }
+  return;
+}
+}
+int ldv_emg___platform_driver_register(struct platform_driver *arg0 , struct module *arg1 )
+{
+  struct platform_driver *ldv_7_platform_driver_platform_driver ;
+  void *tmp ;
+  int tmp___0 ;
+  int tmp___1 ;
+  {
+  {
+  tmp = external_allocated_data();
+  ldv_7_platform_driver_platform_driver = (struct platform_driver *)tmp;
+  tmp___1 = ldv_undef_int();
+  }
+  if (tmp___1 != 0) {
+    {
+    ldv_7_platform_driver_platform_driver = arg0;
+    ldv_dispatch_register_7_3(ldv_7_platform_driver_platform_driver);
+    }
+    return (0);
+  } else {
+    {
+    tmp___0 = ldv_undef_int_negative();
+    }
+    return (tmp___0);
+  }
+}
+}
+struct net_device *ldv_emg_alloc_etherdev_mqs(int arg0 , unsigned int arg1 , unsigned int arg2 )
+{
+  struct net_device *ldv_8_netdev_net_device ;
+  unsigned long ldv_8_size_default ;
+  void *tmp ;
+  void *tmp___0 ;
+  int tmp___1 ;
+  {
+  {
+  tmp = external_allocated_data();
+  ldv_8_netdev_net_device = (struct net_device *)tmp;
+  tmp___1 = ldv_undef_int();
+  }
+  if (tmp___1 != 0) {
+    ldv_8_size_default = 3200UL;
+    if (arg0 != 0) {
+      ldv_8_size_default = (ldv_8_size_default + 31UL) & 0xffffffffffffffe0UL;
+      ldv_8_size_default = ldv_8_size_default + (unsigned long )arg0;
+    } else {
+    }
+    {
+    ldv_8_size_default = ldv_8_size_default + 31UL;
+    tmp___0 = kzalloc(ldv_8_size_default, 1744U);
+    ldv_8_netdev_net_device = (struct net_device *)tmp___0;
+    __VERIFIER_assume((int )((long )ldv_8_netdev_net_device));
+    }
+    return (ldv_8_netdev_net_device);
+  } else {
+    return ((struct net_device *)0);
+  }
+}
+}
 void ldv_emg_free_irq(int arg0 , void *arg1 )
 {
-  int ldv_5_line_line ;
+  int ldv_9_line_line ;
   {
   {
-  ldv_5_line_line = arg0;
-  ldv_dispatch_irq_deregister_5_1(ldv_5_line_line);
+  ldv_9_line_line = arg0;
+  ldv_dispatch_irq_deregister_9_1(ldv_9_line_line);
   }
   return;
   return;
@@ -7692,14 +7519,29 @@ void ldv_emg_free_irq(int arg0 , void *arg1 )
 }
 void ldv_emg_free_netdev(struct net_device *arg0 )
 {
-  struct net_device *ldv_6_netdev_net_device ;
+  struct net_device *ldv_10_netdev_net_device ;
   void *tmp ;
   {
   {
   tmp = external_allocated_data();
-  ldv_6_netdev_net_device = (struct net_device *)tmp;
-  ldv_6_netdev_net_device = arg0;
-  ldv_free((void *)ldv_6_netdev_net_device);
+  ldv_10_netdev_net_device = (struct net_device *)tmp;
+  ldv_10_netdev_net_device = arg0;
+  ldv_free((void *)ldv_10_netdev_net_device);
+  }
+  return;
+  return;
+}
+}
+void ldv_emg_platform_driver_unregister(struct platform_driver *arg0 )
+{
+  struct platform_driver *ldv_11_platform_driver_platform_driver ;
+  void *tmp ;
+  {
+  {
+  tmp = external_allocated_data();
+  ldv_11_platform_driver_platform_driver = (struct platform_driver *)tmp;
+  ldv_11_platform_driver_platform_driver = arg0;
+  ldv_dispatch_deregister_11_1(ldv_11_platform_driver_platform_driver);
   }
   return;
   return;
@@ -7707,8 +7549,8 @@ void ldv_emg_free_netdev(struct net_device *arg0 )
 }
 int ldv_emg_register_netdev(struct net_device *arg0 )
 {
-  struct net_device *ldv_7_netdev_net_device ;
-  int ldv_7_ret_default ;
+  struct net_device *ldv_12_netdev_net_device ;
+  int ldv_12_ret_default ;
   void *tmp ;
   int tmp___0 ;
   int tmp___1 ;
@@ -7717,26 +7559,26 @@ int ldv_emg_register_netdev(struct net_device *arg0 )
   {
   {
   tmp = external_allocated_data();
-  ldv_7_netdev_net_device = (struct net_device *)tmp;
-  ldv_7_ret_default = ldv_undef_int();
+  ldv_12_netdev_net_device = (struct net_device *)tmp;
+  ldv_12_ret_default = ldv_undef_int();
   tmp___3 = ldv_undef_int();
   }
   if (tmp___3 != 0) {
     {
-    ldv_7_netdev_net_device = arg0;
-    ldv_7_ret_default = ldv_register_netdev_open_7_6((ldv_7_netdev_net_device->netdev_ops)->ndo_open,
-                                                     ldv_7_netdev_net_device);
+    ldv_12_netdev_net_device = arg0;
+    ldv_12_ret_default = ldv_register_netdev_open_12_6((ldv_12_netdev_net_device->netdev_ops)->ndo_open,
+                                                       ldv_12_netdev_net_device);
     tmp___1 = ldv_undef_int();
     }
     if (tmp___1 != 0) {
       {
-      __VERIFIER_assume(ldv_7_ret_default == 0);
-      ldv_dispatch_register_7_4(ldv_7_netdev_net_device);
+      __VERIFIER_assume(ldv_12_ret_default == 0);
+      ldv_dispatch_register_12_4(ldv_12_netdev_net_device);
       }
       return (0);
     } else {
       {
-      __VERIFIER_assume(ldv_7_ret_default == 0);
+      __VERIFIER_assume(ldv_12_ret_default == 0);
       ldv_failed_register_netdev();
       tmp___0 = ldv_undef_int_negative();
       }
@@ -7754,10 +7596,10 @@ int ldv_emg_register_netdev(struct net_device *arg0 )
 int ldv_emg_request_irq(unsigned int arg0 , irqreturn_t (*arg1)(int , void * ) ,
                         unsigned long arg2 , char *arg3 , void *arg4 )
 {
-  irqreturn_t (*ldv_8_callback_handler)(int , void * ) ;
-  void *ldv_8_data_data ;
-  int ldv_8_line_line ;
-  irqreturn_t (*ldv_8_thread_thread)(int , void * ) ;
+  irqreturn_t (*ldv_13_callback_handler)(int , void * ) ;
+  void *ldv_13_data_data ;
+  int ldv_13_line_line ;
+  irqreturn_t (*ldv_13_thread_thread)(int , void * ) ;
   void *tmp ;
   void *tmp___0 ;
   int tmp___1 ;
@@ -7765,20 +7607,20 @@ int ldv_emg_request_irq(unsigned int arg0 , irqreturn_t (*arg1)(int , void * ) ,
   {
   {
   tmp = external_allocated_data();
-  ldv_8_callback_handler = (irqreturn_t (*)(int , void * ))tmp;
-  ldv_8_data_data = external_allocated_data();
+  ldv_13_callback_handler = (irqreturn_t (*)(int , void * ))tmp;
+  ldv_13_data_data = external_allocated_data();
   tmp___0 = external_allocated_data();
-  ldv_8_thread_thread = (irqreturn_t (*)(int , void * ))tmp___0;
+  ldv_13_thread_thread = (irqreturn_t (*)(int , void * ))tmp___0;
   tmp___2 = ldv_undef_int();
   }
   if (tmp___2 != 0) {
     {
-    ldv_8_line_line = (int )arg0;
-    ldv_8_callback_handler = arg1;
-    ldv_8_thread_thread = (irqreturn_t (*)(int , void * ))0;
-    ldv_8_data_data = arg4;
-    ldv_dispatch_irq_register_8_3(ldv_8_line_line, ldv_8_callback_handler, ldv_8_thread_thread,
-                                  ldv_8_data_data);
+    ldv_13_line_line = (int )arg0;
+    ldv_13_callback_handler = arg1;
+    ldv_13_thread_thread = (irqreturn_t (*)(int , void * ))0;
+    ldv_13_data_data = arg4;
+    ldv_dispatch_irq_register_13_3(ldv_13_line_line, ldv_13_callback_handler, ldv_13_thread_thread,
+                                   ldv_13_data_data);
     }
     return (0);
   } else {
@@ -7791,70 +7633,70 @@ int ldv_emg_request_irq(unsigned int arg0 , irqreturn_t (*arg1)(int , void * ) ,
 }
 void ldv_emg_unregister_netdev(struct net_device *arg0 )
 {
-  struct net_device *ldv_9_netdev_net_device ;
+  struct net_device *ldv_14_netdev_net_device ;
   void *tmp ;
   {
   {
   tmp = external_allocated_data();
-  ldv_9_netdev_net_device = (struct net_device *)tmp;
-  ldv_9_netdev_net_device = arg0;
-  ldv_unregister_netdev_stop_9_2((ldv_9_netdev_net_device->netdev_ops)->ndo_stop,
-                                 ldv_9_netdev_net_device);
-  ldv_dispatch_deregister_9_1(ldv_9_netdev_net_device);
+  ldv_14_netdev_net_device = (struct net_device *)tmp;
+  ldv_14_netdev_net_device = arg0;
+  ldv_unregister_netdev_stop_14_2((ldv_14_netdev_net_device->netdev_ops)->ndo_stop,
+                                  ldv_14_netdev_net_device);
+  ldv_dispatch_deregister_14_1(ldv_14_netdev_net_device);
   }
   return;
   return;
 }
 }
-void *ldv_insmod_4(void *arg0 )
+void *ldv_insmod_6(void *arg0 )
 {
-  int ldv_4_ret_default ;
-  void (*ldv_4_w83977af_cleanup_default)(void) ;
-  int (*ldv_4_w83977af_init_default)(void) ;
+  void (*ldv_6_ks8851_platform_driver_exit_default)(void) ;
+  int (*ldv_6_ks8851_platform_driver_init_default)(void) ;
+  int ldv_6_ret_default ;
   void *tmp ;
   void *tmp___0 ;
   int tmp___1 ;
   {
   {
   tmp = external_allocated_data();
-  ldv_4_w83977af_cleanup_default = (void (*)(void))tmp;
+  ldv_6_ks8851_platform_driver_exit_default = (void (*)(void))tmp;
   tmp___0 = external_allocated_data();
-  ldv_4_w83977af_init_default = (int (*)(void))tmp___0;
+  ldv_6_ks8851_platform_driver_init_default = (int (*)(void))tmp___0;
   ldv_free(arg0);
-  ldv_4_ret_default = ldv_insmod_w83977af_init_4_6(ldv_4_w83977af_init_default);
-  ldv_4_ret_default = ldv_post_init(ldv_4_ret_default);
+  ldv_6_ret_default = ldv_insmod_ks8851_platform_driver_init_6_6(ldv_6_ks8851_platform_driver_init_default);
+  ldv_6_ret_default = ldv_post_init(ldv_6_ret_default);
   tmp___1 = ldv_undef_int();
   }
   if (tmp___1 != 0) {
     {
-    __VERIFIER_assume(ldv_4_ret_default != 0);
+    __VERIFIER_assume(ldv_6_ret_default != 0);
     }
     return ((void *)0);
   } else {
     {
-    __VERIFIER_assume(ldv_4_ret_default == 0);
-    ldv_insmod_w83977af_cleanup_4_2(ldv_4_w83977af_cleanup_default);
+    __VERIFIER_assume(ldv_6_ret_default == 0);
+    ldv_insmod_ks8851_platform_driver_exit_6_2(ldv_6_ks8851_platform_driver_exit_default);
     }
     return ((void *)0);
   }
   return ((void *)0);
 }
 }
-void ldv_insmod_w83977af_cleanup_4_2(void (*arg0)(void) )
+void ldv_insmod_ks8851_platform_driver_exit_6_2(void (*arg0)(void) )
 {
   {
   {
-  w83977af_cleanup();
+  ks8851_platform_driver_exit();
   }
   return;
 }
 }
-int ldv_insmod_w83977af_init_4_6(int (*arg0)(void) )
+int ldv_insmod_ks8851_platform_driver_init_6_6(int (*arg0)(void) )
 {
   int tmp ;
   {
   {
-  tmp = w83977af_init();
+  tmp = ks8851_platform_driver_init();
   }
   return (tmp);
 }
@@ -7863,7 +7705,7 @@ void *ldv_interrupt_scenario_2(void *arg0 )
 {
   irqreturn_t (*ldv_2_callback_handler)(int , void * ) ;
   void *ldv_2_data_data ;
-  int ldv_2_line_line = ldv_undef_int() ;
+  int ldv_2_line_line ;
   enum irqreturn ldv_2_ret_val_default ;
   irqreturn_t (*ldv_2_thread_thread)(int , void * ) ;
   struct ldv_struct_interrupt_scenario_2 *data ;
@@ -7915,18 +7757,18 @@ enum irqreturn ldv_interrupt_scenario_handler_2_5(irqreturn_t (*arg0)(int , void
   irqreturn_t tmp ;
   {
   {
-  tmp = w83977af_interrupt(arg1, arg2);
+  tmp = ks_irq(arg1, arg2);
   }
   return (tmp);
 }
 }
-void *ldv_main_10(void *arg0 )
+void *ldv_main_15(void *arg0 )
 {
   {
   {
   ldv_initialize();
-  ldv_dispatch_insmod_register_10_3();
-  ldv_dispatch_insmod_deregister_10_2();
+  ldv_dispatch_insmod_register_15_3();
+  ldv_dispatch_insmod_deregister_15_2();
   ldv_check_final_state();
   __VERIFIER_assume(0);
   }
@@ -7934,14 +7776,252 @@ void *ldv_main_10(void *arg0 )
   return ((void *)0);
 }
 }
+void *ldv_platform_instance_4(void *arg0 )
+{
+  struct platform_driver *ldv_4_container_platform_driver ;
+  int ldv_4_probed_default ;
+  struct platform_device *ldv_4_resource_platform_device ;
+  struct ldv_struct_platform_instance_4 *data ;
+  void *tmp ;
+  void *tmp___0 ;
+  void *tmp___1 ;
+  int tmp___2 ;
+  int tmp___3 ;
+  int tmp___4 ;
+  {
+  {
+  data = (struct ldv_struct_platform_instance_4 *)arg0;
+  tmp = external_allocated_data();
+  ldv_4_container_platform_driver = (struct platform_driver *)tmp;
+  ldv_4_probed_default = ldv_undef_int();
+  tmp___0 = external_allocated_data();
+  ldv_4_resource_platform_device = (struct platform_device *)tmp___0;
+  }
+  if ((unsigned long )data != (unsigned long )((struct ldv_struct_platform_instance_4 *)0)) {
+    {
+    ldv_4_container_platform_driver = data->arg0;
+    ldv_free((void *)data);
+    }
+  } else {
+  }
+  {
+  tmp___1 = ldv_xmalloc(1432UL);
+  ldv_4_resource_platform_device = (struct platform_device *)tmp___1;
+  }
+  goto ldv_main_4;
+  return ((void *)0);
+  ldv_main_4:
+  {
+  tmp___3 = ldv_undef_int();
+  }
+  if (tmp___3 != 0) {
+    {
+    ldv_pre_probe();
+    ldv_4_probed_default = ldv_platform_instance_probe_4_14(ldv_4_container_platform_driver->probe,
+                                                            ldv_4_resource_platform_device);
+    ldv_4_probed_default = ldv_post_probe(ldv_4_probed_default);
+    tmp___2 = ldv_undef_int();
+    }
+    if (tmp___2 != 0) {
+      {
+      __VERIFIER_assume(ldv_4_probed_default == 0);
+      }
+      goto ldv_call_4;
+    } else {
+      {
+      __VERIFIER_assume(ldv_4_probed_default != 0);
+      }
+      goto ldv_main_4;
+    }
+  } else {
+    {
+    ldv_free((void *)ldv_4_resource_platform_device);
+    }
+    return ((void *)0);
+  }
+  return ((void *)0);
+  ldv_call_4:
+  {
+  tmp___4 = ldv_undef_int();
+  }
+  {
+  if (tmp___4 == 1) {
+    goto case_1;
+  } else {
+  }
+  if (tmp___4 == 2) {
+    goto case_2;
+  } else {
+  }
+  if (tmp___4 == 3) {
+    goto case_3;
+  } else {
+  }
+  goto switch_default;
+  case_1: ;
+  goto ldv_call_4;
+  case_2:
+  {
+  ldv_dispatch_pm_register_4_6();
+  ldv_dispatch_pm_deregister_4_5();
+  }
+  goto ldv_call_4;
+  case_3:
+  {
+  ldv_platform_instance_release_4_3(ldv_4_container_platform_driver->remove, ldv_4_resource_platform_device);
+  ldv_4_probed_default = 1;
+  }
+  goto ldv_main_4;
+  switch_default:
+  {
+  __VERIFIER_assume(0);
+  }
+  switch_break: ;
+  }
+  return ((void *)0);
+}
+}
+int ldv_platform_instance_probe_4_14(int (*arg0)(struct platform_device * ) , struct platform_device *arg1 )
+{
+  int tmp ;
+  {
+  {
+  tmp = ks8851_probe(arg1);
+  }
+  return (tmp);
+}
+}
+void ldv_platform_instance_release_4_3(int (*arg0)(struct platform_device * ) , struct platform_device *arg1 )
+{
+  {
+  {
+  ks8851_remove(arg1);
+  }
+  return;
+}
+}
+void *ldv_pm_ops_scenario_5(void *arg0 )
+{
+  struct device *ldv_5_device_device ;
+  struct dev_pm_ops *ldv_5_pm_ops_dev_pm_ops ;
+  void *tmp ;
+  void *tmp___0 ;
+  int tmp___1 ;
+  int tmp___2 ;
+  int tmp___3 ;
+  int tmp___4 ;
+  int tmp___5 ;
+  {
+  {
+  tmp = external_allocated_data();
+  ldv_5_device_device = (struct device *)tmp;
+  tmp___0 = external_allocated_data();
+  ldv_5_pm_ops_dev_pm_ops = (struct dev_pm_ops *)tmp___0;
+  ldv_free(arg0);
+  }
+  goto ldv_do_5;
+  return ((void *)0);
+  ldv_do_5:
+  {
+  tmp___1 = ldv_undef_int();
+  }
+  {
+  if (tmp___1 == 1) {
+    goto case_1;
+  } else {
+  }
+  if (tmp___1 == 2) {
+    goto case_2;
+  } else {
+  }
+  if (tmp___1 == 3) {
+    goto case_3;
+  } else {
+  }
+  if (tmp___1 == 4) {
+    goto case_4;
+  } else {
+  }
+  goto switch_default___0;
+  case_1: ;
+  goto ldv_do_5;
+  case_2: ;
+  goto ldv_do_5;
+  case_3:
+  {
+  tmp___2 = ldv_undef_int();
+  }
+  {
+  if (tmp___2 == 1) {
+    goto case_1___0;
+  } else {
+  }
+  if (tmp___2 == 2) {
+    goto case_2___0;
+  } else {
+  }
+  if (tmp___2 == 3) {
+    goto case_3___0;
+  } else {
+  }
+  goto switch_default;
+  case_1___0:
+  {
+  tmp___3 = ldv_undef_int();
+  }
+  goto ldv_43107;
+  case_2___0:
+  {
+  tmp___4 = ldv_undef_int();
+  }
+  goto ldv_43107;
+  case_3___0:
+  {
+  tmp___5 = ldv_undef_int();
+  }
+  goto ldv_43107;
+  switch_default:
+  {
+  __VERIFIER_assume(0);
+  }
+  switch_break___0: ;
+  }
+  ldv_43107: ;
+  goto ldv_do_5;
+  case_4: ;
+  return ((void *)0);
+  switch_default___0:
+  {
+  __VERIFIER_assume(0);
+  }
+  switch_break: ;
+  }
+  return ((void *)0);
+}
+}
 void *ldv_random_allocationless_scenario_3(void *arg0 )
 {
+  void (*ldv_3_callback_get_drvinfo)(struct net_device * , struct ethtool_drvinfo * ) ;
+  u32 (*ldv_3_callback_get_link)(struct net_device * ) ;
+  u32 (*ldv_3_callback_get_msglevel)(struct net_device * ) ;
+  int (*ldv_3_callback_get_settings)(struct net_device * , struct ethtool_cmd * ) ;
+  int (*ldv_3_callback_ndo_change_mtu)(struct net_device * , int ) ;
   int (*ldv_3_callback_ndo_do_ioctl)(struct net_device * , struct ifreq * , int ) ;
+  int (*ldv_3_callback_ndo_set_mac_address)(struct net_device * , void * ) ;
+  void (*ldv_3_callback_ndo_set_rx_mode)(struct net_device * ) ;
   netdev_tx_t (*ldv_3_callback_ndo_start_xmit)(struct sk_buff * , struct net_device * ) ;
+  int (*ldv_3_callback_ndo_validate_addr)(struct net_device * ) ;
+  int (*ldv_3_callback_nway_reset)(struct net_device * ) ;
+  void (*ldv_3_callback_set_msglevel)(struct net_device * , u32 ) ;
+  int (*ldv_3_callback_set_settings)(struct net_device * , struct ethtool_cmd * ) ;
   struct net_device *ldv_3_container_net_device ;
-  struct ifreq *ldv_3_ldv_param_3_1_default ;
-  int ldv_3_ldv_param_3_2_default = ldv_undef_int() ;
-  struct sk_buff *ldv_3_ldv_param_8_0_default ;
+  struct ethtool_cmd *ldv_3_container_struct_ethtool_cmd_ptr ;
+  int ldv_3_ldv_param_11_1_default ;
+  struct ifreq *ldv_3_ldv_param_14_1_default ;
+  int ldv_3_ldv_param_14_2_default ;
+  struct sk_buff *ldv_3_ldv_param_19_0_default ;
+  unsigned int ldv_3_ldv_param_24_1_default ;
+  struct ethtool_drvinfo *ldv_3_ldv_param_3_1_default ;
   struct ldv_struct_random_allocationless_scenario_3 *data ;
   void *tmp ;
   void *tmp___0 ;
@@ -7950,21 +8030,61 @@ void *ldv_random_allocationless_scenario_3(void *arg0 )
   void *tmp___3 ;
   void *tmp___4 ;
   void *tmp___5 ;
-  int tmp___6 ;
-  int tmp___7 ;
+  void *tmp___6 ;
+  void *tmp___7 ;
+  void *tmp___8 ;
+  void *tmp___9 ;
+  void *tmp___10 ;
+  void *tmp___11 ;
+  void *tmp___12 ;
+  void *tmp___13 ;
+  void *tmp___14 ;
+  void *tmp___15 ;
+  void *tmp___16 ;
+  void *tmp___17 ;
+  int tmp___18 ;
+  void *tmp___19 ;
+  void *tmp___20 ;
+  int tmp___21 ;
   {
   {
   data = (struct ldv_struct_random_allocationless_scenario_3 *)arg0;
   tmp = external_allocated_data();
-  ldv_3_callback_ndo_do_ioctl = (int (*)(struct net_device * , struct ifreq * , int ))tmp;
+  ldv_3_callback_get_drvinfo = (void (*)(struct net_device * , struct ethtool_drvinfo * ))tmp;
   tmp___0 = external_allocated_data();
-  ldv_3_callback_ndo_start_xmit = (netdev_tx_t (*)(struct sk_buff * , struct net_device * ))tmp___0;
+  ldv_3_callback_get_link = (u32 (*)(struct net_device * ))tmp___0;
   tmp___1 = external_allocated_data();
-  ldv_3_container_net_device = (struct net_device *)tmp___1;
+  ldv_3_callback_get_msglevel = (u32 (*)(struct net_device * ))tmp___1;
   tmp___2 = external_allocated_data();
-  ldv_3_ldv_param_3_1_default = (struct ifreq *)tmp___2;
+  ldv_3_callback_get_settings = (int (*)(struct net_device * , struct ethtool_cmd * ))tmp___2;
   tmp___3 = external_allocated_data();
-  ldv_3_ldv_param_8_0_default = (struct sk_buff *)tmp___3;
+  ldv_3_callback_ndo_change_mtu = (int (*)(struct net_device * , int ))tmp___3;
+  tmp___4 = external_allocated_data();
+  ldv_3_callback_ndo_do_ioctl = (int (*)(struct net_device * , struct ifreq * , int ))tmp___4;
+  tmp___5 = external_allocated_data();
+  ldv_3_callback_ndo_set_mac_address = (int (*)(struct net_device * , void * ))tmp___5;
+  tmp___6 = external_allocated_data();
+  ldv_3_callback_ndo_set_rx_mode = (void (*)(struct net_device * ))tmp___6;
+  tmp___7 = external_allocated_data();
+  ldv_3_callback_ndo_start_xmit = (netdev_tx_t (*)(struct sk_buff * , struct net_device * ))tmp___7;
+  tmp___8 = external_allocated_data();
+  ldv_3_callback_ndo_validate_addr = (int (*)(struct net_device * ))tmp___8;
+  tmp___9 = external_allocated_data();
+  ldv_3_callback_nway_reset = (int (*)(struct net_device * ))tmp___9;
+  tmp___10 = external_allocated_data();
+  ldv_3_callback_set_msglevel = (void (*)(struct net_device * , u32 ))tmp___10;
+  tmp___11 = external_allocated_data();
+  ldv_3_callback_set_settings = (int (*)(struct net_device * , struct ethtool_cmd * ))tmp___11;
+  tmp___12 = external_allocated_data();
+  ldv_3_container_net_device = (struct net_device *)tmp___12;
+  tmp___13 = external_allocated_data();
+  ldv_3_container_struct_ethtool_cmd_ptr = (struct ethtool_cmd *)tmp___13;
+  tmp___14 = external_allocated_data();
+  ldv_3_ldv_param_14_1_default = (struct ifreq *)tmp___14;
+  tmp___15 = external_allocated_data();
+  ldv_3_ldv_param_19_0_default = (struct sk_buff *)tmp___15;
+  tmp___16 = external_allocated_data();
+  ldv_3_ldv_param_3_1_default = (struct ethtool_drvinfo *)tmp___16;
   }
   if ((unsigned long )data != (unsigned long )((struct ldv_struct_random_allocationless_scenario_3 *)0)) {
     {
@@ -7977,31 +8097,158 @@ void *ldv_random_allocationless_scenario_3(void *arg0 )
   return ((void *)0);
   ldv_call_3:
   {
-  tmp___7 = ldv_undef_int();
+  tmp___21 = ldv_undef_int();
   }
-  if (tmp___7 != 0) {
+  if (tmp___21 != 0) {
     {
-    tmp___4 = ldv_xmalloc_unknown_size(0UL);
-    ldv_3_ldv_param_3_1_default = (struct ifreq *)tmp___4;
-    tmp___6 = ldv_undef_int();
+    tmp___17 = ldv_xmalloc_unknown_size(0UL);
+    ldv_3_ldv_param_3_1_default = (struct ethtool_drvinfo *)tmp___17;
+    tmp___18 = ldv_undef_int();
     }
-    if (tmp___6 != 0) {
-      {
-      tmp___5 = ldv_xmalloc_unknown_size(0UL);
-      ldv_3_ldv_param_8_0_default = (struct sk_buff *)tmp___5;
-      ldv_random_allocationless_scenario_callback_3_8(ldv_3_callback_ndo_start_xmit,
-                                                      ldv_3_ldv_param_8_0_default,
-                                                      ldv_3_container_net_device);
-      ldv_free((void *)ldv_3_ldv_param_8_0_default);
-      }
+    {
+    if (tmp___18 == 1) {
+      goto case_1;
     } else {
-      {
-      ldv_random_allocationless_scenario_callback_3_3(ldv_3_callback_ndo_do_ioctl,
-                                                      ldv_3_container_net_device,
-                                                      ldv_3_ldv_param_3_1_default,
-                                                      ldv_3_ldv_param_3_2_default);
-      }
     }
+    if (tmp___18 == 2) {
+      goto case_2;
+    } else {
+    }
+    if (tmp___18 == 3) {
+      goto case_3;
+    } else {
+    }
+    if (tmp___18 == 4) {
+      goto case_4;
+    } else {
+    }
+    if (tmp___18 == 5) {
+      goto case_5;
+    } else {
+    }
+    if (tmp___18 == 6) {
+      goto case_6;
+    } else {
+    }
+    if (tmp___18 == 7) {
+      goto case_7;
+    } else {
+    }
+    if (tmp___18 == 8) {
+      goto case_8;
+    } else {
+    }
+    if (tmp___18 == 9) {
+      goto case_9;
+    } else {
+    }
+    if (tmp___18 == 10) {
+      goto case_10;
+    } else {
+    }
+    if (tmp___18 == 11) {
+      goto case_11;
+    } else {
+    }
+    if (tmp___18 == 12) {
+      goto case_12;
+    } else {
+    }
+    if (tmp___18 == 13) {
+      goto case_13;
+    } else {
+    }
+    goto switch_default;
+    case_1:
+    {
+    ldv_random_allocationless_scenario_callback_3_27(ldv_3_callback_set_settings,
+                                                     ldv_3_container_net_device, ldv_3_container_struct_ethtool_cmd_ptr);
+    }
+    goto ldv_43162;
+    case_2:
+    {
+    ldv_random_allocationless_scenario_callback_3_24(ldv_3_callback_set_msglevel,
+                                                     ldv_3_container_net_device, ldv_3_ldv_param_24_1_default);
+    }
+    goto ldv_43162;
+    case_3:
+    {
+    ldv_random_allocationless_scenario_callback_3_23(ldv_3_callback_nway_reset, ldv_3_container_net_device);
+    }
+    goto ldv_43162;
+    case_4:
+    {
+    ldv_random_allocationless_scenario_callback_3_22(ldv_3_callback_ndo_validate_addr,
+                                                     ldv_3_container_net_device);
+    }
+    goto ldv_43162;
+    case_5:
+    {
+    tmp___19 = ldv_xmalloc_unknown_size(0UL);
+    ldv_3_ldv_param_19_0_default = (struct sk_buff *)tmp___19;
+    ldv_random_allocationless_scenario_callback_3_19(ldv_3_callback_ndo_start_xmit,
+                                                     ldv_3_ldv_param_19_0_default,
+                                                     ldv_3_container_net_device);
+    ldv_free((void *)ldv_3_ldv_param_19_0_default);
+    }
+    goto ldv_43162;
+    case_6:
+    {
+    ldv_random_allocationless_scenario_callback_3_18(ldv_3_callback_ndo_set_rx_mode,
+                                                     ldv_3_container_net_device);
+    }
+    goto ldv_43162;
+    case_7:
+    {
+    ldv_random_allocationless_scenario_callback_3_17(ldv_3_callback_ndo_set_mac_address,
+                                                     ldv_3_container_net_device, (void *)ldv_3_container_struct_ethtool_cmd_ptr);
+    }
+    goto ldv_43162;
+    case_8:
+    {
+    tmp___20 = ldv_xmalloc_unknown_size(0UL);
+    ldv_3_ldv_param_14_1_default = (struct ifreq *)tmp___20;
+    ldv_random_allocationless_scenario_callback_3_14(ldv_3_callback_ndo_do_ioctl,
+                                                     ldv_3_container_net_device, ldv_3_ldv_param_14_1_default,
+                                                     ldv_3_ldv_param_14_2_default);
+    ldv_free((void *)ldv_3_ldv_param_14_1_default);
+    }
+    goto ldv_43162;
+    case_9:
+    {
+    ldv_random_allocationless_scenario_callback_3_11(ldv_3_callback_ndo_change_mtu,
+                                                     ldv_3_container_net_device, ldv_3_ldv_param_11_1_default);
+    }
+    goto ldv_43162;
+    case_10:
+    {
+    ldv_random_allocationless_scenario_callback_3_10(ldv_3_callback_get_settings,
+                                                     ldv_3_container_net_device, ldv_3_container_struct_ethtool_cmd_ptr);
+    }
+    goto ldv_43162;
+    case_11:
+    {
+    ldv_random_allocationless_scenario_callback_3_9(ldv_3_callback_get_msglevel, ldv_3_container_net_device);
+    }
+    goto ldv_43162;
+    case_12:
+    {
+    ldv_random_allocationless_scenario_callback_3_8(ldv_3_callback_get_link, ldv_3_container_net_device);
+    }
+    goto ldv_43162;
+    case_13:
+    {
+    ldv_random_allocationless_scenario_callback_3_3(ldv_3_callback_get_drvinfo, ldv_3_container_net_device,
+                                                    ldv_3_ldv_param_3_1_default);
+    }
+    goto ldv_43162;
+    switch_default:
+    {
+    __VERIFIER_assume(0);
+    }
+    switch_break: ;
+    }
+    ldv_43162:
     {
     ldv_free((void *)ldv_3_ldv_param_3_1_default);
     }
@@ -8012,44 +8259,160 @@ void *ldv_random_allocationless_scenario_3(void *arg0 )
   return ((void *)0);
 }
 }
-void ldv_random_allocationless_scenario_callback_3_3(int (*arg0)(struct net_device * ,
-                                                                 struct ifreq * ,
-                                                                 int ) , struct net_device *arg1 ,
-                                                     struct ifreq *arg2 , int arg3 )
+void ldv_random_allocationless_scenario_callback_3_10(int (*arg0)(struct net_device * ,
+                                                                  struct ethtool_cmd * ) ,
+                                                      struct net_device *arg1 , struct ethtool_cmd *arg2 )
 {
   {
   {
-  w83977af_net_ioctl(arg1, arg2, arg3);
+  ks_get_settings(arg1, arg2);
   }
   return;
 }
 }
-void ldv_random_allocationless_scenario_callback_3_8(netdev_tx_t (*arg0)(struct sk_buff * ,
-                                                                         struct net_device * ) ,
-                                                     struct sk_buff *arg1 , struct net_device *arg2 )
+void ldv_random_allocationless_scenario_callback_3_11(int (*arg0)(struct net_device * ,
+                                                                  int ) , struct net_device *arg1 ,
+                                                      int arg2 )
 {
   {
   {
-  w83977af_hard_xmit(arg1, arg2);
+  eth_change_mtu(arg1, arg2);
   }
   return;
 }
 }
-int ldv_register_netdev_open_7_6(int (*arg0)(struct net_device * ) , struct net_device *arg1 )
+void ldv_random_allocationless_scenario_callback_3_14(int (*arg0)(struct net_device * ,
+                                                                  struct ifreq * ,
+                                                                  int ) , struct net_device *arg1 ,
+                                                      struct ifreq *arg2 , int arg3 )
+{
+  {
+  {
+  ks_net_ioctl(arg1, arg2, arg3);
+  }
+  return;
+}
+}
+void ldv_random_allocationless_scenario_callback_3_17(int (*arg0)(struct net_device * ,
+                                                                  void * ) , struct net_device *arg1 ,
+                                                      void *arg2 )
+{
+  {
+  {
+  ks_set_mac_address(arg1, arg2);
+  }
+  return;
+}
+}
+void ldv_random_allocationless_scenario_callback_3_18(void (*arg0)(struct net_device * ) ,
+                                                      struct net_device *arg1 )
+{
+  {
+  {
+  ks_set_rx_mode(arg1);
+  }
+  return;
+}
+}
+void ldv_random_allocationless_scenario_callback_3_19(netdev_tx_t (*arg0)(struct sk_buff * ,
+                                                                          struct net_device * ) ,
+                                                      struct sk_buff *arg1 , struct net_device *arg2 )
+{
+  {
+  {
+  ks_start_xmit(arg1, arg2);
+  }
+  return;
+}
+}
+void ldv_random_allocationless_scenario_callback_3_22(int (*arg0)(struct net_device * ) ,
+                                                      struct net_device *arg1 )
+{
+  {
+  {
+  eth_validate_addr(arg1);
+  }
+  return;
+}
+}
+void ldv_random_allocationless_scenario_callback_3_23(int (*arg0)(struct net_device * ) ,
+                                                      struct net_device *arg1 )
+{
+  {
+  {
+  ks_nway_reset(arg1);
+  }
+  return;
+}
+}
+void ldv_random_allocationless_scenario_callback_3_24(void (*arg0)(struct net_device * ,
+                                                                   u32 ) , struct net_device *arg1 ,
+                                                      unsigned int arg2 )
+{
+  {
+  {
+  ks_set_msglevel(arg1, arg2);
+  }
+  return;
+}
+}
+void ldv_random_allocationless_scenario_callback_3_27(int (*arg0)(struct net_device * ,
+                                                                  struct ethtool_cmd * ) ,
+                                                      struct net_device *arg1 , struct ethtool_cmd *arg2 )
+{
+  {
+  {
+  ks_set_settings(arg1, arg2);
+  }
+  return;
+}
+}
+void ldv_random_allocationless_scenario_callback_3_3(void (*arg0)(struct net_device * ,
+                                                                  struct ethtool_drvinfo * ) ,
+                                                     struct net_device *arg1 , struct ethtool_drvinfo *arg2 )
+{
+  {
+  {
+  ks_get_drvinfo(arg1, arg2);
+  }
+  return;
+}
+}
+void ldv_random_allocationless_scenario_callback_3_8(u32 (*arg0)(struct net_device * ) ,
+                                                     struct net_device *arg1 )
+{
+  {
+  {
+  ks_get_link(arg1);
+  }
+  return;
+}
+}
+void ldv_random_allocationless_scenario_callback_3_9(u32 (*arg0)(struct net_device * ) ,
+                                                     struct net_device *arg1 )
+{
+  {
+  {
+  ks_get_msglevel(arg1);
+  }
+  return;
+}
+}
+int ldv_register_netdev_open_12_6(int (*arg0)(struct net_device * ) , struct net_device *arg1 )
 {
   int tmp ;
   {
   {
-  tmp = w83977af_net_open(arg1);
+  tmp = ks_net_open(arg1);
   }
   return (tmp);
 }
 }
-void ldv_unregister_netdev_stop_9_2(int (*arg0)(struct net_device * ) , struct net_device *arg1 )
+void ldv_unregister_netdev_stop_14_2(int (*arg0)(struct net_device * ) , struct net_device *arg1 )
 {
   {
   {
-  w83977af_net_close(arg1);
+  ks_net_stop(arg1);
   }
   return;
 }
@@ -8058,12 +8421,149 @@ int main(void)
 {
   {
   {
-  ldv_main_10((void *)0);
+  ldv_main_15((void *)0);
   }
   return (0);
 }
 }
-static int ldv_register_netdev_71(struct net_device *ldv_func_arg1 )
+__inline static void *kzalloc(size_t size , gfp_t flags )
+{
+  void *tmp ;
+  {
+  {
+  tmp = ldv_kzalloc(size, flags);
+  }
+  return (tmp);
+}
+}
+static void *ldv_dev_get_drvdata_65(struct device const *dev )
+{
+  void *tmp ;
+  {
+  {
+  tmp = ldv_dev_get_drvdata(dev);
+  }
+  return (tmp);
+}
+}
+static int ldv_dev_set_drvdata_66(struct device *dev , void *data )
+{
+  int tmp ;
+  {
+  {
+  tmp = ldv_dev_set_drvdata(dev, data);
+  }
+  return (tmp);
+}
+}
+__inline static int ldv_request_irq_67(unsigned int irq , irqreturn_t (*handler)(int ,
+                                                                                 void * ) ,
+                                       unsigned long flags , char const *name ,
+                                       void *dev )
+{
+  int tmp ;
+  {
+  {
+  tmp = ldv_emg_request_irq(irq, handler, flags, (char *)name, dev);
+  }
+  return (tmp);
+}
+}
+static void ldv_mutex_lock_68(struct mutex *ldv_func_arg1 )
+{
+  {
+  {
+  ldv_mutex_lock_lock_of_ks_net(ldv_func_arg1);
+  }
+  return;
+}
+}
+static void ldv_free_irq_69(unsigned int ldv_func_arg1 , void *ldv_func_arg2 )
+{
+  {
+  {
+  ldv_emg_free_irq((int )ldv_func_arg1, ldv_func_arg2);
+  }
+  return;
+}
+}
+static void ldv_mutex_unlock_70(struct mutex *ldv_func_arg1 )
+{
+  {
+  {
+  ldv_mutex_unlock_lock_of_ks_net(ldv_func_arg1);
+  }
+  return;
+}
+}
+__inline static void ldv_spin_lock_71(spinlock_t *lock )
+{
+  {
+  {
+  ldv_spin_lock_statelock_of_ks_net();
+  spin_lock(lock);
+  }
+  return;
+}
+}
+__inline static void ldv_spin_unlock_72(spinlock_t *lock )
+{
+  {
+  {
+  ldv_spin_unlock_statelock_of_ks_net();
+  spin_unlock(lock);
+  }
+  return;
+}
+}
+static void ldv_mutex_lock_73(struct mutex *ldv_func_arg1 )
+{
+  {
+  {
+  ldv_mutex_lock_lock_of_ks_net(ldv_func_arg1);
+  }
+  return;
+}
+}
+static void ldv_mutex_unlock_74(struct mutex *ldv_func_arg1 )
+{
+  {
+  {
+  ldv_mutex_unlock_lock_of_ks_net(ldv_func_arg1);
+  }
+  return;
+}
+}
+static void ldv_mutex_lock_75(struct mutex *ldv_func_arg1 )
+{
+  {
+  {
+  ldv_mutex_lock_lock_of_ks_net(ldv_func_arg1);
+  }
+  return;
+}
+}
+static void ldv_mutex_unlock_76(struct mutex *ldv_func_arg1 )
+{
+  {
+  {
+  ldv_mutex_unlock_lock_of_ks_net(ldv_func_arg1);
+  }
+  return;
+}
+}
+static struct net_device *ldv_alloc_etherdev_mqs_77(int ldv_func_arg1 , unsigned int ldv_func_arg2 ,
+                                                    unsigned int ldv_func_arg3 )
+{
+  struct net_device *tmp ;
+  {
+  {
+  tmp = ldv_emg_alloc_etherdev_mqs(ldv_func_arg1, ldv_func_arg2, ldv_func_arg3);
+  }
+  return (tmp);
+}
+}
+static int ldv_register_netdev_78(struct net_device *ldv_func_arg1 )
 {
   int tmp ;
   {
@@ -8073,16 +8573,7 @@ static int ldv_register_netdev_71(struct net_device *ldv_func_arg1 )
   return (tmp);
 }
 }
-static void ldv_free_netdev_72(struct net_device *ldv_func_arg1 )
-{
-  {
-  {
-  ldv_emg_free_netdev(ldv_func_arg1);
-  }
-  return;
-}
-}
-static void ldv_unregister_netdev_73(struct net_device *ldv_func_arg1 )
+static void ldv_unregister_netdev_79(struct net_device *ldv_func_arg1 )
 {
   {
   {
@@ -8091,7 +8582,7 @@ static void ldv_unregister_netdev_73(struct net_device *ldv_func_arg1 )
   return;
 }
 }
-static void ldv_free_netdev_74(struct net_device *ldv_func_arg1 )
+static void ldv_free_netdev_80(struct net_device *ldv_func_arg1 )
 {
   {
   {
@@ -8100,53 +8591,40 @@ static void ldv_free_netdev_74(struct net_device *ldv_func_arg1 )
   return;
 }
 }
-__inline static int ldv_request_irq_75(unsigned int irq___0 , irqreturn_t (*handler)(int ,
-                                                                                     void * ) ,
-                                       unsigned long flags , char const *name ,
-                                       void *dev )
+static void ldv_unregister_netdev_81(struct net_device *ldv_func_arg1 )
+{
+  {
+  {
+  ldv_emg_unregister_netdev(ldv_func_arg1);
+  }
+  return;
+}
+}
+static void ldv_free_netdev_82(struct net_device *ldv_func_arg1 )
+{
+  {
+  {
+  ldv_emg_free_netdev(ldv_func_arg1);
+  }
+  return;
+}
+}
+static int ldv___platform_driver_register_83(struct platform_driver *ldv_func_arg1 ,
+                                             struct module *ldv_func_arg2 )
 {
   int tmp ;
   {
   {
-  tmp = ldv_emg_request_irq(irq___0, handler, flags, (char *)name, dev);
+  tmp = ldv_emg___platform_driver_register(ldv_func_arg1, ldv_func_arg2);
   }
   return (tmp);
 }
 }
-static void ldv_free_irq_76(unsigned int ldv_func_arg1 , void *ldv_func_arg2 )
+static void ldv_platform_driver_unregister_84(struct platform_driver *ldv_func_arg1 )
 {
   {
   {
-  ldv_emg_free_irq((int )ldv_func_arg1, ldv_func_arg2);
-  }
-  return;
-}
-}
-static void ldv_free_irq_77(unsigned int ldv_func_arg1 , void *ldv_func_arg2 )
-{
-  {
-  {
-  ldv_emg_free_irq((int )ldv_func_arg1, ldv_func_arg2);
-  }
-  return;
-}
-}
-static void ldv___ldv_spin_lock_78(spinlock_t *ldv_func_arg1 )
-{
-  {
-  {
-  ldv_spin_lock_lock_of_w83977af_ir();
-  __ldv_spin_lock(ldv_func_arg1);
-  }
-  return;
-}
-}
-__inline static void ldv_spin_unlock_irqrestore_79(spinlock_t *lock , unsigned long flags )
-{
-  {
-  {
-  ldv_spin_unlock_lock_of_w83977af_ir();
-  spin_unlock_irqrestore(lock, flags);
+  ldv_emg_platform_driver_unregister(ldv_func_arg1);
   }
   return;
 }
@@ -8232,7 +8710,6 @@ long ldv_is_err_or_null(void const *ptr )
   return ((long )tmp___0);
 }
 }
-int ldv_post_probe(int probe_ret_val ) ;
 int ldv_filter_err_code(int ret_val ) ;
 static int ldv_filter_positive_int(int val )
 {
@@ -8287,13 +8764,14 @@ void *ldv_kzalloc(size_t size , gfp_t flags )
   return (res);
 }
 }
-long ldv__builtin_expect(long exp , long c )
+void ldv_assert(char const *desc , int expr ) ;
+long __builtin_expect(long exp , long c )
 {
   {
   return (exp);
 }
 }
-void ldv__builtin_trap(void)
+void __builtin_trap(void)
 {
   {
   {
@@ -8310,7 +8788,6 @@ void *ldv_zalloc_unknown_size(void) ;
 extern void *malloc(size_t ) ;
 extern void *calloc(size_t , size_t ) ;
 extern void free(void * ) ;
-extern void *memset(void * , int , size_t ) ;
 void *ldv_malloc(size_t size )
 {
   void *res ;
@@ -8619,7 +9096,7 @@ void ldv_mutex_unlock_i_mutex_of_inode(struct mutex *lock )
 {
   {
   {
-  pthread_mutex_unlock(& pmutex_i_mutex_of_inode);
+  pthread_mutex_lock(& pmutex_i_mutex_of_inode);
   }
   return;
 }
@@ -8693,7 +9170,81 @@ void ldv_mutex_unlock_lock(struct mutex *lock )
 {
   {
   {
-  pthread_mutex_unlock(& pmutex_lock);
+  pthread_mutex_lock(& pmutex_lock);
+  }
+  return;
+}
+}
+pthread_mutex_t pmutex_lock_of_ks_net ;
+void ldv_mutex_lock_lock_of_ks_net(struct mutex *lock )
+{
+  {
+  {
+  pthread_mutex_lock(& pmutex_lock_of_ks_net);
+  }
+  return;
+}
+}
+int ldv_mutex_lock_interruptible_or_killable_lock_of_ks_net(struct mutex *lock )
+{
+  int tmp ;
+  {
+  {
+  tmp = ldv_undef_int();
+  }
+  if (tmp != 0) {
+    {
+    pthread_mutex_lock(& pmutex_lock_of_ks_net);
+    }
+    return (0);
+  } else {
+    return (-4);
+  }
+}
+}
+int ldv_mutex_is_locked_lock_of_ks_net(struct mutex *lock )
+{
+  int tmp ;
+  {
+  {
+  tmp = ldv_undef_int();
+  }
+  if (tmp != 0) {
+    return (1);
+  } else {
+    return (0);
+  }
+}
+}
+int ldv_mutex_trylock_lock_of_ks_net(struct mutex *lock )
+{
+  int tmp ;
+  {
+  {
+  tmp = pthread_mutex_trylock(& pmutex_lock_of_ks_net);
+  }
+  return (tmp);
+}
+}
+int ldv_atomic_dec_and_mutex_lock_lock_of_ks_net(atomic_t *cnt , struct mutex *lock )
+{
+  {
+  cnt->counter = cnt->counter - 1;
+  if (cnt->counter != 0) {
+    return (0);
+  } else {
+    {
+    pthread_mutex_lock(& pmutex_lock_of_ks_net);
+    }
+    return (1);
+  }
+}
+}
+void ldv_mutex_unlock_lock_of_ks_net(struct mutex *lock )
+{
+  {
+  {
+  pthread_mutex_lock(& pmutex_lock_of_ks_net);
   }
   return;
 }
@@ -8767,7 +9318,7 @@ void ldv_mutex_unlock_mutex_of_device(struct mutex *lock )
 {
   {
   {
-  pthread_mutex_unlock(& pmutex_mutex_of_device);
+  pthread_mutex_lock(& pmutex_mutex_of_device);
   }
   return;
 }
@@ -8797,96 +9348,6 @@ void ldv_assert(char const *desc , int expr )
 }
 }
 extern int pthread_mutex_unlock(pthread_mutex_t * ) ;
-pthread_mutex_t smutex_NOT_ARG_SIGN ;
-void ldv_spin_lock_NOT_ARG_SIGN(void)
-{
-  {
-  {
-  pthread_mutex_lock(& smutex_NOT_ARG_SIGN);
-  }
-  return;
-}
-}
-void ldv_spin_unlock_NOT_ARG_SIGN(void)
-{
-  {
-  {
-  pthread_mutex_unlock(& smutex_NOT_ARG_SIGN);
-  }
-  return;
-}
-}
-int ldv_spin_trylock_NOT_ARG_SIGN(void)
-{
-  int tmp ;
-  {
-  {
-  tmp = pthread_mutex_trylock(& smutex_NOT_ARG_SIGN);
-  }
-  return (tmp);
-}
-}
-void ldv_spin_unlock_wait_NOT_ARG_SIGN(void)
-{
-  {
-  return;
-}
-}
-int ldv_spin_is_locked_NOT_ARG_SIGN(void)
-{
-  int tmp ;
-  {
-  {
-  tmp = ldv_undef_int();
-  }
-  if (tmp != 0) {
-    return (1);
-  } else {
-    return (0);
-  }
-}
-}
-int ldv_spin_can_lock_NOT_ARG_SIGN(void)
-{
-  int tmp ;
-  {
-  {
-  tmp = ldv_spin_is_locked_NOT_ARG_SIGN();
-  }
-  return (tmp == 0);
-}
-}
-int ldv_spin_is_contended_NOT_ARG_SIGN(void)
-{
-  int is_spin_contended ;
-  {
-  {
-  is_spin_contended = ldv_undef_int();
-  }
-  if (is_spin_contended != 0) {
-    return (0);
-  } else {
-    return (1);
-  }
-}
-}
-int ldv_atomic_dec_and_lock_NOT_ARG_SIGN(void)
-{
-  int atomic_value_after_dec ;
-  {
-  {
-  atomic_value_after_dec = ldv_undef_int();
-  }
-  if (atomic_value_after_dec == 0) {
-    {
-    ldv_spin_lock_NOT_ARG_SIGN();
-    }
-    return (1);
-  } else {
-  }
-  return (0);
-}
-}
 pthread_mutex_t smutex__xmit_lock_of_netdev_queue ;
 void ldv_spin_lock__xmit_lock_of_netdev_queue(void)
 {
@@ -9157,96 +9618,6 @@ int ldv_atomic_dec_and_lock_alloc_lock_of_task_struct(void)
   return (0);
 }
 }
-pthread_mutex_t smutex_dma_spin_lock ;
-void ldv_spin_lock_dma_spin_lock(void)
-{
-  {
-  {
-  pthread_mutex_lock(& smutex_dma_spin_lock);
-  }
-  return;
-}
-}
-void ldv_spin_unlock_dma_spin_lock(void)
-{
-  {
-  {
-  pthread_mutex_unlock(& smutex_dma_spin_lock);
-  }
-  return;
-}
-}
-int ldv_spin_trylock_dma_spin_lock(void)
-{
-  int tmp ;
-  {
-  {
-  tmp = pthread_mutex_trylock(& smutex_dma_spin_lock);
-  }
-  return (tmp);
-}
-}
-void ldv_spin_unlock_wait_dma_spin_lock(void)
-{
-  {
-  return;
-}
-}
-int ldv_spin_is_locked_dma_spin_lock(void)
-{
-  int tmp ;
-  {
-  {
-  tmp = ldv_undef_int();
-  }
-  if (tmp != 0) {
-    return (1);
-  } else {
-    return (0);
-  }
-}
-}
-int ldv_spin_can_lock_dma_spin_lock(void)
-{
-  int tmp ;
-  {
-  {
-  tmp = ldv_spin_is_locked_dma_spin_lock();
-  }
-  return (tmp == 0);
-}
-}
-int ldv_spin_is_contended_dma_spin_lock(void)
-{
-  int is_spin_contended ;
-  {
-  {
-  is_spin_contended = ldv_undef_int();
-  }
-  if (is_spin_contended != 0) {
-    return (0);
-  } else {
-    return (1);
-  }
-}
-}
-int ldv_atomic_dec_and_lock_dma_spin_lock(void)
-{
-  int atomic_value_after_dec ;
-  {
-  {
-  atomic_value_after_dec = ldv_undef_int();
-  }
-  if (atomic_value_after_dec == 0) {
-    {
-    ldv_spin_lock_dma_spin_lock();
-    }
-    return (1);
-  } else {
-  }
-  return (0);
-}
-}
 pthread_mutex_t smutex_i_lock_of_inode ;
 void ldv_spin_lock_i_lock_of_inode(void)
 {
@@ -9510,96 +9881,6 @@ int ldv_atomic_dec_and_lock_lock_of_NOT_ARG_SIGN(void)
   if (atomic_value_after_dec == 0) {
     {
     ldv_spin_lock_lock_of_NOT_ARG_SIGN();
-    }
-    return (1);
-  } else {
-  }
-  return (0);
-}
-}
-pthread_mutex_t smutex_lock_of_w83977af_ir ;
-void ldv_spin_lock_lock_of_w83977af_ir(void)
-{
-  {
-  {
-  pthread_mutex_lock(& smutex_lock_of_w83977af_ir);
-  }
-  return;
-}
-}
-void ldv_spin_unlock_lock_of_w83977af_ir(void)
-{
-  {
-  {
-  pthread_mutex_unlock(& smutex_lock_of_w83977af_ir);
-  }
-  return;
-}
-}
-int ldv_spin_trylock_lock_of_w83977af_ir(void)
-{
-  int tmp ;
-  {
-  {
-  tmp = pthread_mutex_trylock(& smutex_lock_of_w83977af_ir);
-  }
-  return (tmp);
-}
-}
-void ldv_spin_unlock_wait_lock_of_w83977af_ir(void)
-{
-  {
-  return;
-}
-}
-int ldv_spin_is_locked_lock_of_w83977af_ir(void)
-{
-  int tmp ;
-  {
-  {
-  tmp = ldv_undef_int();
-  }
-  if (tmp != 0) {
-    return (1);
-  } else {
-    return (0);
-  }
-}
-}
-int ldv_spin_can_lock_lock_of_w83977af_ir(void)
-{
-  int tmp ;
-  {
-  {
-  tmp = ldv_spin_is_locked_lock_of_w83977af_ir();
-  }
-  return (tmp == 0);
-}
-}
-int ldv_spin_is_contended_lock_of_w83977af_ir(void)
-{
-  int is_spin_contended ;
-  {
-  {
-  is_spin_contended = ldv_undef_int();
-  }
-  if (is_spin_contended != 0) {
-    return (0);
-  } else {
-    return (1);
-  }
-}
-}
-int ldv_atomic_dec_and_lock_lock_of_w83977af_ir(void)
-{
-  int atomic_value_after_dec ;
-  {
-  {
-  atomic_value_after_dec = ldv_undef_int();
-  }
-  if (atomic_value_after_dec == 0) {
-    {
-    ldv_spin_lock_lock_of_w83977af_ir();
     }
     return (1);
   } else {
@@ -9967,6 +10248,96 @@ int ldv_atomic_dec_and_lock_siglock_of_sighand_struct(void)
   return (0);
 }
 }
+pthread_mutex_t smutex_statelock_of_ks_net ;
+void ldv_spin_lock_statelock_of_ks_net(void)
+{
+  {
+  {
+  pthread_mutex_lock(& smutex_statelock_of_ks_net);
+  }
+  return;
+}
+}
+void ldv_spin_unlock_statelock_of_ks_net(void)
+{
+  {
+  {
+  pthread_mutex_unlock(& smutex_statelock_of_ks_net);
+  }
+  return;
+}
+}
+int ldv_spin_trylock_statelock_of_ks_net(void)
+{
+  int tmp ;
+  {
+  {
+  tmp = pthread_mutex_trylock(& smutex_statelock_of_ks_net);
+  }
+  return (tmp);
+}
+}
+void ldv_spin_unlock_wait_statelock_of_ks_net(void)
+{
+  {
+  return;
+}
+}
+int ldv_spin_is_locked_statelock_of_ks_net(void)
+{
+  int tmp ;
+  {
+  {
+  tmp = ldv_undef_int();
+  }
+  if (tmp != 0) {
+    return (1);
+  } else {
+    return (0);
+  }
+}
+}
+int ldv_spin_can_lock_statelock_of_ks_net(void)
+{
+  int tmp ;
+  {
+  {
+  tmp = ldv_spin_is_locked_statelock_of_ks_net();
+  }
+  return (tmp == 0);
+}
+}
+int ldv_spin_is_contended_statelock_of_ks_net(void)
+{
+  int is_spin_contended ;
+  {
+  {
+  is_spin_contended = ldv_undef_int();
+  }
+  if (is_spin_contended != 0) {
+    return (0);
+  } else {
+    return (1);
+  }
+}
+}
+int ldv_atomic_dec_and_lock_statelock_of_ks_net(void)
+{
+  int atomic_value_after_dec ;
+  {
+  {
+  atomic_value_after_dec = ldv_undef_int();
+  }
+  if (atomic_value_after_dec == 0) {
+    {
+    ldv_spin_lock_statelock_of_ks_net();
+    }
+    return (1);
+  } else {
+  }
+  return (0);
+}
+}
 pthread_mutex_t smutex_tx_global_lock_of_net_device ;
 void ldv_spin_lock_tx_global_lock_of_net_device(void)
 {
@@ -10056,142 +10427,4 @@ int ldv_atomic_dec_and_lock_tx_global_lock_of_net_device(void)
   }
   return (0);
 }
-}
-void *__VEFIRIER_nondet_pointer(void);
-void *external_alloc(void) {
-  return __VEFIRIER_nondet_pointer();
-}
-void free(void *);
-void kfree(void const *p) {
-  free((void *)p);
-}
-void debug_dma_alloc_coherent(struct device *arg0, size_t arg1, dma_addr_t arg2, void *arg3){
-  return;
-}
-int __VEFIRIER_nondet_int(void);
-int async_wrap_skb(struct sk_buff *arg0, __u8 *arg1, int arg2){
-  return __VEFIRIER_nondet_int();
-}
-void async_unwrap_char(struct net_device *arg0, struct net_device_stats *arg1, iobuff_t *arg2, __u8 arg3){
-  return;
-}
-void __raw_spin_lock_init(raw_spinlock_t *arg0, const char *arg1, struct lock_class_key *arg2){
-  return;
-}
-void consume_skb(struct sk_buff *arg0){
-  return;
-}
-void __const_udelay(unsigned long arg0){
-  return;
-}
-int __VEFIRIER_nondet_int(void);
-int sprintf(char *arg0, const char *arg1, ...){
-  return __VEFIRIER_nondet_int();
-}
-void _raw_spin_unlock_irqrestore(raw_spinlock_t *arg0, unsigned long arg1){
-  return;
-}
-void irda_setup_dma(int arg0, dma_addr_t arg1, int arg2, int arg3){
-  return;
-}
-void ldv_after_alloc(void *arg0){
-  return;
-}
-void irda_qos_bits_to_value(struct qos_info *arg0){
-  return;
-}
-int __VEFIRIER_nondet_int(void);
-int netif_rx(struct sk_buff *arg0){
-  return __VEFIRIER_nondet_int();
-}
-void ldv_switch_to_interrupt_context(){
-  return;
-}
-void ldv_check_alloc_flags(gfp_t arg0){
-  return;
-}
-void irda_init_max_qos_capabilies(struct qos_info *arg0){
-  return;
-}
-void __release_region(struct resource *arg0, resource_size_t arg1, resource_size_t arg2){
-  return;
-}
-void __ldv_spin_lock(spinlock_t *arg0){
-  return;
-}
-void ldv_switch_to_process_context(){
-  return;
-}
-void *external_alloc(void);
-struct sk_buff *__netdev_alloc_skb(struct net_device *arg0, unsigned int arg1, gfp_t arg2){
-  return (struct sk_buff *)external_alloc();
-}
-int __VEFIRIER_nondet_int(void);
-int printk(const char *arg0, ...){
-  return __VEFIRIER_nondet_int();
-}
-void warn_slowpath_null(const char *arg0, const int arg1){
-  return;
-}
-bool __VEFIRIER_nondet_bool(void);
-bool capable(int arg0){
-  return __VEFIRIER_nondet_bool();
-}
-void *external_alloc(void);
-unsigned char *skb_put(struct sk_buff *arg0, unsigned int arg1){
-  return (unsigned char *)external_alloc();
-}
-void __udelay(unsigned long arg0){
-  return;
-}
-int __VEFIRIER_nondet_int(void);
-int request_dma(unsigned int arg0, const char *arg1){
-  return __VEFIRIER_nondet_int();
-}
-int __VEFIRIER_nondet_int(void);
-int net_ratelimit(){
-  return __VEFIRIER_nondet_int();
-}
-void *external_alloc(void);
-void *external_allocated_data(){
-  return (void *)external_alloc();
-}
-void irlap_close(struct irlap_cb *arg0){
-  return;
-}
-int __VEFIRIER_nondet_int(void);
-int ldv_failed_register_netdev(){
-  return __VEFIRIER_nondet_int();
-}
-void *external_alloc(void);
-struct resource *__request_region(struct resource *arg0, resource_size_t arg1, resource_size_t arg2, const char *arg3, int arg4){
-  return (struct resource *)external_alloc();
-}
-void debug_dma_free_coherent(struct device *arg0, size_t arg1, void *arg2, dma_addr_t arg3){
-  return;
-}
-void *external_alloc(void);
-struct net_device *alloc_irdadev(int arg0){
-  return (struct net_device *)external_alloc();
-}
-void *external_alloc(void);
-void *memcpy(void *arg0, const void *arg1, size_t arg2){
-  return (void *)external_alloc();
-}
-void free_dma(unsigned int arg0){
-  return;
-}
-void *external_alloc(void);
-struct irlap_cb *irlap_open(struct net_device *arg0, struct qos_info *arg1, const char *arg2){
-  return (struct irlap_cb *)external_alloc();
-}
-int __VEFIRIER_nondet_int(void);
-int netpoll_trap(){
-  return __VEFIRIER_nondet_int();
-}
-void irda_device_set_media_busy(struct net_device *arg0, int arg1){
-  return;
-}
-void __netif_schedule(struct Qdisc *arg0){
-  return;
 }

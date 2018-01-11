@@ -65,6 +65,7 @@ typedef unsigned long long u64;
 typedef long __kernel_long_t;
 typedef unsigned long __kernel_ulong_t;
 typedef int __kernel_pid_t;
+typedef __kernel_long_t __kernel_suseconds_t;
 typedef unsigned int __kernel_uid32_t;
 typedef unsigned int __kernel_gid32_t;
 typedef __kernel_ulong_t __kernel_size_t;
@@ -89,6 +90,7 @@ typedef __kernel_loff_t loff_t;
 typedef __kernel_size_t size_t;
 typedef __kernel_ssize_t ssize_t;
 typedef __kernel_time_t time_t;
+typedef __u8 u_int8_t;
 typedef __s32 int32_t;
 typedef __u8 uint8_t;
 typedef __u32 uint32_t;
@@ -617,6 +619,10 @@ struct timespec {
    __kernel_time_t tv_sec ;
    long tv_nsec ;
 };
+struct timeval {
+   __kernel_time_t tv_sec ;
+   __kernel_suseconds_t tv_usec ;
+};
 union ktime {
    s64 tv64 ;
 };
@@ -1047,6 +1053,8 @@ struct dma_map_ops;
 struct dev_archdata {
    struct dma_map_ops *dma_ops ;
    void *iommu ;
+};
+struct pdev_archdata {
 };
 struct device_private;
 struct device_driver;
@@ -4645,7 +4653,7 @@ struct net_device_ops {
    void (*ndo_dfwd_del_station)(struct net_device * , void * ) ;
    netdev_tx_t (*ndo_dfwd_start_xmit)(struct sk_buff * , struct net_device * , void * ) ;
 };
-enum ldv_28333 {
+enum ldv_28405 {
     NETREG_UNINITIALIZED = 0,
     NETREG_REGISTERED = 1,
     NETREG_UNREGISTERING = 2,
@@ -4653,7 +4661,7 @@ enum ldv_28333 {
     NETREG_RELEASED = 4,
     NETREG_DUMMY = 5
 } ;
-enum ldv_28334 {
+enum ldv_28406 {
     RTNL_LINK_INITIALIZED = 0,
     RTNL_LINK_INITIALIZING = 1
 } ;
@@ -4778,9 +4786,9 @@ struct net_device {
    struct list_head todo_list ;
    struct hlist_node index_hlist ;
    struct list_head link_watch_list ;
-   enum ldv_28333 reg_state : 8 ;
+   enum ldv_28405 reg_state : 8 ;
    bool dismantle ;
-   enum ldv_28334 rtnl_link_state : 16 ;
+   enum ldv_28406 rtnl_link_state : 16 ;
    void (*destructor)(struct net_device * ) ;
    struct netpoll_info *npinfo ;
    struct net *nd_net ;
@@ -4811,6 +4819,66 @@ struct pcpu_sw_netstats {
    u64 tx_bytes ;
    struct u64_stats_sync syncp ;
 };
+typedef unsigned long kernel_ulong_t;
+struct acpi_device_id {
+   __u8 id[9U] ;
+   kernel_ulong_t driver_data ;
+};
+struct pnp_device_id {
+   __u8 id[8U] ;
+   kernel_ulong_t driver_data ;
+};
+struct __anonstruct_devs_240 {
+   __u8 id[8U] ;
+};
+struct pnp_card_device_id {
+   __u8 id[8U] ;
+   kernel_ulong_t driver_data ;
+   struct __anonstruct_devs_240 devs[8U] ;
+};
+struct of_device_id {
+   char name[32U] ;
+   char type[32U] ;
+   char compatible[128U] ;
+   void const *data ;
+};
+struct platform_device_id {
+   char name[20U] ;
+   kernel_ulong_t driver_data ;
+};
+struct mfd_cell;
+struct platform_device {
+   char const *name ;
+   int id ;
+   bool id_auto ;
+   struct device dev ;
+   u32 num_resources ;
+   struct resource *resource ;
+   struct platform_device_id const *id_entry ;
+   struct mfd_cell *mfd_cell ;
+   struct pdev_archdata archdata ;
+};
+struct platform_device_info {
+   struct device *parent ;
+   struct acpi_dev_node acpi_node ;
+   char const *name ;
+   int id ;
+   struct resource const *res ;
+   unsigned int num_res ;
+   void const *data ;
+   size_t size_data ;
+   u64 dma_mask ;
+};
+struct platform_driver {
+   int (*probe)(struct platform_device * ) ;
+   int (*remove)(struct platform_device * ) ;
+   void (*shutdown)(struct platform_device * ) ;
+   int (*suspend)(struct platform_device * , pm_message_t ) ;
+   int (*resume)(struct platform_device * ) ;
+   struct device_driver driver ;
+   struct platform_device_id const *id_table ;
+   bool prevent_deferred_probe ;
+};
 typedef __u64 Elf64_Addr;
 typedef __u16 Elf64_Half;
 typedef __u32 Elf64_Word;
@@ -4833,7 +4901,7 @@ struct kernel_param_ops {
 };
 struct kparam_string;
 struct kparam_array;
-union __anonunion____missing_field_name_242 {
+union __anonunion____missing_field_name_245 {
    void *arg ;
    struct kparam_string const *str ;
    struct kparam_array const *arr ;
@@ -4843,7 +4911,7 @@ struct kernel_param {
    struct kernel_param_ops const *ops ;
    u16 perm ;
    s16 level ;
-   union __anonunion____missing_field_name_242 __annonCompField75 ;
+   union __anonunion____missing_field_name_245 __annonCompField75 ;
 };
 struct kparam_string {
    unsigned int maxlen ;
@@ -4980,35 +5048,96 @@ struct tcmsg {
    __u32 tcm_parent ;
    __u32 tcm_info ;
 };
-struct if_irda_qos {
-   unsigned long baudrate ;
-   unsigned short data_size ;
-   unsigned short window_size ;
-   unsigned short min_turn_time ;
-   unsigned short max_turn_time ;
-   unsigned char add_bofs ;
-   unsigned char link_disc ;
+struct pnp_protocol;
+struct pnp_dev;
+struct pnp_id;
+struct pnp_card {
+   struct device dev ;
+   unsigned char number ;
+   struct list_head global_list ;
+   struct list_head protocol_list ;
+   struct list_head devices ;
+   struct pnp_protocol *protocol ;
+   struct pnp_id *id ;
+   char name[50U] ;
+   unsigned char pnpver ;
+   unsigned char productver ;
+   unsigned int serial ;
+   unsigned char checksum ;
+   struct proc_dir_entry *procdir ;
 };
-struct if_irda_line {
-   __u8 dtr ;
-   __u8 rts ;
+struct pnp_card_driver;
+struct pnp_card_link {
+   struct pnp_card *card ;
+   struct pnp_card_driver *driver ;
+   void *driver_data ;
+   pm_message_t pm_state ;
 };
-union __anonunion_ifr_ifrn_249 {
-   char ifrn_name[16U] ;
+struct pnp_driver;
+struct pnp_dev {
+   struct device dev ;
+   u64 dma_mask ;
+   unsigned int number ;
+   int status ;
+   struct list_head global_list ;
+   struct list_head protocol_list ;
+   struct list_head card_list ;
+   struct list_head rdev_list ;
+   struct pnp_protocol *protocol ;
+   struct pnp_card *card ;
+   struct pnp_driver *driver ;
+   struct pnp_card_link *card_link ;
+   struct pnp_id *id ;
+   int active ;
+   int capabilities ;
+   unsigned int num_dependent_sets ;
+   struct list_head resources ;
+   struct list_head options ;
+   char name[50U] ;
+   int flags ;
+   struct proc_dir_entry *procent ;
+   void *data ;
 };
-union __anonunion_ifr_ifru_250 {
-   struct if_irda_line ifru_line ;
-   struct if_irda_qos ifru_qos ;
-   unsigned short ifru_flags ;
-   unsigned int ifru_receiving ;
-   unsigned int ifru_mode ;
-   unsigned int ifru_dongle ;
+struct pnp_id {
+   char id[8U] ;
+   struct pnp_id *next ;
 };
-struct if_irda_req {
-   union __anonunion_ifr_ifrn_249 ifr_ifrn ;
-   union __anonunion_ifr_ifru_250 ifr_ifru ;
+struct pnp_driver {
+   char *name ;
+   struct pnp_device_id const *id_table ;
+   unsigned int flags ;
+   int (*probe)(struct pnp_dev * , struct pnp_device_id const * ) ;
+   void (*remove)(struct pnp_dev * ) ;
+   void (*shutdown)(struct pnp_dev * ) ;
+   int (*suspend)(struct pnp_dev * , pm_message_t ) ;
+   int (*resume)(struct pnp_dev * ) ;
+   struct device_driver driver ;
 };
-typedef __u32 magic_t;
+struct pnp_card_driver {
+   struct list_head global_list ;
+   char *name ;
+   struct pnp_card_device_id const *id_table ;
+   unsigned int flags ;
+   int (*probe)(struct pnp_card_link * , struct pnp_card_device_id const * ) ;
+   void (*remove)(struct pnp_card_link * ) ;
+   int (*suspend)(struct pnp_card_link * , pm_message_t ) ;
+   int (*resume)(struct pnp_card_link * ) ;
+   struct pnp_driver link ;
+};
+struct pnp_protocol {
+   struct list_head protocol_list ;
+   char *name ;
+   int (*get)(struct pnp_dev * ) ;
+   int (*set)(struct pnp_dev * ) ;
+   int (*disable)(struct pnp_dev * ) ;
+   bool (*can_wakeup)(struct pnp_dev * ) ;
+   int (*suspend)(struct pnp_dev * , pm_message_t ) ;
+   int (*resume)(struct pnp_dev * ) ;
+   unsigned char number ;
+   struct device dev ;
+   struct list_head cards ;
+   struct list_head devices ;
+};
 typedef unsigned char cc_t;
 typedef unsigned int speed_t;
 typedef unsigned int tcflag_t;
@@ -5142,12 +5271,12 @@ struct tty_ldisc {
    struct tty_ldisc_ops *ops ;
    struct tty_struct *tty ;
 };
-union __anonunion____missing_field_name_251 {
+union __anonunion____missing_field_name_249 {
    struct tty_buffer *next ;
    struct llist_node free ;
 };
 struct tty_buffer {
-   union __anonunion____missing_field_name_251 __annonCompField76 ;
+   union __anonunion____missing_field_name_249 __annonCompField76 ;
    int used ;
    int size ;
    int commit ;
@@ -5240,6 +5369,34 @@ struct tty_struct {
    int write_cnt ;
    struct work_struct SAK_work ;
    struct tty_port *port ;
+};
+struct if_irda_qos {
+   unsigned long baudrate ;
+   unsigned short data_size ;
+   unsigned short window_size ;
+   unsigned short min_turn_time ;
+   unsigned short max_turn_time ;
+   unsigned char add_bofs ;
+   unsigned char link_disc ;
+};
+struct if_irda_line {
+   __u8 dtr ;
+   __u8 rts ;
+};
+union __anonunion_ifr_ifrn_253 {
+   char ifrn_name[16U] ;
+};
+union __anonunion_ifr_ifru_254 {
+   struct if_irda_line ifru_line ;
+   struct if_irda_qos ifru_qos ;
+   unsigned short ifru_flags ;
+   unsigned int ifru_receiving ;
+   unsigned int ifru_mode ;
+   unsigned int ifru_dongle ;
+};
+struct if_irda_req {
+   union __anonunion_ifr_ifrn_253 ifr_ifrn ;
+   union __anonunion_ifr_ifru_254 ifr_ifru ;
 };
 struct tc_stats {
    __u64 bytes ;
@@ -5424,11 +5581,12 @@ struct qdisc_walker {
    int count ;
    int (*fn)(struct Qdisc * , unsigned long , struct qdisc_walker * ) ;
 };
-struct __anonstruct_qos_value_t_258 {
+typedef __u32 magic_t;
+struct __anonstruct_qos_value_t_261 {
    __u32 value ;
    __u16 bits ;
 };
-typedef struct __anonstruct_qos_value_t_258 qos_value_t;
+typedef struct __anonstruct_qos_value_t_261 qos_value_t;
 struct qos_info {
    magic_t magic ;
    qos_value_t baud_rate ;
@@ -5453,7 +5611,7 @@ struct irda_skb_cb {
    __u16 xbofs_delay ;
    __u8 line ;
 };
-struct __anonstruct_chipio_t_260 {
+struct __anonstruct_chipio_t_263 {
    int cfg_base ;
    int sir_base ;
    int fir_base ;
@@ -5473,8 +5631,8 @@ struct __anonstruct_chipio_t_260 {
    __u32 new_speed ;
    int dongle_id ;
 };
-typedef struct __anonstruct_chipio_t_260 chipio_t;
-struct __anonstruct_iobuff_t_261 {
+typedef struct __anonstruct_chipio_t_263 chipio_t;
+struct __anonstruct_iobuff_t_264 {
    int state ;
    int in_frame ;
    __u8 *head ;
@@ -5484,21 +5642,42 @@ struct __anonstruct_iobuff_t_261 {
    __u16 fcs ;
    struct sk_buff *skb ;
 };
-typedef struct __anonstruct_iobuff_t_261 iobuff_t;
+typedef struct __anonstruct_iobuff_t_264 iobuff_t;
+struct nsc_chip {
+   char *name ;
+   int cfg[3U] ;
+   u_int8_t cid_index ;
+   u_int8_t cid_value ;
+   u_int8_t cid_mask ;
+   int (*probe)(struct nsc_chip * , chipio_t * ) ;
+   int (*init)(struct nsc_chip * , chipio_t * ) ;
+};
+typedef struct nsc_chip nsc_chip_t;
 struct st_fifo_entry {
    int status ;
    int len ;
 };
 struct st_fifo {
-   struct st_fifo_entry entries[10U] ;
+   struct st_fifo_entry entries[7U] ;
+   int pending_bytes ;
    int head ;
    int tail ;
    int len ;
 };
-struct w83977af_ir {
+struct frame_cb {
+   void *start ;
+   int len ;
+};
+struct tx_fifo {
+   struct frame_cb queue[7U] ;
+   int ptr ;
+   int len ;
+   int free ;
+   void *tail ;
+};
+struct nsc_ircc_cb {
    struct st_fifo st_fifo ;
-   int tx_buff_offsets[10U] ;
-   int tx_len ;
+   struct tx_fifo tx_fifo ;
    struct net_device *netdev ;
    struct irlap_cb *irlap ;
    struct qos_info qos ;
@@ -5507,10 +5686,15 @@ struct w83977af_ir {
    iobuff_t rx_buff ;
    dma_addr_t tx_buff_dma ;
    dma_addr_t rx_buff_dma ;
+   __u8 ier ;
+   struct timeval stamp ;
+   struct timeval now ;
    spinlock_t lock ;
    __u32 new_speed ;
+   int index ;
+   struct platform_device *pldev ;
 };
-struct ldv_struct_free_irq_5 {
+struct ldv_struct_free_irq_8 {
    int arg0 ;
    int signal_pending ;
 };
@@ -5521,7 +5705,8 @@ struct ldv_struct_interrupt_scenario_2 {
    void *arg3 ;
    int signal_pending ;
 };
-struct ldv_struct_main_10 {
+struct ldv_struct_platform_instance_4 {
+   struct platform_driver *arg0 ;
    int signal_pending ;
 };
 struct ldv_struct_random_allocationless_scenario_3 {
@@ -5532,17 +5717,6 @@ struct device_private {
    void *driver_data ;
 };
 enum hrtimer_restart;
-typedef unsigned long kernel_ulong_t;
-struct acpi_device_id {
-   __u8 id[9U] ;
-   kernel_ulong_t driver_data ;
-};
-struct of_device_id {
-   char name[32U] ;
-   char type[32U] ;
-   char compatible[128U] ;
-   void const *data ;
-};
 struct kthread_work;
 struct kthread_worker {
    spinlock_t lock ;
@@ -5638,6 +5812,11 @@ struct spi_message {
    void *state ;
 };
 long ldv__builtin_expect(long exp , long c ) ;
+void *ldv_dev_get_drvdata(struct device const *dev ) ;
+int ldv_dev_set_drvdata(struct device *dev , void *data ) ;
+long ldv_is_err(void const *ptr ) ;
+long ldv_ptr_err(void const *ptr ) ;
+extern struct module __this_module ;
 extern struct pv_cpu_ops pv_cpu_ops ;
 extern struct pv_irq_ops pv_irq_ops ;
 __inline static void set_bit(long nr , unsigned long volatile *addr )
@@ -5662,9 +5841,16 @@ __inline static int test_and_clear_bit(long nr , unsigned long volatile *addr )
   return (1);
 }
 }
+__inline static int constant_test_bit(long nr , unsigned long const volatile *addr )
+{
+  {
+  return ((int )((unsigned long )*(addr + (unsigned long )(nr >> 6)) >> ((int )nr & 63)) & 1);
+}
+}
 extern int printk(char const * , ...) ;
 extern int sprintf(char * , char const * , ...) ;
 extern void *memcpy(void * , void const * , size_t ) ;
+extern void *memset(void * , int , size_t ) ;
 extern void warn_slowpath_null(char const * , int const ) ;
 __inline static void slow_down_io(void)
 {
@@ -5677,12 +5863,12 @@ __inline static void slow_down_io(void)
 }
 __inline static unsigned long arch_local_save_flags(void)
 {
-  unsigned long __ret = 0 ;
-  unsigned long __edi = 0 ;
-  unsigned long __esi = 0 ;
-  unsigned long __edx = 0 ;
-  unsigned long __ecx = 0 ;
-  unsigned long __eax = 0 ;
+  unsigned long __ret = 0;
+  unsigned long __edi = 0;
+  unsigned long __esi = 0;
+  unsigned long __edx = 0;
+  unsigned long __ecx = 0;
+  unsigned long __eax = 0;
   long tmp ;
   {
   {
@@ -5704,6 +5890,8 @@ __inline static unsigned long arch_local_save_flags(void)
   return (__ret);
 }
 }
+__inline static long PTR_ERR(void const *ptr ) ;
+__inline static long IS_ERR(void const *ptr ) ;
 __inline static int arch_irqs_disabled_flags(unsigned long flags )
 {
   {
@@ -5711,9 +5899,15 @@ __inline static int arch_irqs_disabled_flags(unsigned long flags )
 }
 }
 extern void __ldv_spin_lock(spinlock_t * ) ;
-static void ldv___ldv_spin_lock_78(spinlock_t *ldv_func_arg1 ) ;
-void ldv_spin_lock_lock_of_w83977af_ir(void) ;
-void ldv_spin_unlock_lock_of_w83977af_ir(void) ;
+static void ldv___ldv_spin_lock_83(spinlock_t *ldv_func_arg1 ) ;
+static void ldv___ldv_spin_lock_86(spinlock_t *ldv_func_arg1 ) ;
+static void ldv___ldv_spin_lock_91(spinlock_t *ldv_func_arg1 ) ;
+static void ldv___ldv_spin_lock_96(spinlock_t *ldv_func_arg1 ) ;
+static void ldv___ldv_spin_lock_98(spinlock_t *ldv_func_arg1 ) ;
+static void ldv___ldv_spin_lock_102(spinlock_t *ldv_func_arg1 ) ;
+static void ldv___ldv_spin_lock_104(spinlock_t *ldv_func_arg1 ) ;
+void ldv_spin_lock_lock_of_nsc_ircc_cb(void) ;
+void ldv_spin_unlock_lock_of_nsc_ircc_cb(void) ;
 void ldv_initialize(void) ;
 int ldv_post_init(int init_ret_val ) ;
 extern int ldv_failed_register_netdev(void) ;
@@ -5728,15 +5922,35 @@ void *ldv_xmalloc(size_t size ) ;
 extern void *external_allocated_data(void) ;
 void *ldv_xmalloc_unknown_size(size_t size ) ;
 extern void __raw_spin_lock_init(raw_spinlock_t * , char const * , struct lock_class_key * ) ;
+extern void _raw_spin_lock(raw_spinlock_t * ) ;
+extern void _raw_spin_unlock(raw_spinlock_t * ) ;
 extern void _raw_spin_unlock_irqrestore(raw_spinlock_t * , unsigned long ) ;
-void ldv_assert(char const *desc , int expr ) ;
-__u32 io_speed;
 __inline static raw_spinlock_t *spinlock_check(spinlock_t *lock )
 {
   {
   return (& lock->__annonCompField19.rlock);
 }
 }
+__inline static void spin_lock(spinlock_t *lock )
+{
+  {
+  {
+  _raw_spin_lock(& lock->__annonCompField19.rlock);
+  }
+  return;
+}
+}
+__inline static void ldv_spin_lock_89(spinlock_t *lock ) ;
+__inline static void spin_unlock(spinlock_t *lock )
+{
+  {
+  {
+  _raw_spin_unlock(& lock->__annonCompField19.rlock);
+  }
+  return;
+}
+}
+__inline static void ldv_spin_unlock_90(spinlock_t *lock ) ;
 __inline static void spin_unlock_irqrestore(spinlock_t *lock , unsigned long flags )
 {
   {
@@ -5746,7 +5960,16 @@ __inline static void spin_unlock_irqrestore(spinlock_t *lock , unsigned long fla
   return;
 }
 }
-__inline static void ldv_spin_unlock_irqrestore_79(spinlock_t *lock , unsigned long flags ) ;
+__inline static void ldv_spin_unlock_irqrestore_84(spinlock_t *lock , unsigned long flags ) ;
+__inline static void ldv_spin_unlock_irqrestore_84(spinlock_t *lock , unsigned long flags ) ;
+__inline static void ldv_spin_unlock_irqrestore_84(spinlock_t *lock , unsigned long flags ) ;
+__inline static void ldv_spin_unlock_irqrestore_84(spinlock_t *lock , unsigned long flags ) ;
+__inline static void ldv_spin_unlock_irqrestore_84(spinlock_t *lock , unsigned long flags ) ;
+__inline static void ldv_spin_unlock_irqrestore_84(spinlock_t *lock , unsigned long flags ) ;
+__inline static void ldv_spin_unlock_irqrestore_84(spinlock_t *lock , unsigned long flags ) ;
+__inline static void ldv_spin_unlock_irqrestore_84(spinlock_t *lock , unsigned long flags ) ;
+__inline static void ldv_spin_unlock_irqrestore_84(spinlock_t *lock , unsigned long flags ) ;
+extern void do_gettimeofday(struct timeval * ) ;
 extern unsigned long volatile jiffies ;
 extern struct resource ioport_resource ;
 extern struct resource *__request_region(struct resource * , resource_size_t , resource_size_t ,
@@ -5780,6 +6003,8 @@ __inline static unsigned char inb_p(int port )
   return (value);
 }
 }
+static void *ldv_dev_get_drvdata_65(struct device const *dev ) ;
+static int ldv_dev_set_drvdata_66(struct device *dev , void *data ) ;
 extern void __udelay(unsigned long ) ;
 extern void __const_udelay(unsigned long ) ;
 extern bool capable(int ) ;
@@ -6005,8 +6230,18 @@ __inline static void *netdev_priv(struct net_device const *dev )
   return ((void *)(dev + 3200U));
 }
 }
-static void ldv_free_netdev_72(struct net_device *ldv_func_arg1 ) ;
-static void ldv_free_netdev_74(struct net_device *ldv_func_arg1 ) ;
+extern void unregister_netdevice_queue(struct net_device * , struct list_head * ) ;
+__inline static void unregister_netdevice(struct net_device *dev )
+{
+  {
+  {
+  unregister_netdevice_queue(dev, (struct list_head *)0);
+  }
+  return;
+}
+}
+static void ldv_free_netdev_80(struct net_device *ldv_func_arg1 ) ;
+static void ldv_free_netdev_82(struct net_device *ldv_func_arg1 ) ;
 extern int netpoll_trap(void) ;
 extern void __netif_schedule(struct Qdisc * ) ;
 __inline static void netif_tx_start_queue(struct netdev_queue *dev_queue )
@@ -6110,15 +6345,257 @@ __inline static void netif_stop_queue(struct net_device *dev )
   return;
 }
 }
+__inline static bool netif_running(struct net_device const *dev )
+{
+  int tmp ;
+  {
+  {
+  tmp = constant_test_bit(0L, (unsigned long const volatile *)(& dev->state));
+  }
+  return (tmp != 0);
+}
+}
 extern int netif_rx(struct sk_buff * ) ;
-static int ldv_register_netdev_71(struct net_device *ldv_func_arg1 ) ;
-static void ldv_unregister_netdev_73(struct net_device *ldv_func_arg1 ) ;
-__inline static int ldv_request_irq_75(unsigned int irq___0 , irqreturn_t (*handler)(int ,
+extern void netif_device_detach(struct net_device * ) ;
+extern void netif_device_attach(struct net_device * ) ;
+static int ldv_register_netdev_78(struct net_device *ldv_func_arg1 ) ;
+static void ldv_unregister_netdev_79(struct net_device *ldv_func_arg1 ) ;
+static void ldv_unregister_netdev_81(struct net_device *ldv_func_arg1 ) ;
+extern void platform_device_unregister(struct platform_device * ) ;
+extern struct platform_device *platform_device_register_full(struct platform_device_info const * ) ;
+__inline static struct platform_device *platform_device_register_resndata(struct device *parent ,
+                                                                          char const *name ,
+                                                                          int id ,
+                                                                          struct resource const *res ,
+                                                                          unsigned int num ,
+                                                                          void const *data ,
+                                                                          size_t size )
+{
+  struct platform_device_info pdevinfo ;
+  struct platform_device *tmp ;
+  {
+  {
+  pdevinfo.parent = parent;
+  pdevinfo.acpi_node.companion = 0;
+  pdevinfo.name = name;
+  pdevinfo.id = id;
+  pdevinfo.res = res;
+  pdevinfo.num_res = num;
+  pdevinfo.data = data;
+  pdevinfo.size_data = size;
+  pdevinfo.dma_mask = 0ULL;
+  tmp = platform_device_register_full((struct platform_device_info const *)(& pdevinfo));
+  }
+  return (tmp);
+}
+}
+__inline static struct platform_device *platform_device_register_simple(char const *name ,
+                                                                        int id , struct resource const *res ,
+                                                                        unsigned int num )
+{
+  struct platform_device *tmp ;
+  {
+  {
+  tmp = platform_device_register_resndata((struct device *)0, name, id, res, num,
+                                          (void const *)0, 0UL);
+  }
+  return (tmp);
+}
+}
+static int ldv___platform_driver_register_75(struct platform_driver *ldv_func_arg1 ,
+                                             struct module *ldv_func_arg2 ) ;
+static void ldv_platform_driver_unregister_76(struct platform_driver *ldv_func_arg1 ) ;
+static void ldv_platform_driver_unregister_77(struct platform_driver *ldv_func_arg1 ) ;
+void ldv_assert(char const *desc , int expr ) ;
+__inline static void *platform_get_drvdata(struct platform_device const *pdev )
+{
+  void *tmp ;
+  {
+  {
+  tmp = ldv_dev_get_drvdata_65(& pdev->dev);
+  }
+  return (tmp);
+}
+}
+__inline static void platform_set_drvdata(struct platform_device *pdev , void *data )
+{
+  {
+  {
+  ldv_dev_set_drvdata_66(& pdev->dev, data);
+  }
+  return;
+}
+}
+__inline static int ldv_request_irq_93(unsigned int irq___0 , irqreturn_t (*handler)(int ,
                                                                                      void * ) ,
                                        unsigned long flags , char const *name ,
                                        void *dev ) ;
-static void ldv_free_irq_76(unsigned int ldv_func_arg1 , void *ldv_func_arg2 ) ;
-static void ldv_free_irq_77(unsigned int ldv_func_arg1 , void *ldv_func_arg2 ) ;
+__inline static int ldv_request_irq_93(unsigned int irq___0 , irqreturn_t (*handler)(int ,
+                                                                                     void * ) ,
+                                       unsigned long flags , char const *name ,
+                                       void *dev ) ;
+static void ldv_free_irq_94(unsigned int ldv_func_arg1 , void *ldv_func_arg2 ) ;
+static void ldv_free_irq_95(unsigned int ldv_func_arg1 , void *ldv_func_arg2 ) ;
+static void ldv_free_irq_100(unsigned int ldv_func_arg1 , void *ldv_func_arg2 ) ;
+extern void rtnl_lock(void) ;
+extern void rtnl_unlock(void) ;
+extern struct resource *pnp_get_resource(struct pnp_dev * , unsigned long , unsigned int ) ;
+__inline static int pnp_resource_valid(struct resource *res )
+{
+  {
+  if ((unsigned long )res != (unsigned long )((struct resource *)0)) {
+    return (1);
+  } else {
+  }
+  return (0);
+}
+}
+__inline static resource_size_t pnp_port_start(struct pnp_dev *dev , unsigned int bar )
+{
+  struct resource *res ;
+  struct resource *tmp ;
+  int tmp___0 ;
+  {
+  {
+  tmp = pnp_get_resource(dev, 256UL, bar);
+  res = tmp;
+  tmp___0 = pnp_resource_valid(res);
+  }
+  if (tmp___0 != 0) {
+    return (res->start);
+  } else {
+  }
+  return (0ULL);
+}
+}
+__inline static unsigned long pnp_port_flags(struct pnp_dev *dev , unsigned int bar )
+{
+  struct resource *res ;
+  struct resource *tmp ;
+  int tmp___0 ;
+  {
+  {
+  tmp = pnp_get_resource(dev, 256UL, bar);
+  res = tmp;
+  tmp___0 = pnp_resource_valid(res);
+  }
+  if (tmp___0 != 0) {
+    return (res->flags);
+  } else {
+  }
+  return (1073742080UL);
+}
+}
+__inline static int pnp_port_valid(struct pnp_dev *dev , unsigned int bar )
+{
+  struct resource *tmp ;
+  int tmp___0 ;
+  {
+  {
+  tmp = pnp_get_resource(dev, 256UL, bar);
+  tmp___0 = pnp_resource_valid(tmp);
+  }
+  return (tmp___0);
+}
+}
+__inline static resource_size_t pnp_irq(struct pnp_dev *dev , unsigned int bar )
+{
+  struct resource *res ;
+  struct resource *tmp ;
+  int tmp___0 ;
+  {
+  {
+  tmp = pnp_get_resource(dev, 1024UL, bar);
+  res = tmp;
+  tmp___0 = pnp_resource_valid(res);
+  }
+  if (tmp___0 != 0) {
+    return (res->start);
+  } else {
+  }
+  return (0xffffffffffffffffULL);
+}
+}
+__inline static unsigned long pnp_irq_flags(struct pnp_dev *dev , unsigned int bar )
+{
+  struct resource *res ;
+  struct resource *tmp ;
+  int tmp___0 ;
+  {
+  {
+  tmp = pnp_get_resource(dev, 1024UL, bar);
+  res = tmp;
+  tmp___0 = pnp_resource_valid(res);
+  }
+  if (tmp___0 != 0) {
+    return (res->flags);
+  } else {
+  }
+  return (1073742848UL);
+}
+}
+__inline static int pnp_irq_valid(struct pnp_dev *dev , unsigned int bar )
+{
+  struct resource *tmp ;
+  int tmp___0 ;
+  {
+  {
+  tmp = pnp_get_resource(dev, 1024UL, bar);
+  tmp___0 = pnp_resource_valid(tmp);
+  }
+  return (tmp___0);
+}
+}
+__inline static resource_size_t pnp_dma(struct pnp_dev *dev , unsigned int bar )
+{
+  struct resource *res ;
+  struct resource *tmp ;
+  int tmp___0 ;
+  {
+  {
+  tmp = pnp_get_resource(dev, 2048UL, bar);
+  res = tmp;
+  tmp___0 = pnp_resource_valid(res);
+  }
+  if (tmp___0 != 0) {
+    return (res->start);
+  } else {
+  }
+  return (0xffffffffffffffffULL);
+}
+}
+__inline static unsigned long pnp_dma_flags(struct pnp_dev *dev , unsigned int bar )
+{
+  struct resource *res ;
+  struct resource *tmp ;
+  int tmp___0 ;
+  {
+  {
+  tmp = pnp_get_resource(dev, 2048UL, bar);
+  res = tmp;
+  tmp___0 = pnp_resource_valid(res);
+  }
+  if (tmp___0 != 0) {
+    return (res->flags);
+  } else {
+  }
+  return (1073743872UL);
+}
+}
+__inline static int pnp_dma_valid(struct pnp_dev *dev , unsigned int bar )
+{
+  struct resource *tmp ;
+  int tmp___0 ;
+  {
+  {
+  tmp = pnp_get_resource(dev, 2048UL, bar);
+  tmp___0 = pnp_resource_valid(tmp);
+  }
+  return (tmp___0);
+}
+}
+extern int pnp_register_driver(struct pnp_driver * ) ;
+extern void pnp_unregister_driver(struct pnp_driver * ) ;
 __inline static void disable_dma(unsigned int dmanr )
 {
   {
@@ -6136,12 +6613,50 @@ __inline static void disable_dma(unsigned int dmanr )
 }
 extern int request_dma(unsigned int , char const * ) ;
 extern void free_dma(unsigned int ) ;
+__inline static bool qdisc_all_tx_empty(struct net_device const *dev )
+{
+  unsigned int i ;
+  struct netdev_queue *txq ;
+  struct netdev_queue *tmp ;
+  struct Qdisc const *q ;
+  {
+  i = 0U;
+  goto ldv_45048;
+  ldv_45047:
+  {
+  tmp = netdev_get_tx_queue(dev, i);
+  txq = tmp;
+  q = (struct Qdisc const *)txq->qdisc;
+  }
+  if ((unsigned int )q->q.qlen != 0U) {
+    return (0);
+  } else {
+  }
+  i = i + 1U;
+  ldv_45048: ;
+  if (i < (unsigned int )dev->num_tx_queues) {
+    goto ldv_45047;
+  } else {
+  }
+  return (1);
+}
+}
 extern unsigned int irda_debug ;
 extern void irda_init_max_qos_capabilies(struct qos_info * ) ;
 extern void irda_qos_bits_to_value(struct qos_info * ) ;
 extern struct irlap_cb *irlap_open(struct net_device * , struct qos_info * , char const * ) ;
 extern void irlap_close(struct irlap_cb * ) ;
 extern void irda_device_set_media_busy(struct net_device * , int ) ;
+__inline static int irda_device_txqueue_empty(struct net_device const *dev )
+{
+  bool tmp ;
+  {
+  {
+  tmp = qdisc_all_tx_empty(dev);
+  }
+  return ((int )tmp);
+}
+}
 extern struct net_device *alloc_irdadev(int ) ;
 extern void irda_setup_dma(int , dma_addr_t , int , int ) ;
 __inline static __u16 irda_get_mtt(struct sk_buff const *skb )
@@ -6163,214 +6678,469 @@ __inline static __u32 irda_get_next_speed(struct sk_buff const *skb )
 extern int async_wrap_skb(struct sk_buff * , __u8 * , int ) ;
 extern void async_unwrap_char(struct net_device * , struct net_device_stats * , iobuff_t * ,
                               __u8 ) ;
-__inline static void w977_efm_enter(unsigned int efio___0 )
+__inline static void switch_bank(int iobase , int bank )
 {
   {
   {
-  outb(135, (int )efio___0);
-  outb(135, (int )efio___0);
+  outb((int )((unsigned char )bank), iobase + 3);
   }
   return;
 }
 }
-__inline static void w977_select_device(__u8 devnum , unsigned int efio___0 )
-{
-  {
-  {
-  outb(7, (int )efio___0);
-  outb((int )devnum, (int )(efio___0 + 1U));
-  }
-  return;
-}
-}
-__inline static void w977_write_reg(__u8 reg , __u8 value , unsigned int efio___0 )
-{
-  {
-  {
-  outb((int )reg, (int )efio___0);
-  outb((int )value, (int )(efio___0 + 1U));
-  }
-  return;
-}
-}
-__inline static void w977_efm_exit(unsigned int efio___0 )
-{
-  {
-  {
-  outb(170, (int )efio___0);
-  }
-  return;
-}
-}
-__inline static void switch_bank(int iobase , int set )
-{
-  {
-  {
-  outb((int )((unsigned char )set), iobase + 3);
-  }
-  return;
-}
-}
-static char *driver_name = (char *)"w83977af_ir";
+static char *driver_name = (char *)"nsc-ircc";
+static int nsc_ircc_suspend(struct platform_device *dev , pm_message_t state ) ;
+static int nsc_ircc_resume(struct platform_device *dev ) ;
+static struct platform_driver nsc_ircc_driver =
+     {0, 0, 0, & nsc_ircc_suspend, & nsc_ircc_resume, {"nsc-ircc", 0, 0, 0, (_Bool)0,
+                                                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    0, (_Bool)0};
 static int qos_mtt_bits = 7;
-static unsigned int io[4U] = { 384U, 4294967295U, 4294967295U, 4294967295U};
-static unsigned int irq[4U] = { 11U, 0U, 0U, 0U};
-static unsigned int dma[4U] = { 1U, 0U, 0U, 0U};
-static unsigned int efbase[2U] = { 880U, 1008U};
-static unsigned int efio = 880U;
-static struct w83977af_ir *dev_self[4U] = { (struct w83977af_ir *)0, (struct w83977af_ir *)0, (struct w83977af_ir *)0, (struct w83977af_ir *)0};
-static int w83977af_open(int i , unsigned int iobase , unsigned int irq___0 , unsigned int dma___0 ) ;
-static int w83977af_close(struct w83977af_ir *self ) ;
-static int w83977af_probe(int iobase , int irq___0 , int dma___0 ) ;
-static int w83977af_dma_receive(struct w83977af_ir *self ) ;
-static int w83977af_dma_receive_complete(struct w83977af_ir *self ) ;
-static netdev_tx_t w83977af_hard_xmit(struct sk_buff *skb , struct net_device *dev ) ;
-static int w83977af_pio_write(int iobase , __u8 *buf , int len , int fifo_size ) ;
-static void w83977af_dma_write(struct w83977af_ir *self , int iobase ) ;
-static void w83977af_change_speed(struct w83977af_ir *self , __u32 speed ) ;
-static int w83977af_is_receiving(struct w83977af_ir *self ) ;
-static int w83977af_net_open(struct net_device *dev ) ;
-static int w83977af_net_close(struct net_device *dev ) ;
-static int w83977af_net_ioctl(struct net_device *dev , struct ifreq *rq , int cmd ) ;
-static int w83977af_init(void)
+static int dongle_id ;
+static unsigned int io[5U] = { 4294967295U, 4294967295U, 4294967295U, 4294967295U,
+        4294967295U};
+static unsigned int irq[5U] = { 0U, 0U, 0U, 0U,
+        0U};
+static unsigned int dma[5U] = { 0U, 0U, 0U, 0U,
+        0U};
+static int nsc_ircc_probe_108(nsc_chip_t *chip , chipio_t *info ) ;
+static int nsc_ircc_probe_338(nsc_chip_t *chip , chipio_t *info ) ;
+static int nsc_ircc_probe_39x(nsc_chip_t *chip , chipio_t *info ) ;
+static int nsc_ircc_init_108(nsc_chip_t *chip , chipio_t *info ) ;
+static int nsc_ircc_init_338(nsc_chip_t *chip , chipio_t *info ) ;
+static int nsc_ircc_init_39x(nsc_chip_t *chip , chipio_t *info ) ;
+static int nsc_ircc_pnp_probe(struct pnp_dev *dev , struct pnp_device_id const *id ) ;
+static nsc_chip_t chips[7U] = { {(char *)"PC87108", {336, 920, 234}, 5U, 16U, 240U, & nsc_ircc_probe_108, & nsc_ircc_init_108},
+        {(char *)"PC87338",
+      {920, 348, 46}, 8U, 176U, 248U, & nsc_ircc_probe_338, & nsc_ircc_init_338},
+        {(char *)"PC8738x", {5710, 78, 46}, 32U, 244U, 255U, & nsc_ircc_probe_39x, & nsc_ircc_init_39x},
+        {(char *)"PC8739x",
+      {46, 78, 0}, 32U, 234U, 255U, & nsc_ircc_probe_39x, & nsc_ircc_init_39x},
+        {(char *)"IBM-PC8738x", {46, 78, 0}, 32U, 244U, 255U, & nsc_ircc_probe_39x, & nsc_ircc_init_39x},
+        {(char *)"IBM-PC8394T",
+      {46, 78, 0}, 32U, 249U, 255U, & nsc_ircc_probe_39x, & nsc_ircc_init_39x},
+        {(char *)0, {0, 0, 0}, (unsigned char)0, (unsigned char)0, (unsigned char)0,
+      0, 0}};
+static struct nsc_ircc_cb *dev_self[5U] = { (struct nsc_ircc_cb *)0, (struct nsc_ircc_cb *)0, (struct nsc_ircc_cb *)0, (struct nsc_ircc_cb *)0,
+        (struct nsc_ircc_cb *)0};
+static char *dongle_types[16U] =
+  { (char *)"Differential serial interface", (char *)"Differential serial interface", (char *)"Reserved", (char *)"Reserved",
+        (char *)"Sharp RY5HD01", (char *)"Reserved", (char *)"Single-ended serial interface", (char *)"Consumer-IR only",
+        (char *)"HP HSDL-2300, HP HSDL-3600/HSDL-3610", (char *)"IBM31T1100 or Temic TFDS6000/TFDS6500", (char *)"Reserved", (char *)"Reserved",
+        (char *)"HP HSDL-1100/HSDL-2100", (char *)"HP HSDL-1100/HSDL-2100", (char *)"Supports SIR Mode only", (char *)"No dongle connected"};
+static chipio_t pnp_info ;
+static struct pnp_device_id const nsc_ircc_pnp_table[4U] = { {{'N', 'S', 'C', '6', '0', '0', '1', '\000'}, 0UL},
+        {{'H', 'W', 'P', 'C', '2', '2', '4', '\000'}, 0UL},
+        {{'I', 'B', 'M', '0', '0', '7', '1', '\000'}, 1UL}};
+struct pnp_device_id const __mod_pnp_device_table ;
+static struct pnp_driver nsc_ircc_pnp_driver =
+     {(char *)"nsc-ircc", (struct pnp_device_id const *)(& nsc_ircc_pnp_table), 0U,
+    & nsc_ircc_pnp_probe, 0, 0, 0, 0, {0, 0, 0, 0, (_Bool)0, 0, 0, 0, 0, 0, 0, 0,
+                                       0, 0, 0}};
+static int nsc_ircc_open(chipio_t *info ) ;
+static int nsc_ircc_close(struct nsc_ircc_cb *self ) ;
+static int nsc_ircc_setup(chipio_t *info ) ;
+static void nsc_ircc_pio_receive(struct nsc_ircc_cb *self ) ;
+static int nsc_ircc_dma_receive(struct nsc_ircc_cb *self ) ;
+static int nsc_ircc_dma_receive_complete(struct nsc_ircc_cb *self , int iobase ) ;
+static netdev_tx_t nsc_ircc_hard_xmit_sir(struct sk_buff *skb , struct net_device *dev ) ;
+static netdev_tx_t nsc_ircc_hard_xmit_fir(struct sk_buff *skb , struct net_device *dev ) ;
+static int nsc_ircc_pio_write(int iobase , __u8 *buf , int len , int fifo_size ) ;
+static void nsc_ircc_dma_xmit(struct nsc_ircc_cb *self , int iobase ) ;
+static __u8 nsc_ircc_change_speed(struct nsc_ircc_cb *self , __u32 speed ) ;
+static int nsc_ircc_is_receiving(struct nsc_ircc_cb *self ) ;
+static int nsc_ircc_read_dongle_id(int iobase ) ;
+static void nsc_ircc_init_dongle_interface(int iobase , int dongle_id___0 ) ;
+static int nsc_ircc_net_open(struct net_device *dev ) ;
+static int nsc_ircc_net_close(struct net_device *dev ) ;
+static int nsc_ircc_net_ioctl(struct net_device *dev , struct ifreq *rq , int cmd ) ;
+static int pnp_registered ;
+static int pnp_succeeded ;
+static int nsc_ircc_init(void)
 {
+  chipio_t info ;
+  nsc_chip_t *chip ;
+  int ret ;
+  int cfg_base ;
+  int cfg ;
+  int id ;
+  int reg ;
   int i ;
   int tmp ;
+  unsigned char tmp___0 ;
+  unsigned char tmp___1 ;
+  int tmp___2 ;
+  int tmp___3 ;
+  int tmp___4 ;
   {
   {
-  printk("\017%s()\n", "w83977af_init");
   i = 0;
+  ret = ldv___platform_driver_register_75(& nsc_ircc_driver, & __this_module);
   }
-  goto ldv_44920;
-  ldv_44919:
+  if (ret != 0) {
+    {
+    tmp = net_ratelimit();
+    }
+    if (tmp != 0) {
+      {
+      printk("\v%s, Can\'t register driver!\n", driver_name);
+      }
+    } else {
+    }
+    return (ret);
+  } else {
+  }
   {
-  tmp = w83977af_open(i, io[i], irq[i], dma[i]);
+  ret = pnp_register_driver(& nsc_ircc_pnp_driver);
   }
-  if (tmp == 0) {
-    return (0);
+  if (ret == 0) {
+    pnp_registered = 1;
   } else {
   }
-  i = i + 1;
-  ldv_44920: ;
-  if ((unsigned int )i <= 3U && io[i] <= 1999U) {
-    goto ldv_44919;
+  ret = -19;
+  chip = (nsc_chip_t *)(& chips);
+  goto ldv_45784;
+  ldv_45783: ;
+  if (irda_debug > 1U) {
+    {
+    printk("\017%s(), Probing for %s ...\n", "nsc_ircc_init", chip->name);
+    }
   } else {
   }
-  return (-19);
+  cfg = 0;
+  goto ldv_45781;
+  ldv_45780:
+  cfg_base = chip->cfg[cfg];
+  if (cfg_base == 0) {
+    goto ldv_45779;
+  } else {
+  }
+  {
+  tmp___0 = inb(cfg_base);
+  reg = (int )tmp___0;
+  }
+  if (reg == 255) {
+    if (irda_debug > 1U) {
+      {
+      printk("\017%s() no chip at 0x%03x\n", "nsc_ircc_init", cfg_base);
+      }
+    } else {
+    }
+    goto ldv_45779;
+  } else {
+  }
+  {
+  outb((int )chip->cid_index, cfg_base);
+  tmp___1 = inb(cfg_base + 1);
+  id = (int )tmp___1;
+  }
+  if ((id & (int )chip->cid_mask) == (int )chip->cid_value) {
+    if (irda_debug > 1U) {
+      {
+      printk("\017%s() Found %s chip, revision=%d\n", "nsc_ircc_init", chip->name,
+             id & ~ ((int )chip->cid_mask));
+      }
+    } else {
+    }
+    if (pnp_succeeded != 0) {
+      {
+      memset((void *)(& info), 0, 72UL);
+      info.cfg_base = cfg_base;
+      info.fir_base = pnp_info.fir_base;
+      info.dma = pnp_info.dma;
+      info.irq = pnp_info.irq;
+      }
+      if (info.fir_base <= 8191) {
+        {
+        tmp___2 = net_ratelimit();
+        }
+        if (tmp___2 != 0) {
+          {
+          printk("\016%s, chip->init\n", driver_name);
+          }
+        } else {
+        }
+        {
+        (*(chip->init))(chip, & info);
+        }
+      } else {
+        {
+        (*(chip->probe))(chip, & info);
+        }
+      }
+      {
+      tmp___3 = nsc_ircc_open(& info);
+      }
+      if (tmp___3 >= 0) {
+        ret = 0;
+      } else {
+      }
+    } else {
+    }
+    if (ret != 0) {
+      if (irda_debug > 1U) {
+        {
+        printk("\017%s, PnP init failed\n", driver_name);
+        }
+      } else {
+      }
+      {
+      memset((void *)(& info), 0, 72UL);
+      info.cfg_base = cfg_base;
+      info.fir_base = (int )io[i];
+      info.dma = (int )dma[i];
+      info.irq = (int )irq[i];
+      }
+      if (io[i] <= 8191U) {
+        {
+        (*(chip->init))(chip, & info);
+        }
+      } else {
+        {
+        (*(chip->probe))(chip, & info);
+        }
+      }
+      {
+      tmp___4 = nsc_ircc_open(& info);
+      }
+      if (tmp___4 >= 0) {
+        ret = 0;
+      } else {
+      }
+    } else {
+    }
+    i = i + 1;
+  } else
+  if (irda_debug > 1U) {
+    {
+    printk("\017%s(), Wrong chip id=0x%02x\n", "nsc_ircc_init", id);
+    }
+  } else {
+  }
+  ldv_45779:
+  cfg = cfg + 1;
+  ldv_45781: ;
+  if ((unsigned int )cfg <= 2U) {
+    goto ldv_45780;
+  } else {
+  }
+  chip = chip + 1;
+  ldv_45784: ;
+  if ((unsigned long )chip->name != (unsigned long )((char *)0)) {
+    goto ldv_45783;
+  } else {
+  }
+  if (ret != 0) {
+    {
+    ldv_platform_driver_unregister_76(& nsc_ircc_driver);
+    pnp_unregister_driver(& nsc_ircc_pnp_driver);
+    pnp_registered = 0;
+    }
+  } else {
+  }
+  return (ret);
 }
 }
-static void w83977af_cleanup(void)
+static void nsc_ircc_cleanup(void)
 {
   int i ;
   {
-  if (irda_debug > 3U) {
-    {
-    printk("\017%s()\n", "w83977af_cleanup");
-    }
-  } else {
-  }
   i = 0;
-  goto ldv_44930;
-  ldv_44929: ;
-  if ((unsigned long )dev_self[i] != (unsigned long )((struct w83977af_ir *)0)) {
+  goto ldv_45793;
+  ldv_45792: ;
+  if ((unsigned long )dev_self[i] != (unsigned long )((struct nsc_ircc_cb *)0)) {
     {
-    w83977af_close(dev_self[i]);
+    nsc_ircc_close(dev_self[i]);
     }
   } else {
   }
   i = i + 1;
-  ldv_44930: ;
-  if ((unsigned int )i <= 3U) {
-    goto ldv_44929;
+  ldv_45793: ;
+  if ((unsigned int )i <= 4U) {
+    goto ldv_45792;
   } else {
   }
+  {
+  ldv_platform_driver_unregister_77(& nsc_ircc_driver);
+  }
+  if (pnp_registered != 0) {
+    {
+    pnp_unregister_driver(& nsc_ircc_pnp_driver);
+    }
+  } else {
+  }
+  pnp_registered = 0;
   return;
 }
 }
-static struct net_device_ops const w83977_netdev_ops =
-     {0, 0, & w83977af_net_open, & w83977af_net_close, & w83977af_hard_xmit, 0, 0, 0,
-    0, 0, & w83977af_net_ioctl, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+static struct net_device_ops const nsc_ircc_sir_ops =
+     {0, 0, & nsc_ircc_net_open, & nsc_ircc_net_close, & nsc_ircc_hard_xmit_sir, 0,
+    0, 0, 0, 0, & nsc_ircc_net_ioctl, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0};
-static int w83977af_open(int i , unsigned int iobase , unsigned int irq___0 , unsigned int dma___0 )
+    0, 0, 0, 0, 0, 0, 0};
+static struct net_device_ops const nsc_ircc_fir_ops =
+     {0, 0, & nsc_ircc_net_open, & nsc_ircc_net_close, & nsc_ircc_hard_xmit_fir, 0,
+    0, 0, 0, 0, & nsc_ircc_net_ioctl, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0};
+static int nsc_ircc_open(chipio_t *info )
 {
   struct net_device *dev ;
-  struct w83977af_ir *self ;
+  struct nsc_ircc_cb *self ;
+  void *ret ;
   int err ;
-  struct resource *tmp ;
+  int chip_index ;
+  int tmp ;
   int tmp___0 ;
-  void *tmp___1 ;
+  int tmp___1 ;
+  int tmp___2 ;
+  int tmp___3 ;
+  void *tmp___4 ;
   struct lock_class_key __key ;
-  void *tmp___2 ;
-  void *tmp___3 ;
-  int tmp___4 ;
-  int tmp___5 ;
+  struct resource *tmp___5 ;
+  int tmp___6 ;
+  void *tmp___7 ;
+  void *tmp___8 ;
+  int tmp___9 ;
+  int tmp___10 ;
+  int tmp___11 ;
+  int tmp___12 ;
+  int tmp___13 ;
+  int tmp___14 ;
+  long tmp___15 ;
+  long tmp___16 ;
   {
-  {
-  printk("\017%s()\n", "w83977af_open");
-  tmp = __request_region(& ioport_resource, (resource_size_t )iobase, 8ULL, (char const *)driver_name,
-                         0);
-  }
-  if ((unsigned long )tmp == (unsigned long )((struct resource *)0)) {
+  if (irda_debug > 1U) {
     {
-    printk("\017%s(), can\'t get iobase of 0x%03x\n", "w83977af_open", iobase);
+    printk("\017%s()\n", "nsc_ircc_open");
     }
-    return (-19);
+  } else {
+  }
+  chip_index = 0;
+  goto ldv_45810;
+  ldv_45809: ;
+  if ((unsigned long )dev_self[chip_index] == (unsigned long )((struct nsc_ircc_cb *)0)) {
+    goto ldv_45808;
+  } else {
+  }
+  chip_index = chip_index + 1;
+  ldv_45810: ;
+  if ((unsigned int )chip_index <= 4U) {
+    goto ldv_45809;
+  } else {
+  }
+  ldv_45808: ;
+  if (chip_index == 5) {
+    {
+    tmp = net_ratelimit();
+    }
+    if (tmp != 0) {
+      {
+      printk("\v%s(), maximum number of supported chips reached!\n", "nsc_ircc_open");
+      }
+    } else {
+    }
+    return (-12);
   } else {
   }
   {
-  tmp___0 = w83977af_probe((int )iobase, (int )irq___0, (int )dma___0);
+  tmp___0 = net_ratelimit();
   }
-  if (tmp___0 == -1) {
-    err = -1;
-    goto err_out;
+  if (tmp___0 != 0) {
+    {
+    printk("\016%s, Found chip at base=0x%03x\n", driver_name, info->cfg_base);
+    }
   } else {
   }
   {
-  dev = alloc_irdadev(488);
+  tmp___1 = nsc_ircc_setup(info);
+  }
+  if (tmp___1 == -1) {
+    return (-1);
+  } else {
+  }
+  {
+  tmp___2 = net_ratelimit();
+  }
+  if (tmp___2 != 0) {
+    {
+    printk("\016%s, driver loaded (Dag Brattli)\n", driver_name);
+    }
+  } else {
+  }
+  {
+  dev = alloc_irdadev(608);
   }
   if ((unsigned long )dev == (unsigned long )((struct net_device *)0)) {
     {
-    printk("\vIrDA: Can\'t allocate memory for IrDA control block!\n");
-    err = -12;
+    tmp___3 = net_ratelimit();
     }
-    goto err_out;
+    if (tmp___3 != 0) {
+      {
+      printk("\v%s(), can\'t allocate memory for control block!\n", "nsc_ircc_open");
+      }
+    } else {
+    }
+    return (-12);
   } else {
   }
   {
-  tmp___1 = netdev_priv((struct net_device const *)dev);
-  self = (struct w83977af_ir *)tmp___1;
+  tmp___4 = netdev_priv((struct net_device const *)dev);
+  self = (struct nsc_ircc_cb *)tmp___4;
+  self->netdev = dev;
   spinlock_check(& self->lock);
   __raw_spin_lock_init(& self->lock.__annonCompField19.rlock, "&(&self->lock)->rlock",
                        & __key);
-  self->io.fir_base = (int )iobase;
-  self->io.irq = (int )irq___0;
+  dev_self[chip_index] = self;
+  self->index = chip_index;
+  self->io.cfg_base = info->cfg_base;
+  self->io.fir_base = info->fir_base;
+  self->io.irq = info->irq;
   self->io.fir_ext = 8;
-  self->io.dma = (int )dma___0;
+  self->io.dma = info->dma;
   self->io.fifo_size = 32;
+  tmp___5 = __request_region(& ioport_resource, (resource_size_t )self->io.fir_base,
+                             (resource_size_t )self->io.fir_ext, (char const *)driver_name,
+                             0);
+  ret = (void *)tmp___5;
+  }
+  if ((unsigned long )ret == (unsigned long )((void *)0)) {
+    {
+    tmp___6 = net_ratelimit();
+    }
+    if (tmp___6 != 0) {
+      {
+      printk("\f%s(), can\'t get iobase of 0x%03x\n", "nsc_ircc_open", self->io.fir_base);
+      }
+    } else {
+    }
+    err = -19;
+    goto out1;
+  } else {
+  }
+  {
   irda_init_max_qos_capabilies(& self->qos);
   self->qos.baud_rate.bits = 510U;
   self->qos.min_turn_time.bits = (__u16 )qos_mtt_bits;
   irda_qos_bits_to_value(& self->qos);
   self->rx_buff.truesize = 14384;
-  self->tx_buff.truesize = 4000;
-  tmp___2 = dma_zalloc_coherent((struct device *)0, (size_t )self->rx_buff.truesize,
+  self->tx_buff.truesize = 14384;
+  tmp___7 = dma_zalloc_coherent((struct device *)0, (size_t )self->rx_buff.truesize,
                                 & self->rx_buff_dma, 208U);
-  self->rx_buff.head = (__u8 *)tmp___2;
+  self->rx_buff.head = (__u8 *)tmp___7;
   }
   if ((unsigned long )self->rx_buff.head == (unsigned long )((__u8 *)0U)) {
     err = -12;
-    goto err_out1;
+    goto out2;
   } else {
   }
   {
-  tmp___3 = dma_zalloc_coherent((struct device *)0, (size_t )self->tx_buff.truesize,
+  tmp___8 = dma_zalloc_coherent((struct device *)0, (size_t )self->tx_buff.truesize,
                                 & self->tx_buff_dma, 208U);
-  self->tx_buff.head = (__u8 *)tmp___3;
+  self->tx_buff.head = (__u8 *)tmp___8;
   }
   if ((unsigned long )self->tx_buff.head == (unsigned long )((__u8 *)0U)) {
     err = -12;
-    goto err_out2;
+    goto out3;
   } else {
   }
   {
@@ -6378,68 +7148,135 @@ static int w83977af_open(int i , unsigned int iobase , unsigned int irq___0 , un
   self->rx_buff.state = 0;
   self->tx_buff.data = self->tx_buff.head;
   self->rx_buff.data = self->rx_buff.head;
-  self->netdev = dev;
-  dev->netdev_ops = & w83977_netdev_ops;
-  err = ldv_register_netdev_71(dev);
-  }
-  if (err != 0) {
-    {
-    tmp___4 = net_ratelimit();
-    }
-    if (tmp___4 != 0) {
-      {
-      printk("\v%s(), register_netdevice() failed!\n", "w83977af_open");
-      }
-    } else {
-    }
-    goto err_out3;
-  } else {
-  }
+  tmp___10 = 0;
+  self->tx_fifo.free = tmp___10;
+  tmp___9 = tmp___10;
+  self->tx_fifo.ptr = tmp___9;
+  self->tx_fifo.len = tmp___9;
+  self->tx_fifo.tail = (void *)self->tx_buff.head;
+  dev->netdev_ops = & nsc_ircc_sir_ops;
   {
-  tmp___5 = net_ratelimit();
+  tmp___12 = net_ratelimit();
   }
-  if (tmp___5 != 0) {
+  if (tmp___12 != 0) {
     {
     printk("\016IrDA: Registered device %s\n", (char *)(& dev->name));
     }
   } else {
   }
-  dev_self[i] = self;
-  return (0);
-  err_out3:
+  if ((unsigned int )dongle_id - 1U > 14U) {
+    {
+    dongle_id = nsc_ircc_read_dongle_id(self->io.fir_base);
+    tmp___13 = net_ratelimit();
+    }
+    if (tmp___13 != 0) {
+      {
+      printk("\016%s, Found dongle: %s\n", driver_name, dongle_types[dongle_id]);
+      }
+    } else {
+    }
+  } else {
+    {
+    tmp___14 = net_ratelimit();
+    }
+    if (tmp___14 != 0) {
+      {
+      printk("\016%s, Using dongle: %s\n", driver_name, dongle_types[dongle_id]);
+      }
+    } else {
+    }
+  }
+  {
+  self->io.dongle_id = dongle_id;
+  
+  err = ldv_register_netdev_78(dev);
+  }
+  if (err != 0) {
+    {
+    tmp___11 = net_ratelimit();
+    }
+    if (tmp___11 != 0) {
+      {
+      printk("\v%s(), register_netdev() failed!\n", "nsc_ircc_open");
+      }
+    } else {
+    }
+    goto out4;
+  } else {
+  }
+  nsc_ircc_init_dongle_interface(self->io.fir_base, dongle_id);
+  self->pldev = platform_device_register_simple("nsc-ircc", self->index, (struct resource const *)0,
+                                                0U);
+  tmp___16 = IS_ERR((void const *)self->pldev);
+  }
+  if (tmp___16 != 0L) {
+    {
+    tmp___15 = PTR_ERR((void const *)self->pldev);
+    err = (int )tmp___15;
+    }
+    goto out5;
+  } else {
+  }
+  {
+  platform_set_drvdata(self->pldev, (void *)self);
+  }
+  return (chip_index);
+  out5:
+  {
+  ldv_unregister_netdev_79(dev);
+  }
+  out4:
   {
   dma_free_attrs((struct device *)0, (size_t )self->tx_buff.truesize, (void *)self->tx_buff.head,
                  self->tx_buff_dma, (struct dma_attrs *)0);
   }
-  err_out2:
+  out3:
   {
   dma_free_attrs((struct device *)0, (size_t )self->rx_buff.truesize, (void *)self->rx_buff.head,
                  self->rx_buff_dma, (struct dma_attrs *)0);
   }
-  err_out1:
+  out2:
   {
-  ldv_free_netdev_72(dev);
+  __release_region(& ioport_resource, (resource_size_t )self->io.fir_base, (resource_size_t )self->io.fir_ext);
   }
-  err_out:
+  out1:
   {
-  __release_region(& ioport_resource, (resource_size_t )iobase, 8ULL);
+  ldv_free_netdev_80(dev);
+  dev_self[chip_index] = (struct nsc_ircc_cb *)0;
   }
   return (err);
 }
 }
-static int w83977af_close(struct w83977af_ir *self )
+static int nsc_ircc_close(struct nsc_ircc_cb *self )
 {
   int iobase ;
   {
+  if (irda_debug > 3U) {
+    {
+    printk("\017%s()\n", "nsc_ircc_close");
+    }
+  } else {
+  }
+  if ((unsigned long )self == (unsigned long )((struct nsc_ircc_cb *)0)) {
+    {
+    printk("Assertion failed! %s:%s:%d %s\n", (char *)"drivers/net/irda/nsc-ircc.c",
+           "nsc_ircc_close", 521, (char *)"self != NULL");
+    }
+    return (-1);
+  } else {
+  }
   {
-  printk("\017%s()\n", "w83977af_close");
   iobase = self->io.fir_base;
-  w977_efm_enter(efio);
-  w977_select_device(6, efio);
-  w977_write_reg(48, 0, efio);
-  w977_efm_exit(efio);
-  ldv_unregister_netdev_73(self->netdev);
-  printk("\017%s(), Releasing Region %03x\n", "w83977af_close", self->io.fir_base);
+  platform_device_unregister(self->pldev);
+  ldv_unregister_netdev_81(self->netdev);
+  }
+  if (irda_debug > 3U) {
+    {
+    printk("\017%s(), Releasing Region %03x\n", "nsc_ircc_close", self->io.fir_base);
+    }
+  } else {
+  }
+  {
   __release_region(& ioport_resource, (resource_size_t )self->io.fir_base, (resource_size_t )self->io.fir_ext);
   }
   if ((unsigned long )self->tx_buff.head != (unsigned long )((__u8 *)0U)) {
@@ -6457,94 +7294,1166 @@ static int w83977af_close(struct w83977af_ir *self )
   } else {
   }
   {
-  ldv_free_netdev_74(self->netdev);
+  dev_self[self->index] = (struct nsc_ircc_cb *)0;
+  ldv_free_netdev_82(self->netdev);
   }
   return (0);
 }
 }
-static int w83977af_probe(int iobase , int irq___0 , int dma___0 )
+static int nsc_ircc_init_108(nsc_chip_t *chip , chipio_t *info )
 {
-  int version ;
-  int i ;
-  unsigned char tmp ;
-  unsigned char tmp___0 ;
+  int cfg_base ;
+  __u8 temp ;
+  int tmp ;
+  int tmp___0 ;
   int tmp___1 ;
   {
-  i = 0;
-  goto ldv_44962;
-  ldv_44961:
   {
-  printk("\017%s()\n", "w83977af_probe");
-  w977_efm_enter(efbase[i]);
-  w977_select_device(6, efbase[i]);
-  w977_write_reg(96, (int )((__u8 )(iobase >> 8)), efbase[i]);
-  w977_write_reg(97, (int )((__u8 )iobase), efbase[i]);
-  w977_write_reg(112, (int )((__u8 )irq___0), efbase[i]);
-  w977_write_reg(116, (int )((__u8 )dma___0), efbase[i]);
-  w977_write_reg(117, 4, efbase[i]);
-  w977_write_reg(240, 3, efbase[i]);
-  w977_write_reg(48, 1, efbase[i]);
-  w977_efm_exit(efbase[i]);
-  switch_bank(iobase, 224);
-  outb((int )((unsigned int )((unsigned char )iobase) + 2U), 0);
-  switch_bank(iobase, 3);
-  outb(8, iobase + 4);
-  switch_bank(iobase, 224);
-  tmp = inb(iobase + 2);
-  outb((int )((unsigned int )tmp | 1U), iobase + 2);
-  switch_bank(iobase, 3);
-  outb(96, iobase + 4);
-  switch_bank(iobase, 228);
-  tmp___0 = inb(iobase);
-  version = (int )tmp___0;
+  cfg_base = info->cfg_base;
+  temp = 0U;
+  outb(2, cfg_base);
+  outb(0, cfg_base + 1);
+  outb(0, cfg_base);
   }
-  if ((version & 240) == 16) {
+  {
+  if (info->fir_base == 1000) {
+    goto case_1000;
+  } else {
+  }
+  if (info->fir_base == 744) {
+    goto case_744;
+  } else {
+  }
+  if (info->fir_base == 1016) {
+    goto case_1016;
+  } else {
+  }
+  if (info->fir_base == 760) {
+    goto case_760;
+  } else {
+  }
+  goto switch_default;
+  case_1000:
+  {
+  outb(20, cfg_base + 1);
+  }
+  goto ldv_45833;
+  case_744:
+  {
+  outb(21, cfg_base + 1);
+  }
+  goto ldv_45833;
+  case_1016:
+  {
+  outb(22, cfg_base + 1);
+  }
+  goto ldv_45833;
+  case_760:
+  {
+  outb(23, cfg_base + 1);
+  }
+  goto ldv_45833;
+  switch_default:
+  {
+  tmp = net_ratelimit();
+  }
+  if (tmp != 0) {
     {
-    efio = efbase[i];
-    switch_bank(iobase, 224);
-    outb(5, iobase + 4);
-    switch_bank(iobase, 3);
-    outb(167, iobase + 2);
-    switch_bank(iobase, 232);
-    outb(0, iobase + 6);
-    outb(8, iobase + 7);
-    switch_bank(iobase, 244);
-    outb(64, iobase + 7);
-    tmp___1 = net_ratelimit();
+    printk("\v%s(), invalid base_address", "nsc_ircc_init_108");
     }
-    if (tmp___1 != 0) {
+  } else {
+  }
+  switch_break: ;
+  }
+  ldv_45833: ;
+  {
+  if (info->irq == 3) {
+    goto case_3;
+  } else {
+  }
+  if (info->irq == 4) {
+    goto case_4;
+  } else {
+  }
+  if (info->irq == 5) {
+    goto case_5;
+  } else {
+  }
+  if (info->irq == 7) {
+    goto case_7;
+  } else {
+  }
+  if (info->irq == 9) {
+    goto case_9;
+  } else {
+  }
+  if (info->irq == 11) {
+    goto case_11;
+  } else {
+  }
+  if (info->irq == 15) {
+    goto case_15;
+  } else {
+  }
+  goto switch_default___0;
+  case_3:
+  temp = 1U;
+  goto ldv_45840;
+  case_4:
+  temp = 2U;
+  goto ldv_45840;
+  case_5:
+  temp = 3U;
+  goto ldv_45840;
+  case_7:
+  temp = 4U;
+  goto ldv_45840;
+  case_9:
+  temp = 5U;
+  goto ldv_45840;
+  case_11:
+  temp = 6U;
+  goto ldv_45840;
+  case_15:
+  temp = 7U;
+  goto ldv_45840;
+  switch_default___0:
+  {
+  tmp___0 = net_ratelimit();
+  }
+  if (tmp___0 != 0) {
+    {
+    printk("\v%s(), invalid irq", "nsc_ircc_init_108");
+    }
+  } else {
+  }
+  switch_break___0: ;
+  }
+  ldv_45840:
+  {
+  outb(1, cfg_base);
+  }
+  {
+  if (info->dma == 0) {
+    goto case_0;
+  } else {
+  }
+  if (info->dma == 1) {
+    goto case_1;
+  } else {
+  }
+  if (info->dma == 3) {
+    goto case_3___0;
+  } else {
+  }
+  goto switch_default___1;
+  case_0:
+  {
+  outb((int )((unsigned int )temp + 8U), cfg_base + 1);
+  }
+  goto ldv_45849;
+  case_1:
+  {
+  outb((int )((unsigned int )temp + 16U), cfg_base + 1);
+  }
+  goto ldv_45849;
+  case_3___0:
+  {
+  outb((int )((unsigned int )temp + 24U), cfg_base + 1);
+  }
+  goto ldv_45849;
+  switch_default___1:
+  {
+  tmp___1 = net_ratelimit();
+  }
+  if (tmp___1 != 0) {
+    {
+    printk("\v%s(), invalid dma", "nsc_ircc_init_108");
+    }
+  } else {
+  }
+  switch_break___1: ;
+  }
+  ldv_45849:
+  {
+  outb(2, cfg_base);
+  outb(3, cfg_base + 1);
+  }
+  return (0);
+}
+}
+static int nsc_ircc_probe_108(nsc_chip_t *chip , chipio_t *info )
+{
+  int cfg_base ;
+  int reg ;
+  unsigned char tmp ;
+  unsigned char tmp___0 ;
+  unsigned char tmp___1 ;
+  {
+  {
+  cfg_base = info->cfg_base;
+  outb(0, cfg_base);
+  tmp = inb(cfg_base + 1);
+  reg = (int )tmp;
+  }
+  {
+  if ((reg & 3) == 0) {
+    goto case_0;
+  } else {
+  }
+  if ((reg & 3) == 1) {
+    goto case_1;
+  } else {
+  }
+  if ((reg & 3) == 2) {
+    goto case_2;
+  } else {
+  }
+  if ((reg & 3) == 3) {
+    goto case_3;
+  } else {
+  }
+  goto switch_break;
+  case_0:
+  info->fir_base = 1000;
+  goto ldv_45860;
+  case_1:
+  info->fir_base = 744;
+  goto ldv_45860;
+  case_2:
+  info->fir_base = 1016;
+  goto ldv_45860;
+  case_3:
+  info->fir_base = 760;
+  goto ldv_45860;
+  switch_break: ;
+  }
+  ldv_45860:
+  info->sir_base = info->fir_base;
+  if (irda_debug > 1U) {
+    {
+    printk("\017%s(), probing fir_base=0x%03x\n", "nsc_ircc_probe_108", info->fir_base);
+    }
+  } else {
+  }
+  {
+  outb(1, cfg_base);
+  tmp___0 = inb(cfg_base + 1);
+  reg = (int )tmp___0;
+  }
+  {
+  if ((reg & 7) == 0) {
+    goto case_0___0;
+  } else {
+  }
+  if ((reg & 7) == 1) {
+    goto case_1___0;
+  } else {
+  }
+  if ((reg & 7) == 2) {
+    goto case_2___0;
+  } else {
+  }
+  if ((reg & 7) == 3) {
+    goto case_3___0;
+  } else {
+  }
+  if ((reg & 7) == 4) {
+    goto case_4;
+  } else {
+  }
+  if ((reg & 7) == 5) {
+    goto case_5;
+  } else {
+  }
+  if ((reg & 7) == 6) {
+    goto case_6;
+  } else {
+  }
+  if ((reg & 7) == 7) {
+    goto case_7;
+  } else {
+  }
+  goto switch_break___0;
+  case_0___0:
+  info->irq = -1;
+  goto ldv_45866;
+  case_1___0:
+  info->irq = 3;
+  goto ldv_45866;
+  case_2___0:
+  info->irq = 4;
+  goto ldv_45866;
+  case_3___0:
+  info->irq = 5;
+  goto ldv_45866;
+  case_4:
+  info->irq = 7;
+  goto ldv_45866;
+  case_5:
+  info->irq = 9;
+  goto ldv_45866;
+  case_6:
+  info->irq = 11;
+  goto ldv_45866;
+  case_7:
+  info->irq = 15;
+  goto ldv_45866;
+  switch_break___0: ;
+  }
+  ldv_45866: ;
+  if (irda_debug > 1U) {
+    {
+    printk("\017%s(), probing irq=%d\n", "nsc_ircc_probe_108", info->irq);
+    }
+  } else {
+  }
+  {
+  if (((reg >> 3) & 3) == 0) {
+    goto case_0___1;
+  } else {
+  }
+  if (((reg >> 3) & 3) == 1) {
+    goto case_1___1;
+  } else {
+  }
+  if (((reg >> 3) & 3) == 2) {
+    goto case_2___1;
+  } else {
+  }
+  if (((reg >> 3) & 3) == 3) {
+    goto case_3___1;
+  } else {
+  }
+  goto switch_break___1;
+  case_0___1:
+  info->dma = -1;
+  goto ldv_45875;
+  case_1___1:
+  info->dma = 0;
+  goto ldv_45875;
+  case_2___1:
+  info->dma = 1;
+  goto ldv_45875;
+  case_3___1:
+  info->dma = 3;
+  goto ldv_45875;
+  switch_break___1: ;
+  }
+  ldv_45875: ;
+  if (irda_debug > 1U) {
+    {
+    printk("\017%s(), probing dma=%d\n", "nsc_ircc_probe_108", info->dma);
+    }
+  } else {
+  }
+  {
+  outb(2, cfg_base);
+  tmp___1 = inb(cfg_base + 1);
+  reg = (int )tmp___1;
+  info->enabled = reg & 1;
+  info->suspended = (reg & 2) == 0;
+  }
+  return (0);
+}
+}
+static int nsc_ircc_init_338(nsc_chip_t *chip , chipio_t *info )
+{
+  {
+  return (0);
+}
+}
+static int nsc_ircc_probe_338(nsc_chip_t *chip , chipio_t *info )
+{
+  int cfg_base ;
+  int reg ;
+  int com ;
+  int pnp ;
+  unsigned char tmp ;
+  unsigned char tmp___0 ;
+  unsigned char tmp___1 ;
+  unsigned char tmp___2 ;
+  unsigned char tmp___3 ;
+  unsigned char tmp___4 ;
+  unsigned char tmp___5 ;
+  unsigned char tmp___6 ;
+  {
+  {
+  cfg_base = info->cfg_base;
+  com = 0;
+  outb(0, cfg_base);
+  tmp = inb(cfg_base + 1);
+  reg = (int )tmp;
+  info->enabled = (reg >> 2) & 1;
+  outb(27, cfg_base);
+  tmp___0 = inb(cfg_base + 1);
+  reg = (int )tmp___0;
+  pnp = (reg >> 3) & 1;
+  }
+  if (pnp != 0) {
+    if (irda_debug > 1U) {
       {
-      printk("\016W83977AF (IR) driver loaded. Version: 0x%02x\n", version);
+      printk("\017(), Chip is in PnP mode\n");
       }
     } else {
     }
-    return (0);
+    {
+    outb(70, cfg_base);
+    tmp___1 = inb(cfg_base + 1);
+    reg = ((int )tmp___1 & 254) << 2;
+    outb(71, cfg_base);
+    tmp___2 = inb(cfg_base + 1);
+    reg = reg | (((int )tmp___2 & 252) << 8);
+    info->fir_base = reg;
+    }
   } else {
     {
-    printk("\017%s(), Wrong chip version", "w83977af_probe");
+    outb(1, cfg_base);
+    tmp___3 = inb(cfg_base + 1);
+    reg = (int )tmp___3;
+    }
+    {
+    if (((reg >> 4) & 3) == 0) {
+      goto case_0;
+    } else {
+    }
+    if (((reg >> 4) & 3) == 1) {
+      goto case_1;
+    } else {
+    }
+    if (((reg >> 4) & 3) == 2) {
+      goto case_2;
+    } else {
+    }
+    if (((reg >> 4) & 3) == 3) {
+      goto case_3;
+    } else {
+    }
+    goto switch_break;
+    case_0:
+    info->fir_base = 1016;
+    goto ldv_45892;
+    case_1:
+    info->fir_base = 760;
+    goto ldv_45892;
+    case_2:
+    com = 3;
+    goto ldv_45892;
+    case_3:
+    com = 4;
+    goto ldv_45892;
+    switch_break: ;
+    }
+    ldv_45892: ;
+    if (com != 0) {
+      {
+      if (((reg >> 6) & 3) == 0) {
+        goto case_0___0;
+      } else {
+      }
+      if (((reg >> 6) & 3) == 1) {
+        goto case_1___0;
+      } else {
+      }
+      if (((reg >> 6) & 3) == 2) {
+        goto case_2___0;
+      } else {
+      }
+      if (((reg >> 6) & 3) == 3) {
+        goto case_3___0;
+      } else {
+      }
+      goto switch_break___0;
+      case_0___0: ;
+      if (com == 3) {
+        info->fir_base = 1000;
+      } else {
+        info->fir_base = 744;
+      }
+      goto ldv_45897;
+      case_1___0: ;
+      if (com == 3) {
+        info->fir_base = 824;
+      } else {
+        info->fir_base = 568;
+      }
+      goto ldv_45897;
+      case_2___0: ;
+      if (com == 3) {
+        info->fir_base = 744;
+      } else {
+        info->fir_base = 736;
+      }
+      goto ldv_45897;
+      case_3___0: ;
+      if (com == 3) {
+        info->fir_base = 544;
+      } else {
+        info->fir_base = 552;
+      }
+      goto ldv_45897;
+      switch_break___0: ;
+      }
+      ldv_45897: ;
+    } else {
     }
   }
-  i = i + 1;
-  ldv_44962: ;
-  if (i <= 1) {
-    goto ldv_44961;
+  {
+  info->sir_base = info->fir_base;
+  outb(28, cfg_base);
+  tmp___4 = inb(cfg_base + 1);
+  reg = (int )tmp___4;
+  info->irq = reg >> 4;
+  outb(79, cfg_base);
+  tmp___5 = inb(cfg_base + 1);
+  reg = (int )tmp___5;
+  info->dma = (reg & 7) + -1;
+  outb(2, cfg_base);
+  tmp___6 = inb(cfg_base + 1);
+  reg = (int )tmp___6;
+  info->suspended = reg & 1;
+  }
+  return (0);
+}
+}
+static int nsc_ircc_init_39x(nsc_chip_t *chip , chipio_t *info )
+{
+  int cfg_base ;
+  int enabled ;
+  unsigned char tmp ;
+  {
+  cfg_base = info->cfg_base;
+  if (irda_debug > 1U) {
+    {
+    printk("\017%s(): nsc_ircc_init_39x (user settings): io=0x%04x, irq=%d, dma=%d\n",
+           "nsc_ircc_init_39x", info->fir_base, info->irq, info->dma);
+    }
   } else {
   }
-  return (-1);
+  {
+  outb(7, cfg_base);
+  outb(2, cfg_base + 1);
+  outb(48, cfg_base);
+  tmp = inb(cfg_base + 1);
+  enabled = (int )tmp & 1;
+  }
+  if (enabled == 0) {
+    {
+    outb(33, cfg_base);
+    outb(1, cfg_base + 1);
+    }
+  } else {
+  }
+  {
+  outb(240, cfg_base);
+  outb(130, cfg_base + 1);
+  }
+  return (0);
 }
 }
-static void w83977af_change_speed(struct w83977af_ir *self , __u32 speed )
+static int nsc_ircc_probe_39x(nsc_chip_t *chip , chipio_t *info )
 {
-  int ir_mode ;
+  int cfg_base ;
+  int reg1 ;
+  int reg2 ;
+  int irq___0 ;
+  int irqt ;
+  int dma1 ;
+  int dma2 ;
+  int enabled ;
+  int susp ;
+  unsigned char tmp ;
+  unsigned char tmp___0 ;
+  unsigned char tmp___1 ;
+  unsigned char tmp___2 ;
+  unsigned char tmp___3 ;
+  unsigned char tmp___4 ;
+  unsigned char tmp___5 ;
+  unsigned char tmp___6 ;
+  unsigned char tmp___7 ;
+  {
+  cfg_base = info->cfg_base;
+  if (irda_debug > 1U) {
+    {
+    printk("\017%s(), nsc_ircc_probe_39x, base=%d\n", "nsc_ircc_probe_39x", cfg_base);
+    }
+  } else {
+  }
+  {
+  outb(7, cfg_base);
+  outb(2, cfg_base + 1);
+  outb(96, cfg_base);
+  tmp = inb(cfg_base + 1);
+  reg1 = (int )tmp;
+  outb(97, cfg_base);
+  tmp___0 = inb(cfg_base + 1);
+  reg2 = (int )tmp___0;
+  info->fir_base = (reg1 << 8) | reg2;
+  outb(112, cfg_base);
+  tmp___1 = inb(cfg_base + 1);
+  irq___0 = (int )tmp___1;
+  outb(113, cfg_base);
+  tmp___2 = inb(cfg_base + 1);
+  irqt = (int )tmp___2;
+  info->irq = irq___0;
+  outb(116, cfg_base);
+  tmp___3 = inb(cfg_base + 1);
+  dma1 = (int )tmp___3;
+  outb(117, cfg_base);
+  tmp___4 = inb(cfg_base + 1);
+  dma2 = (int )tmp___4;
+  info->dma = dma1 + -1;
+  outb(48, cfg_base);
+  tmp___5 = inb(cfg_base + 1);
+  enabled = (int )tmp___5 & 1;
+  info->enabled = enabled;
+  outb(240, cfg_base);
+  tmp___6 = inb(cfg_base + 1);
+  susp = 1 - (((int )tmp___6 & 2) >> 1);
+  }
+  if (irda_debug > 1U) {
+    {
+    printk("\017%s(): io=0x%02x%02x, irq=%d (type %d), rxdma=%d, txdma=%d, enabled=%d (suspended=%d)\n",
+           "nsc_ircc_probe_39x", reg1, reg2, irq___0, irqt, dma1, dma2, enabled, susp);
+    }
+  } else {
+  }
+  {
+  outb(48, cfg_base);
+  tmp___7 = inb(cfg_base + 1);
+  enabled = (int )tmp___7 & 1;
+  }
+  if (enabled == 0) {
+    {
+    outb(33, cfg_base);
+    outb(1, cfg_base + 1);
+    }
+  } else {
+  }
+  {
+  outb(240, cfg_base);
+  outb(130, cfg_base + 1);
+  }
+  return (0);
+}
+}
+static int nsc_ircc_pnp_probe(struct pnp_dev *dev , struct pnp_device_id const *id )
+{
+  resource_size_t tmp ;
+  int tmp___0 ;
+  unsigned long tmp___1 ;
+  resource_size_t tmp___2 ;
+  int tmp___3 ;
+  unsigned long tmp___4 ;
+  resource_size_t tmp___5 ;
+  int tmp___6 ;
+  unsigned long tmp___7 ;
+  {
+  {
+  memset((void *)(& pnp_info), 0, 72UL);
+  pnp_info.irq = -1;
+  pnp_info.dma = -1;
+  pnp_succeeded = 1;
+  }
+  if ((int )id->driver_data & 1) {
+    dongle_id = 9;
+  } else {
+  }
+  {
+  tmp___0 = pnp_port_valid(dev, 0U);
+  }
+  if (tmp___0 != 0) {
+    {
+    tmp___1 = pnp_port_flags(dev, 0U);
+    }
+    if ((tmp___1 & 268435456UL) == 0UL) {
+      {
+      tmp = pnp_port_start(dev, 0U);
+      pnp_info.fir_base = (int )tmp;
+      }
+    } else {
+    }
+  } else {
+  }
+  {
+  tmp___3 = pnp_irq_valid(dev, 0U);
+  }
+  if (tmp___3 != 0) {
+    {
+    tmp___4 = pnp_irq_flags(dev, 0U);
+    }
+    if ((tmp___4 & 268435456UL) == 0UL) {
+      {
+      tmp___2 = pnp_irq(dev, 0U);
+      pnp_info.irq = (int )tmp___2;
+      }
+    } else {
+    }
+  } else {
+  }
+  {
+  tmp___6 = pnp_dma_valid(dev, 0U);
+  }
+  if (tmp___6 != 0) {
+    {
+    tmp___7 = pnp_dma_flags(dev, 0U);
+    }
+    if ((tmp___7 & 268435456UL) == 0UL) {
+      {
+      tmp___5 = pnp_dma(dev, 0U);
+      pnp_info.dma = (int )tmp___5;
+      }
+    } else {
+    }
+  } else {
+  }
+  {
+  printk("\017%s() : From PnP, found firbase 0x%03X ; irq %d ; dma %d.\n", "nsc_ircc_pnp_probe",
+         pnp_info.fir_base, pnp_info.irq, pnp_info.dma);
+  }
+  if ((pnp_info.fir_base == 0 || pnp_info.irq == -1) || pnp_info.dma == -1) {
+    pnp_succeeded = 0;
+  } else {
+  }
+  return (0);
+}
+}
+static int nsc_ircc_setup(chipio_t *info )
+{
+  int version ;
   int iobase ;
-  __u8 set ;
+  unsigned char tmp ;
+  int tmp___0 ;
   {
   {
-  ir_mode = 96;
+  iobase = info->fir_base;
+  switch_bank(iobase, 228);
+  tmp = inb(iobase);
+  version = (int )tmp;
+  }
+  if (irda_debug > 1U) {
+    {
+    printk("\017%s() Driver %s Found chip version %02x\n", "nsc_ircc_setup", driver_name,
+           version);
+    }
+  } else {
+  }
+  if ((version & 240) != 32) {
+    {
+    tmp___0 = net_ratelimit();
+    }
+    if (tmp___0 != 0) {
+      {
+      printk("\v%s, Wrong chip version %02x\n", driver_name, version);
+      }
+    } else {
+    }
+    return (-1);
+  } else {
+  }
+  {
+  switch_bank(iobase, 224);
+  outb(1, iobase + 2);
+  switch_bank(iobase, 3);
+  switch_bank(iobase, 3);
+  outb(103, iobase + 2);
+  outb(3, iobase + 3);
+  outb(96, iobase + 4);
+  switch_bank(iobase, 224);
+  outb(5, iobase + 4);
+  switch_bank(iobase, 236);
+  outb(2, iobase + 4);
+  switch_bank(iobase, 240);
+  outb(32, iobase);
+  outb(10, iobase + 1);
+  outb(13, iobase + 2);
+  outb(42, iobase + 4);
+  switch_bank(iobase, 3);
+  outb(1, iobase + 1);
+  }
+  return (0);
+}
+}
+static int nsc_ircc_read_dongle_id(int iobase )
+{
+  int dongle_id___0 ;
+  __u8 bank ;
+  unsigned char tmp ;
+  {
+  {
+  bank = inb(iobase + 3);
+  switch_bank(iobase, 244);
+  outb(0, iobase + 7);
+  __const_udelay(214750UL);
+  tmp = inb(iobase + 4);
+  dongle_id___0 = (int )tmp & 15;
+  }
+  if (dongle_id___0 == 10) {
+    dongle_id___0 = 9;
+  } else {
+  }
+  {
+  switch_bank(iobase, 3);
+  outb((int )bank, iobase + 3);
+  }
+  return (dongle_id___0);
+}
+}
+static void nsc_ircc_init_dongle_interface(int iobase , int dongle_id___0 )
+{
+  int bank ;
+  unsigned char tmp ;
+  {
+  {
+  tmp = inb(iobase + 3);
+  bank = (int )tmp;
+  switch_bank(iobase, 244);
+  }
+  {
+  if (dongle_id___0 == 0) {
+    goto case_0;
+  } else {
+  }
+  if (dongle_id___0 == 1) {
+    goto case_1;
+  } else {
+  }
+  if (dongle_id___0 == 2) {
+    goto case_2;
+  } else {
+  }
+  if (dongle_id___0 == 3) {
+    goto case_3;
+  } else {
+  }
+  if (dongle_id___0 == 4) {
+    goto case_4;
+  } else {
+  }
+  if (dongle_id___0 == 5) {
+    goto case_5;
+  } else {
+  }
+  if (dongle_id___0 == 6) {
+    goto case_6;
+  } else {
+  }
+  if (dongle_id___0 == 7) {
+    goto case_7;
+  } else {
+  }
+  if (dongle_id___0 == 8) {
+    goto case_8;
+  } else {
+  }
+  if (dongle_id___0 == 9) {
+    goto case_9;
+  } else {
+  }
+  if (dongle_id___0 == 10) {
+    goto case_10;
+  } else {
+  }
+  if (dongle_id___0 == 11) {
+    goto case_11;
+  } else {
+  }
+  if (dongle_id___0 == 12) {
+    goto case_12;
+  } else {
+  }
+  if (dongle_id___0 == 13) {
+    goto case_13;
+  } else {
+  }
+  if (dongle_id___0 == 14) {
+    goto case_14;
+  } else {
+  }
+  if (dongle_id___0 == 15) {
+    goto case_15;
+  } else {
+  }
+  goto switch_default;
+  case_0: ;
+  case_1:
+  {
+  printk("\017%s(), %s not defined by irda yet\n", "nsc_ircc_init_dongle_interface",
+         dongle_types[dongle_id___0]);
+  }
+  goto ldv_45946;
+  case_2: ;
+  case_3:
+  {
+  printk("\017%s(), %s not defined by irda yet\n", "nsc_ircc_init_dongle_interface",
+         dongle_types[dongle_id___0]);
+  }
+  goto ldv_45946;
+  case_4: ;
+  goto ldv_45946;
+  case_5:
+  {
+  printk("\017%s(), %s not defined by irda yet\n", "nsc_ircc_init_dongle_interface",
+         dongle_types[dongle_id___0]);
+  }
+  goto ldv_45946;
+  case_6:
+  {
+  printk("\017%s(), %s not defined by irda yet\n", "nsc_ircc_init_dongle_interface",
+         dongle_types[dongle_id___0]);
+  }
+  goto ldv_45946;
+  case_7:
+  {
+  printk("\017%s(), %s is not for IrDA mode\n", "nsc_ircc_init_dongle_interface",
+         dongle_types[dongle_id___0]);
+  }
+  goto ldv_45946;
+  case_8:
+  {
+  printk("\017%s(), %s\n", "nsc_ircc_init_dongle_interface", dongle_types[dongle_id___0]);
+  }
+  goto ldv_45946;
+  case_9:
+  {
+  outb(40, iobase + 7);
+  }
+  goto ldv_45946;
+  case_10: ;
+  case_11:
+  {
+  printk("\017%s(), %s not defined by irda yet\n", "nsc_ircc_init_dongle_interface",
+         dongle_types[dongle_id___0]);
+  }
+  goto ldv_45946;
+  case_12: ;
+  case_13:
+  {
+  outb(72, iobase + 7);
+  }
+  goto ldv_45946;
+  case_14:
+  {
+  outb(40, iobase + 7);
+  }
+  goto ldv_45946;
+  case_15:
+  {
+  printk("\017%s(), %s\n", "nsc_ircc_init_dongle_interface", dongle_types[dongle_id___0]);
+  switch_bank(iobase, 3);
+  outb(98, iobase + 4);
+  }
+  goto ldv_45946;
+  switch_default:
+  {
+  printk("\017%s(), invalid dongle_id %#x", "nsc_ircc_init_dongle_interface", dongle_id___0);
+  }
+  switch_break: ;
+  }
+  ldv_45946:
+  {
+  outb(0, iobase + 4);
+  outb((int )((unsigned char )bank), iobase + 3);
+  }
+  return;
+}
+}
+static void nsc_ircc_change_dongle_speed(int iobase , int speed , int dongle_id___0 )
+{
+  __u8 bank ;
+  {
+  {
+  bank = inb(iobase + 3);
+  switch_bank(iobase, 244);
+  }
+  {
+  if (dongle_id___0 == 0) {
+    goto case_0;
+  } else {
+  }
+  if (dongle_id___0 == 1) {
+    goto case_1;
+  } else {
+  }
+  if (dongle_id___0 == 2) {
+    goto case_2;
+  } else {
+  }
+  if (dongle_id___0 == 3) {
+    goto case_3;
+  } else {
+  }
+  if (dongle_id___0 == 4) {
+    goto case_4;
+  } else {
+  }
+  if (dongle_id___0 == 5) {
+    goto case_5;
+  } else {
+  }
+  if (dongle_id___0 == 6) {
+    goto case_6;
+  } else {
+  }
+  if (dongle_id___0 == 7) {
+    goto case_7;
+  } else {
+  }
+  if (dongle_id___0 == 8) {
+    goto case_8;
+  } else {
+  }
+  if (dongle_id___0 == 9) {
+    goto case_9;
+  } else {
+  }
+  if (dongle_id___0 == 10) {
+    goto case_10;
+  } else {
+  }
+  if (dongle_id___0 == 11) {
+    goto case_11;
+  } else {
+  }
+  if (dongle_id___0 == 12) {
+    goto case_12;
+  } else {
+  }
+  if (dongle_id___0 == 13) {
+    goto case_13;
+  } else {
+  }
+  if (dongle_id___0 == 14) {
+    goto case_14;
+  } else {
+  }
+  if (dongle_id___0 == 15) {
+    goto case_15;
+  } else {
+  }
+  goto switch_default;
+  case_0: ;
+  case_1:
+  {
+  printk("\017%s(), %s not defined by irda yet\n", "nsc_ircc_change_dongle_speed",
+         dongle_types[dongle_id___0]);
+  }
+  goto ldv_45971;
+  case_2: ;
+  case_3:
+  {
+  printk("\017%s(), %s not defined by irda yet\n", "nsc_ircc_change_dongle_speed",
+         dongle_types[dongle_id___0]);
+  }
+  goto ldv_45971;
+  case_4: ;
+  goto ldv_45971;
+  case_5:
+  {
+  printk("\017%s(), %s not defined by irda yet\n", "nsc_ircc_change_dongle_speed",
+         dongle_types[dongle_id___0]);
+  }
+  goto ldv_45971;
+  case_6:
+  {
+  printk("\017%s(), %s not defined by irda yet\n", "nsc_ircc_change_dongle_speed",
+         dongle_types[dongle_id___0]);
+  }
+  goto ldv_45971;
+  case_7:
+  {
+  printk("\017%s(), %s is not for IrDA mode\n", "nsc_ircc_change_dongle_speed", dongle_types[dongle_id___0]);
+  }
+  goto ldv_45971;
+  case_8:
+  {
+  printk("\017%s(), %s\n", "nsc_ircc_change_dongle_speed", dongle_types[dongle_id___0]);
+  outb(0, iobase + 4);
+  }
+  if (speed > 115200) {
+    {
+    outb(1, iobase + 4);
+    }
+  } else {
+  }
+  goto ldv_45971;
+  case_9:
+  {
+  outb(1, iobase + 4);
+  }
+  if (speed == 4000000) {
+    {
+    outb(129, iobase + 4);
+    outb(128, iobase + 4);
+    }
+  } else {
+    {
+    outb(0, iobase + 4);
+    }
+  }
+  goto ldv_45971;
+  case_10: ;
+  case_11:
+  {
+  printk("\017%s(), %s not defined by irda yet\n", "nsc_ircc_change_dongle_speed",
+         dongle_types[dongle_id___0]);
+  }
+  goto ldv_45971;
+  case_12: ;
+  case_13: ;
+  goto ldv_45971;
+  case_14: ;
+  goto ldv_45971;
+  case_15:
+  {
+  printk("\017%s(), %s is not for IrDA mode\n", "nsc_ircc_change_dongle_speed", dongle_types[dongle_id___0]);
+  switch_bank(iobase, 3);
+  outb(98, iobase + 4);
+  }
+  goto ldv_45971;
+  switch_default:
+  {
+  printk("\017%s(), invalid data_rate\n", "nsc_ircc_change_dongle_speed");
+  }
+  switch_break: ;
+  }
+  ldv_45971:
+  {
+  outb((int )bank, iobase + 3);
+  }
+  return;
+}
+}
+static __u8 nsc_ircc_change_speed(struct nsc_ircc_cb *self , __u32 speed )
+{
+  struct net_device *dev ;
+  __u8 mcr ;
+  int iobase ;
+  __u8 bank ;
+  __u8 ier ;
+  unsigned char tmp ;
+  int tmp_2;
+  {
+  dev = self->netdev;
+  mcr = 96U;
+  if (irda_debug > 1U) {
+    {
+    printk("\017%s(), speed=%d\n", "nsc_ircc_change_speed", speed);
+    }
+  } else {
+  }
+  if ((unsigned long )self == (unsigned long )((struct nsc_ircc_cb *)0)) {
+    {
+    printk("Assertion failed! %s:%s:%d %s\n", (char *)"drivers/net/irda/nsc-ircc.c",
+           "nsc_ircc_change_speed", 1261, (char *)"self != NULL");
+    }
+    return (0U);
+  } else {
+  }
+  {
   iobase = self->io.fir_base;
   self->io.speed = speed;
-  ldv_assert("", self->io.speed == speed);
-  set = inb(iobase + 3);
+  bank = inb(iobase + 3);
   switch_bank(iobase, 3);
   outb(0, iobase + 1);
   switch_bank(iobase, 224);
@@ -6588,113 +8497,130 @@ static void w83977af_change_speed(struct w83977af_ir *self , __u32 speed )
   {
   outb(12, iobase);
   }
-  goto ldv_44972;
+  goto ldv_45998;
   case_19200:
   {
   outb(6, iobase);
   }
-  goto ldv_44972;
+  goto ldv_45998;
   case_38400:
   {
   outb(3, iobase);
   }
-  goto ldv_44972;
+  goto ldv_45998;
   case_57600:
   {
   outb(2, iobase);
   }
-  goto ldv_44972;
+  goto ldv_45998;
   case_115200:
   {
   outb(1, iobase);
   }
-  goto ldv_44972;
+  goto ldv_45998;
   case_576000:
   {
-  ir_mode = 32;
-  printk("\017%s(), handling baud of 576000\n", "w83977af_change_speed");
+  switch_bank(iobase, 236);
+  tmp = inb(iobase + 4);
+  outb((int )((unsigned int )tmp | 4U), iobase + 4);
+  mcr = 128U;
+  printk("\017%s(), handling baud of 576000\n", "nsc_ircc_change_speed");
   }
-  goto ldv_44972;
+  goto ldv_45998;
   case_1152000:
   {
-  ir_mode = 128;
-  printk("\017%s(), handling baud of 1152000\n", "w83977af_change_speed");
+  mcr = 128U;
+  printk("\017%s(), handling baud of 1152000\n", "nsc_ircc_change_speed");
   }
-  goto ldv_44972;
+  goto ldv_45998;
   case_4000000:
   {
-  ir_mode = 160;
-  printk("\017%s(), handling baud of 4000000\n", "w83977af_change_speed");
+  mcr = 160U;
+  printk("\017%s(), handling baud of 4000000\n", "nsc_ircc_change_speed");
   }
-  goto ldv_44972;
+  goto ldv_45998;
   switch_default:
   {
-  ir_mode = 160;
-  printk("\017%s(), unknown baud rate of %d\n", "w83977af_change_speed", speed);
+  mcr = 160U;
+  printk("\017%s(), unknown baud rate of %d\n", "nsc_ircc_change_speed", speed);
   }
-  goto ldv_44972;
+  goto ldv_45998;
   switch_break: ;
   }
-  ldv_44972:
+  ldv_45998:
   {
   switch_bank(iobase, 3);
-  outb((int )((unsigned char )ir_mode), iobase + 4);
-  switch_bank(iobase, 224);
-  outb(5, iobase + 4);
+  outb((int )((unsigned int )mcr | 8U), iobase + 4);
+  tmp_2 = self->io.dongle_id;
+  ldv_assert("", tmp_2 == self->io.dongle_id);
+  nsc_ircc_change_dongle_speed(iobase, (int )speed, self->io.dongle_id);
   switch_bank(iobase, 3);
   outb(0, iobase + 2);
   outb(1, iobase + 2);
-  outb(167, iobase + 2);
-  netif_wake_queue(self->netdev);
+  outb(103, iobase + 2);
+  switch_bank(iobase, 224);
+  outb(5, iobase + 4);
   switch_bank(iobase, 3);
   }
   if (speed > 115200U) {
     {
-    outb(64, iobase + 1);
-    w83977af_dma_receive(self);
+    dev->netdev_ops = & nsc_ircc_fir_ops;
+    ier = 64U;
+    nsc_ircc_dma_receive(self);
     }
   } else {
-    {
-    outb(1, iobase + 1);
-    }
+    dev->netdev_ops = & nsc_ircc_sir_ops;
+    ier = 1U;
   }
   {
-  outb((int )set, iobase + 3);
+  outb((int )ier, iobase + 1);
+  outb((int )bank, iobase + 3);
   }
-  return;
+  return (ier);
 }
 }
-static netdev_tx_t w83977af_hard_xmit(struct sk_buff *skb , struct net_device *dev )
+static netdev_tx_t nsc_ircc_hard_xmit_sir(struct sk_buff *skb , struct net_device *dev )
 {
-  struct w83977af_ir *self ;
-  __s32 speed ;
+  struct nsc_ircc_cb *self ;
+  unsigned long flags = 0;
   int iobase ;
-  __u8 set ;
-  int mtt ;
+  __s32 speed ;
+  __u8 bank ;
   void *tmp ;
   __u32 tmp___0 ;
-  __u16 tmp___1 ;
   {
   {
   tmp = netdev_priv((struct net_device const *)dev);
-  self = (struct w83977af_ir *)tmp;
-  iobase = self->io.fir_base;
+  self = (struct nsc_ircc_cb *)tmp;
   }
-  if (irda_debug > 3U) {
+  if ((unsigned long )self == (unsigned long )((struct nsc_ircc_cb *)0)) {
     {
-    printk("\017%s(%ld), skb->len=%d\n", "w83977af_hard_xmit", jiffies, (int )skb->len);
+    printk("Assertion failed! %s:%s:%d %s\n", (char *)"drivers/net/irda/nsc-ircc.c",
+           "nsc_ircc_hard_xmit_sir", 1370, (char *)"self != NULL");
     }
+    return (0);
   } else {
   }
   {
+  iobase = self->io.fir_base;
   netif_stop_queue(dev);
+  ldv___ldv_spin_lock_83(& self->lock);
   tmp___0 = irda_get_next_speed((struct sk_buff const *)skb);
   speed = (__s32 )tmp___0;
   }
   if ((__u32 )speed != self->io.speed && speed != -1) {
     if (skb->len == 0U) {
+      if (self->io.direction == 2) {
+        {
+        nsc_ircc_change_speed(self, (__u32 )speed);
+        netif_wake_queue(dev);
+        }
+      } else {
+        self->new_speed = (__u32 )speed;
+      }
       {
-      w83977af_change_speed(self, (__u32 )speed);
+      dev->trans_start = jiffies;
+      ldv_spin_unlock_irqrestore_84(& self->lock, flags);
       consume_skb(skb);
       }
       return (0);
@@ -6704,82 +8630,164 @@ static netdev_tx_t w83977af_hard_xmit(struct sk_buff *skb , struct net_device *d
   } else {
   }
   {
-  set = inb(iobase + 3);
+  bank = inb(iobase + 3);
+  self->tx_buff.data = self->tx_buff.head;
+  self->tx_buff.len = async_wrap_skb(skb, self->tx_buff.data, self->tx_buff.truesize);
+  dev->stats.tx_bytes = dev->stats.tx_bytes + (unsigned long )self->tx_buff.len;
+  switch_bank(iobase, 3);
+  outb(2, iobase + 1);
+  outb((int )bank, iobase + 3);
+  dev->trans_start = jiffies;
+  ldv_spin_unlock_irqrestore_84(& self->lock, flags);
+  consume_skb(skb);
   }
-  if (self->io.speed > 115200U) {
+  return (0);
+}
+}
+static netdev_tx_t nsc_ircc_hard_xmit_fir(struct sk_buff *skb , struct net_device *dev )
+{
+  struct nsc_ircc_cb *self ;
+  unsigned long flags = 0 ;
+  int iobase ;
+  __s32 speed ;
+  __u8 bank ;
+  int mtt ;
+  int diff ;
+  void *tmp ;
+  __u32 tmp___0 ;
+  __u16 tmp___1 ;
+  {
+  {
+  tmp = netdev_priv((struct net_device const *)dev);
+  self = (struct nsc_ircc_cb *)tmp;
+  iobase = self->io.fir_base;
+  netif_stop_queue(dev);
+  ldv___ldv_spin_lock_86(& self->lock);
+  tmp___0 = irda_get_next_speed((struct sk_buff const *)skb);
+  speed = (__s32 )tmp___0;
+  }
+  if ((__u32 )speed != self->io.speed && speed != -1) {
+    if (skb->len == 0U) {
+      if (self->tx_fifo.len == 0) {
+        {
+        nsc_ircc_change_speed(self, (__u32 )speed);
+        netif_wake_queue(dev);
+        }
+      } else {
+        self->new_speed = (__u32 )speed;
+      }
+      {
+      dev->trans_start = jiffies;
+      ldv_spin_unlock_irqrestore_84(& self->lock, flags);
+      consume_skb(skb);
+      }
+      return (0);
+    } else {
+      self->new_speed = (__u32 )speed;
+    }
+  } else {
+  }
+  {
+  bank = inb(iobase + 3);
+  self->tx_fifo.queue[self->tx_fifo.free].start = self->tx_fifo.tail;
+  self->tx_fifo.queue[self->tx_fifo.free].len = (int )skb->len;
+  self->tx_fifo.tail = self->tx_fifo.tail + (unsigned long )skb->len;
+  dev->stats.tx_bytes = dev->stats.tx_bytes + (unsigned long )skb->len;
+  skb_copy_from_linear_data((struct sk_buff const *)skb, self->tx_fifo.queue[self->tx_fifo.free].start,
+                            skb->len);
+  self->tx_fifo.len = self->tx_fifo.len + 1;
+  self->tx_fifo.free = self->tx_fifo.free + 1;
+  }
+  if (self->tx_fifo.len == 1) {
     {
-    self->tx_buff.data = self->tx_buff.head;
-    skb_copy_from_linear_data((struct sk_buff const *)skb, (void *)self->tx_buff.data,
-                              skb->len);
-    self->tx_buff.len = (int )skb->len;
     tmp___1 = irda_get_mtt((struct sk_buff const *)skb);
     mtt = (int )tmp___1;
     }
-    if (irda_debug > 3U) {
-      {
-      printk("\017%s(%ld), mtt=%d\n", "w83977af_hard_xmit", jiffies, mtt);
-      }
-    } else {
-    }
     if (mtt != 0) {
       {
-      __udelay((unsigned long )mtt);
+      do_gettimeofday(& self->now);
+      diff = (int )((unsigned int )self->now.tv_usec - (unsigned int )self->stamp.tv_usec);
+      }
+      if (diff < 0) {
+        diff = diff + 1000000;
+      } else {
+      }
+      if (mtt > diff) {
+        mtt = mtt - diff;
+        if (mtt > 125) {
+          {
+          mtt = mtt / 125;
+          switch_bank(iobase, 232);
+          outb((int )((unsigned char )mtt), iobase);
+          outb((int )((unsigned char )(mtt >> 8)) & 15, iobase + 1);
+          outb(1, iobase + 2);
+          self->io.direction = 1;
+          switch_bank(iobase, 3);
+          outb(128, iobase + 1);
+          }
+          goto out;
+        } else {
+          {
+          __udelay((unsigned long )mtt);
+          }
+        }
+      } else {
       }
     } else {
     }
     {
     switch_bank(iobase, 3);
     outb(16, iobase + 1);
-    w83977af_dma_write(self, iobase);
+    nsc_ircc_dma_xmit(self, iobase);
     }
   } else {
+  }
+  out: ;
+  if (self->tx_fifo.free <= 6 && self->new_speed == 0U) {
     {
-    self->tx_buff.data = self->tx_buff.head;
-    self->tx_buff.len = async_wrap_skb(skb, self->tx_buff.data, self->tx_buff.truesize);
-    switch_bank(iobase, 3);
-    outb(32, iobase + 1);
+    netif_wake_queue(self->netdev);
     }
+  } else {
   }
   {
+  outb((int )bank, iobase + 3);
+  dev->trans_start = jiffies;
+  ldv_spin_unlock_irqrestore_84(& self->lock, flags);
   consume_skb(skb);
-  outb((int )set, iobase + 3);
   }
   return (0);
 }
 }
-static void w83977af_dma_write(struct w83977af_ir *self , int iobase )
+static void nsc_ircc_dma_xmit(struct nsc_ircc_cb *self , int iobase )
 {
-  __u8 set ;
+  int bsr ;
   unsigned char tmp ;
   unsigned char tmp___0 ;
+  unsigned char tmp___1 ;
   {
-  if (irda_debug > 3U) {
-    {
-    printk("\017%s(), len=%d\n", "w83977af_dma_write", self->tx_buff.len);
-    }
-  } else {
-  }
   {
-  set = inb(iobase + 3);
-  switch_bank(iobase, 3);
-  tmp = inb(iobase + 4);
-  outb((int )tmp & 251, iobase + 4);
-  switch_bank(iobase, 224);
-  outb(9, iobase + 2);
-  irda_setup_dma(self->io.dma, self->tx_buff_dma, self->tx_buff.len, 72);
-  self->io.direction = 1;
+  tmp = inb(iobase + 3);
+  bsr = (int )tmp;
   switch_bank(iobase, 3);
   tmp___0 = inb(iobase + 4);
-  outb((int )((unsigned int )tmp___0 | 12U), iobase + 4);
-  outb((int )set, iobase + 3);
+  outb((int )tmp___0 & 251, iobase + 4);
+  self->io.direction = 1;
+  switch_bank(iobase, 224);
+  outb(11, iobase + 2);
+  irda_setup_dma(self->io.dma, (unsigned long long )((long )self->tx_fifo.queue[self->tx_fifo.ptr].start - (long )self->tx_buff.head) + self->tx_buff_dma,
+                 self->tx_fifo.queue[self->tx_fifo.ptr].len, 8);
+  switch_bank(iobase, 3);
+  tmp___1 = inb(iobase + 4);
+  outb((int )((unsigned int )tmp___1 | 28U), iobase + 4);
+  outb((int )((unsigned char )bsr), iobase + 3);
   }
   return;
 }
 }
-static int w83977af_pio_write(int iobase , __u8 *buf , int len , int fifo_size )
+static int nsc_ircc_pio_write(int iobase , __u8 *buf , int len , int fifo_size )
 {
   int actual ;
-  __u8 set ;
+  __u8 bank ;
   unsigned char tmp ;
   int tmp___0 ;
   int tmp___1 ;
@@ -6787,82 +8795,72 @@ static int w83977af_pio_write(int iobase , __u8 *buf , int len , int fifo_size )
   actual = 0;
   if (irda_debug > 3U) {
     {
-    printk("\017%s()\n", "w83977af_pio_write");
+    printk("\017%s()\n", "nsc_ircc_pio_write");
     }
   } else {
   }
   {
-  set = inb(iobase + 3);
+  bank = inb(iobase + 3);
   switch_bank(iobase, 3);
   tmp = inb_p(iobase + 5);
   }
   if (((int )tmp & 64) == 0) {
     if (irda_debug > 3U) {
       {
-      printk("\017%s(), warning, FIFO not empty yet!\n", "w83977af_pio_write");
+      printk("\017%s(), warning, FIFO not empty yet!\n", "nsc_ircc_pio_write");
       }
     } else {
     }
     fifo_size = fifo_size + -17;
-    if (irda_debug > 3U) {
-      {
-      printk("\017%s(), %d bytes left in tx fifo\n", "w83977af_pio_write", fifo_size);
-      }
-    } else {
-    }
   } else {
   }
-  goto ldv_45008;
-  ldv_45007:
+  goto ldv_46044;
+  ldv_46043:
   {
   tmp___0 = actual;
   actual = actual + 1;
   outb((int )*(buf + (unsigned long )tmp___0), iobase);
   }
-  ldv_45008:
+  ldv_46044:
   tmp___1 = fifo_size;
   fifo_size = fifo_size - 1;
   if (tmp___1 > 0 && actual < len) {
-    goto ldv_45007;
+    goto ldv_46043;
   } else {
   }
   if (irda_debug > 3U) {
     {
-    printk("\017%s(), fifo_size %d ; %d sent of %d\n", "w83977af_pio_write", fifo_size,
+    printk("\017%s(), fifo_size %d ; %d sent of %d\n", "nsc_ircc_pio_write", fifo_size,
            actual, len);
     }
   } else {
   }
   {
-  outb((int )set, iobase + 3);
+  outb((int )bank, iobase + 3);
   }
   return (actual);
 }
 }
-static void w83977af_dma_xmit_complete(struct w83977af_ir *self )
+static int nsc_ircc_dma_xmit_complete(struct nsc_ircc_cb *self )
 {
   int iobase ;
-  __u8 set ;
+  __u8 bank ;
+  int ret ;
   unsigned char tmp ;
   unsigned char tmp___0 ;
+  int tmp___1 ;
+  int tmp___2 ;
   {
-  if (irda_debug > 3U) {
+  ret = 1;
+  if (irda_debug > 1U) {
     {
-    printk("\017%s(%ld)\n", "w83977af_dma_xmit_complete", jiffies);
+    printk("\017%s()\n", "nsc_ircc_dma_xmit_complete");
     }
-  } else {
-  }
-  if ((unsigned long )self == (unsigned long )((struct w83977af_ir *)0)) {
-    {
-    printk("Assertion failed! %s:%s:%d %s\n", (char *)"drivers/net/irda/w83977af_ir.c",
-           "w83977af_dma_xmit_complete", 666, (char *)"self != NULL");
-    }
-    return;
   } else {
   }
   {
   iobase = self->io.fir_base;
-  set = inb(iobase + 3);
+  bank = inb(iobase + 3);
   switch_bank(iobase, 3);
   tmp = inb(iobase + 4);
   outb((int )tmp & 251, iobase + 4);
@@ -6870,7 +8868,6 @@ static void w83977af_dma_xmit_complete(struct w83977af_ir *self )
   }
   if (((int )tmp___0 & 64) != 0) {
     {
-    printk("\017%s(), Transmit underrun!\n", "w83977af_dma_xmit_complete");
     (self->netdev)->stats.tx_errors = (self->netdev)->stats.tx_errors + 1UL;
     (self->netdev)->stats.tx_fifo_errors = (self->netdev)->stats.tx_fifo_errors + 1UL;
     outb(64, iobase + 7);
@@ -6878,119 +8875,126 @@ static void w83977af_dma_xmit_complete(struct w83977af_ir *self )
   } else {
     (self->netdev)->stats.tx_packets = (self->netdev)->stats.tx_packets + 1UL;
   }
-  if (self->new_speed != 0U) {
+  self->tx_fifo.ptr = self->tx_fifo.ptr + 1;
+  self->tx_fifo.len = self->tx_fifo.len - 1;
+  if (self->tx_fifo.len != 0) {
     {
-    w83977af_change_speed(self, self->new_speed);
-    self->new_speed = 0U;
+    nsc_ircc_dma_xmit(self, iobase);
+    ret = 0;
+    }
+  } else {
+    tmp___2 = 0;
+    self->tx_fifo.free = tmp___2;
+    tmp___1 = tmp___2;
+    self->tx_fifo.ptr = tmp___1;
+    self->tx_fifo.len = tmp___1;
+    self->tx_fifo.tail = (void *)self->tx_buff.head;
+  }
+  if (self->tx_fifo.free <= 6 && self->new_speed == 0U) {
+    {
+    netif_wake_queue(self->netdev);
     }
   } else {
   }
   {
-  netif_wake_queue(self->netdev);
-  outb((int )set, iobase + 3);
+  outb((int )bank, iobase + 3);
   }
-  return;
+  return (ret);
 }
 }
-static int w83977af_dma_receive(struct w83977af_ir *self )
+static int nsc_ircc_dma_receive(struct nsc_ircc_cb *self )
 {
   int iobase ;
-  __u8 set ;
-  unsigned char tmp ;
-  unsigned char tmp___0 ;
-  int tmp___1 ;
+  __u8 bsr ;
+  int tmp ;
+  int tmp___0 ;
+  unsigned char tmp___1 ;
   int tmp___2 ;
-  unsigned char tmp___3 ;
+  int tmp___3 ;
+  unsigned char tmp___4 ;
   {
-  if ((unsigned long )self == (unsigned long )((struct w83977af_ir *)0)) {
-    {
-    printk("Assertion failed! %s:%s:%d %s\n", (char *)"drivers/net/irda/w83977af_ir.c",
-           "w83977af_dma_receive", 718, (char *)"self != NULL");
-    }
-    return (-1);
-  } else {
-  }
-  if (irda_debug > 3U) {
-    {
-    printk("\017%s\n", "w83977af_dma_receive");
-    }
-  } else {
-  }
   {
   iobase = self->io.fir_base;
-  set = inb(iobase + 3);
+  tmp___0 = 0;
+  self->tx_fifo.free = tmp___0;
+  tmp = tmp___0;
+  self->tx_fifo.ptr = tmp;
+  self->tx_fifo.len = tmp;
+  self->tx_fifo.tail = (void *)self->tx_buff.head;
+  bsr = inb(iobase + 3);
   switch_bank(iobase, 3);
-  tmp = inb(iobase + 4);
-  outb((int )tmp & 251, iobase + 4);
+  tmp___1 = inb(iobase + 4);
+  outb((int )tmp___1 & 251, iobase + 4);
   switch_bank(iobase, 224);
-  tmp___0 = inb(iobase + 2);
-  outb((int )((unsigned char )(((int )((signed char )tmp___0) & -10) | 1)), iobase + 2);
+  outb(3, iobase + 2);
   self->io.direction = 2;
   self->rx_buff.data = self->rx_buff.head;
-  irda_setup_dma(self->io.dma, self->rx_buff_dma, self->rx_buff.truesize, 68);
   switch_bank(iobase, 3);
-  outb(163, iobase + 2);
+  outb(3, iobase + 2);
   tmp___2 = 0;
-  self->st_fifo.head = tmp___2;
-  tmp___1 = tmp___2;
-  self->st_fifo.tail = tmp___1;
-  self->st_fifo.len = tmp___1;
+  self->st_fifo.pending_bytes = tmp___2;
+  self->st_fifo.len = tmp___2;
+  tmp___3 = 0;
+  self->st_fifo.head = tmp___3;
+  self->st_fifo.tail = tmp___3;
+  irda_setup_dma(self->io.dma, self->rx_buff_dma, self->rx_buff.truesize, 4);
   switch_bank(iobase, 3);
-  tmp___3 = inb(iobase + 4);
-  outb((int )((unsigned int )tmp___3 | 4U), iobase + 4);
-  outb((int )set, iobase + 3);
+  tmp___4 = inb(iobase + 4);
+  outb((int )((unsigned int )tmp___4 | 4U), iobase + 4);
+  outb((int )bsr, iobase + 3);
   }
   return (0);
 }
 }
-static int w83977af_dma_receive_complete(struct w83977af_ir *self )
+static int nsc_ircc_dma_receive_complete(struct nsc_ircc_cb *self , int iobase )
 {
-  struct sk_buff *skb ;
   struct st_fifo *st_fifo ;
-  int len ;
-  int iobase ;
-  __u8 set ;
+  struct sk_buff *skb ;
   __u8 status ;
+  __u8 bank ;
+  int len ;
   unsigned char tmp ;
   unsigned char tmp___0 ;
   unsigned char tmp___1 ;
+  int tmp___2 ;
   {
-  if (irda_debug > 3U) {
-    {
-    printk("\017%s\n", "w83977af_dma_receive_complete");
-    }
-  } else {
-  }
   {
   st_fifo = & self->st_fifo;
-  iobase = self->io.fir_base;
-  set = inb(iobase + 3);
-  iobase = self->io.fir_base;
+  bank = inb(iobase + 3);
   switch_bank(iobase, 236);
   }
-  goto ldv_45033;
-  ldv_45032:
+  goto ldv_46068;
+  ldv_46069:
   {
-  st_fifo->entries[st_fifo->tail].status = (int )status;
   tmp = inb(iobase + 6);
-  st_fifo->entries[st_fifo->tail].len = (int )tmp;
   tmp___0 = inb(iobase + 7);
-  st_fifo->entries[st_fifo->tail].len = st_fifo->entries[st_fifo->tail].len | ((int )tmp___0 << 8);
+  len = (int )tmp | (((int )tmp___0 & 31) << 8);
+  }
+  if (st_fifo->tail > 6) {
+    {
+    printk("\017%s(), window is full!\n", "nsc_ircc_dma_receive_complete");
+    }
+    goto ldv_46068;
+  } else {
+  }
+  st_fifo->entries[st_fifo->tail].status = (int )status;
+  st_fifo->entries[st_fifo->tail].len = len;
+  st_fifo->pending_bytes = st_fifo->pending_bytes + len;
   st_fifo->tail = st_fifo->tail + 1;
   st_fifo->len = st_fifo->len + 1;
-  }
-  ldv_45033:
+  ldv_46068:
   {
   status = inb(iobase + 5);
   }
   if ((int )((signed char )status) < 0) {
-    goto ldv_45032;
+    goto ldv_46069;
   } else {
   }
-  goto ldv_45036;
-  ldv_45035:
+  goto ldv_46072;
+  ldv_46071:
   status = (__u8 )st_fifo->entries[st_fifo->head].status;
   len = st_fifo->entries[st_fifo->head].len;
+  st_fifo->pending_bytes = st_fifo->pending_bytes - len;
   st_fifo->head = st_fifo->head + 1;
   st_fifo->len = st_fifo->len - 1;
   if (((int )status & 95) != 0) {
@@ -7021,23 +9025,46 @@ static int w83977af_dma_receive_complete(struct w83977af_ir *self )
     } else {
     }
   } else {
-    {
-    switch_bank(iobase, 3);
-    tmp___1 = inb(iobase + 5);
-    }
-    if ((int )tmp___1 & 1) {
+    if (st_fifo->pending_bytes < self->io.fifo_size) {
       {
-      __const_udelay(343600UL);
+      switch_bank(iobase, 3);
+      tmp___1 = inb(iobase + 5);
+      }
+      if ((int )tmp___1 & 1) {
+        {
+        st_fifo->head = st_fifo->head - 1;
+        st_fifo->len = st_fifo->len + 1;
+        st_fifo->pending_bytes = st_fifo->pending_bytes + len;
+        st_fifo->entries[st_fifo->head].status = (int )status;
+        st_fifo->entries[st_fifo->head].len = len;
+        switch_bank(iobase, 232);
+        outb(2, iobase);
+        outb(0, iobase + 1);
+        outb(1, iobase + 2);
+        outb((int )bank, iobase + 3);
+        }
+        return (0);
+      } else {
       }
     } else {
     }
     {
+    do_gettimeofday(& self->stamp);
     skb = dev_alloc_skb((unsigned int )(len + 1));
     }
     if ((unsigned long )skb == (unsigned long )((struct sk_buff *)0)) {
       {
-      printk("\016%s(), memory squeeze, dropping frame.\n", "w83977af_dma_receive_complete");
-      outb((int )set, iobase + 3);
+      tmp___2 = net_ratelimit();
+      }
+      if (tmp___2 != 0) {
+        {
+        printk("\f%s(), memory squeeze, dropping frame.\n", "nsc_ircc_dma_receive_complete");
+        }
+      } else {
+      }
+      {
+      (self->netdev)->stats.rx_dropped = (self->netdev)->stats.rx_dropped + 1UL;
+      outb((int )bank, iobase + 3);
       }
       return (0);
     } else {
@@ -7058,6 +9085,7 @@ static int w83977af_dma_receive_complete(struct w83977af_ir *self )
     }
     {
     self->rx_buff.data = self->rx_buff.data + (unsigned long )len;
+    (self->netdev)->stats.rx_bytes = (self->netdev)->stats.rx_bytes + (unsigned long )len;
     (self->netdev)->stats.rx_packets = (self->netdev)->stats.rx_packets + 1UL;
     skb->dev = self->netdev;
     skb_reset_mac_header(skb);
@@ -7065,186 +9093,190 @@ static int w83977af_dma_receive_complete(struct w83977af_ir *self )
     netif_rx(skb);
     }
   }
-  ldv_45036: ;
-  if (st_fifo->len != 0) {
-    goto ldv_45035;
+  ldv_46072: ;
+  if (st_fifo->len > 0) {
+    goto ldv_46071;
   } else {
   }
   {
-  outb((int )set, iobase + 3);
+  outb((int )bank, iobase + 3);
   }
   return (1);
 }
 }
-static void w83977af_pio_receive(struct w83977af_ir *self )
+static void nsc_ircc_pio_receive(struct nsc_ircc_cb *self )
 {
   __u8 byte ;
   int iobase ;
   unsigned char tmp ;
   {
-  byte = 0U;
-  if (irda_debug > 3U) {
-    {
-    printk("\017%s()\n", "w83977af_pio_receive");
-    }
-  } else {
-  }
-  if ((unsigned long )self == (unsigned long )((struct w83977af_ir *)0)) {
-    {
-    printk("Assertion failed! %s:%s:%d %s\n", (char *)"drivers/net/irda/w83977af_ir.c",
-           "w83977af_pio_receive", 910, (char *)"self != NULL");
-    }
-    return;
-  } else {
-  }
   iobase = self->io.fir_base;
-  ldv_45044:
+  ldv_46079:
   {
   byte = inb(iobase);
   async_unwrap_char(self->netdev, & (self->netdev)->stats, & self->rx_buff, (int )byte);
   tmp = inb(iobase + 5);
   }
   if ((int )tmp & 1) {
-    goto ldv_45044;
+    goto ldv_46079;
   } else {
   }
   return;
 }
 }
-static __u8 w83977af_sir_interrupt(struct w83977af_ir *self , int isr )
+static void nsc_ircc_sir_interrupt(struct nsc_ircc_cb *self , int eir )
 {
   int actual ;
-  __u8 new_icr ;
-  __u8 set ;
-  int iobase ;
   {
-  new_icr = 0U;
-  if (irda_debug > 3U) {
+  if ((eir & 2) != 0) {
     {
-    printk("\017%s(), isr=%#x\n", "w83977af_sir_interrupt", isr);
-    }
-  } else {
-  }
-  iobase = self->io.fir_base;
-  if ((isr & 32) != 0) {
-    {
-    actual = w83977af_pio_write(self->io.fir_base, self->tx_buff.data, self->tx_buff.len,
+    actual = nsc_ircc_pio_write(self->io.fir_base, self->tx_buff.data, self->tx_buff.len,
                                 self->io.fifo_size);
     self->tx_buff.data = self->tx_buff.data + (unsigned long )actual;
     self->tx_buff.len = self->tx_buff.len - actual;
     self->io.direction = 1;
     }
     if (self->tx_buff.len > 0) {
-      new_icr = (__u8 )((unsigned int )new_icr | 32U);
+      self->ier = 2U;
     } else {
       {
-      set = inb(iobase + 3);
-      switch_bank(iobase, 3);
-      outb(8, iobase + 7);
-      outb((int )set, iobase + 3);
       (self->netdev)->stats.tx_packets = (self->netdev)->stats.tx_packets + 1UL;
       netif_wake_queue(self->netdev);
-      new_icr = (__u8 )((unsigned int )new_icr | 2U);
+      self->ier = 32U;
       }
     }
   } else {
   }
-  if ((isr & 2) != 0) {
+  if ((eir & 32) != 0) {
+    self->io.direction = 2;
+    self->ier = 1U;
     if (self->new_speed != 0U) {
       if (irda_debug > 1U) {
         {
-        printk("\017%s(), Changing speed!\n", "w83977af_sir_interrupt");
+        printk("\017%s(), Changing speed!\n", "nsc_ircc_sir_interrupt");
         }
       } else {
       }
       {
-      w83977af_change_speed(self, self->new_speed);
+      self->ier = nsc_ircc_change_speed(self, self->new_speed);
       self->new_speed = 0U;
+      netif_wake_queue(self->netdev);
+      }
+      if (self->io.speed > 115200U) {
+        return;
+      } else {
       }
     } else {
     }
-    self->io.direction = 2;
-    new_icr = (__u8 )((unsigned int )new_icr | 1U);
   } else {
   }
-  if (isr & 1) {
+  if (eir & 1) {
     {
-    w83977af_pio_receive(self);
-    new_icr = (__u8 )((unsigned int )new_icr | 1U);
+    nsc_ircc_pio_receive(self);
+    self->ier = 1U;
     }
   } else {
   }
-  return (new_icr);
+  return;
 }
 }
-static __u8 w83977af_fir_interrupt(struct w83977af_ir *self , int isr )
+static void nsc_ircc_fir_interrupt(struct nsc_ircc_cb *self , int iobase , int eir )
 {
-  __u8 new_icr ;
-  __u8 set ;
-  int iobase ;
+  __u8 bank ;
   int tmp ;
+  int tmp___0 ;
+  int tmp___1 ;
+  int tmp___2 ;
+  int tmp___3 ;
   {
   {
-  new_icr = 0U;
-  iobase = self->io.fir_base;
-  set = inb(iobase + 3);
+  bank = inb(iobase + 3);
   }
-  if ((isr & 68) != 0) {
+  if ((eir & 64) != 0) {
     {
-    tmp = w83977af_dma_receive_complete(self);
+    tmp = nsc_ircc_dma_receive_complete(self, iobase);
     }
     if (tmp != 0) {
-      new_icr = (__u8 )((unsigned int )new_icr | 64U);
+      self->ier = 64U;
     } else {
-      {
-      switch_bank(iobase, 232);
-      outb(1, iobase);
-      outb(0, iobase + 1);
-      outb(1, iobase + 2);
-      new_icr = (__u8 )((unsigned int )new_icr | 128U);
-      }
+      self->ier = 192U;
     }
-  } else {
-  }
-  if ((isr & 128) != 0) {
+  } else
+  if ((eir & 128) != 0) {
     {
     switch_bank(iobase, 232);
     outb(0, iobase + 2);
+    switch_bank(iobase, 3);
+    outb(128, iobase + 7);
     }
     if (self->io.direction == 1) {
       {
-      w83977af_dma_write(self, iobase);
-      new_icr = (__u8 )((unsigned int )new_icr | 16U);
+      nsc_ircc_dma_xmit(self, iobase);
+      self->ier = 16U;
       }
     } else {
       {
-      w83977af_dma_receive_complete(self);
-      new_icr = (__u8 )((unsigned int )new_icr | 64U);
+      tmp___0 = nsc_ircc_dma_receive_complete(self, iobase);
+      }
+      if (tmp___0 != 0) {
+        self->ier = 64U;
+      } else {
+        self->ier = 192U;
       }
     }
-  } else {
-  }
-  if ((isr & 16) != 0) {
+  } else
+  if ((eir & 16) != 0) {
     {
-    w83977af_dma_xmit_complete(self);
-    w83977af_dma_receive(self);
-    new_icr = 64U;
+    tmp___3 = nsc_ircc_dma_xmit_complete(self);
+    }
+    if (tmp___3 != 0) {
+      if (self->new_speed != 0U) {
+        self->ier = 32U;
+      } else {
+        {
+        tmp___2 = irda_device_txqueue_empty((struct net_device const *)self->netdev);
+        }
+        if (tmp___2 != 0) {
+          {
+          nsc_ircc_dma_receive(self);
+          self->ier = 64U;
+          }
+        } else {
+          {
+          tmp___1 = net_ratelimit();
+          }
+          if (tmp___1 != 0) {
+            {
+            printk("\f%s(), potential Tx queue lockup !\n", "nsc_ircc_fir_interrupt");
+            }
+          } else {
+          }
+        }
+      }
+    } else {
+      self->ier = 16U;
+    }
+  } else
+  if ((eir & 32) != 0) {
+    {
+    self->ier = nsc_ircc_change_speed(self, self->new_speed);
+    self->new_speed = 0U;
+    netif_wake_queue(self->netdev);
     }
   } else {
   }
   {
-  outb((int )set, iobase + 3);
+  outb((int )bank, iobase + 3);
   }
-  return (new_icr);
+  return;
 }
 }
-static irqreturn_t w83977af_interrupt(int irq___0 , void *dev_id )
+static irqreturn_t nsc_ircc_interrupt(int irq___0 , void *dev_id )
 {
   struct net_device *dev ;
-  struct w83977af_ir *self ;
-  __u8 set ;
-  __u8 icr ;
-  __u8 isr ;
+  struct nsc_ircc_cb *self ;
+  __u8 bsr ;
+  __u8 eir ;
   int iobase ;
   void *tmp ;
   unsigned char tmp___0 ;
@@ -7252,54 +9284,60 @@ static irqreturn_t w83977af_interrupt(int irq___0 , void *dev_id )
   {
   dev = (struct net_device *)dev_id;
   tmp = netdev_priv((struct net_device const *)dev);
-  self = (struct w83977af_ir *)tmp;
+  self = (struct nsc_ircc_cb *)tmp;
+  ldv_spin_lock_89(& self->lock);
   iobase = self->io.fir_base;
-  set = inb(iobase + 3);
+  bsr = inb(iobase + 3);
   switch_bank(iobase, 3);
-  icr = inb(iobase + 1);
+  self->ier = inb(iobase + 1);
   tmp___0 = inb(iobase + 2);
-  isr = (__u8 )((int )tmp___0 & (int )icr);
+  eir = (__u8 )((int )tmp___0 & (int )self->ier);
   outb(0, iobase + 1);
   }
-  if ((unsigned int )isr != 0U) {
+  if ((unsigned int )eir != 0U) {
     if (self->io.speed > 115200U) {
       {
-      icr = w83977af_fir_interrupt(self, (int )isr);
+      nsc_ircc_fir_interrupt(self, iobase, (int )eir);
       }
     } else {
       {
-      icr = w83977af_sir_interrupt(self, (int )isr);
+      nsc_ircc_sir_interrupt(self, (int )eir);
       }
     }
   } else {
   }
   {
-  outb((int )icr, iobase + 1);
-  outb((int )set, iobase + 3);
+  outb((int )self->ier, iobase + 1);
+  outb((int )bsr, iobase + 3);
+  ldv_spin_unlock_90(& self->lock);
   }
-  return ((unsigned int )isr != 0U);
+  return ((unsigned int )eir != 0U);
 }
 }
-static int w83977af_is_receiving(struct w83977af_ir *self )
+static int nsc_ircc_is_receiving(struct nsc_ircc_cb *self )
 {
+  unsigned long flags = 0 ;
   int status ;
   int iobase ;
-  __u8 set ;
+  __u8 bank ;
   unsigned char tmp ;
   {
   status = 0;
-  if ((unsigned long )self == (unsigned long )((struct w83977af_ir *)0)) {
+  if ((unsigned long )self == (unsigned long )((struct nsc_ircc_cb *)0)) {
     {
-    printk("Assertion failed! %s:%s:%d %s\n", (char *)"drivers/net/irda/w83977af_ir.c",
-           "w83977af_is_receiving", 1122, (char *)"self != NULL");
+    printk("Assertion failed! %s:%s:%d %s\n", (char *)"drivers/net/irda/nsc-ircc.c",
+           "nsc_ircc_is_receiving", 2141, (char *)"self != NULL");
     }
     return (0);
   } else {
   }
+  {
+  ldv___ldv_spin_lock_91(& self->lock);
+  }
   if (self->io.speed > 115200U) {
     {
     iobase = self->io.fir_base;
-    set = inb(iobase + 3);
+    bank = inb(iobase + 3);
     switch_bank(iobase, 224);
     tmp = inb(iobase + 7);
     }
@@ -7308,121 +9346,138 @@ static int w83977af_is_receiving(struct w83977af_ir *self )
     } else {
     }
     {
-    outb((int )set, iobase + 3);
+    outb((int )bank, iobase + 3);
     }
   } else {
     status = self->rx_buff.state != 0;
   }
+  {
+  ldv_spin_unlock_irqrestore_84(& self->lock, flags);
+  }
   return (status);
 }
 }
-static int w83977af_net_open(struct net_device *dev )
+static int nsc_ircc_net_open(struct net_device *dev )
 {
-  struct w83977af_ir *self ;
+  struct nsc_ircc_cb *self ;
   int iobase ;
   char hwname[32U] ;
-  __u8 set ;
+  __u8 bank ;
   void *tmp ;
   int tmp___0 ;
   int tmp___1 ;
+  int tmp___2 ;
+  int tmp___3 ;
   {
-  {
-  printk("\017%s()\n", "w83977af_net_open");
+  if (irda_debug > 3U) {
+    {
+    printk("\017%s()\n", "nsc_ircc_net_open");
+    }
+  } else {
   }
   if ((unsigned long )dev == (unsigned long )((struct net_device *)0)) {
     {
-    printk("Assertion failed! %s:%s:%d %s\n", (char *)"drivers/net/irda/w83977af_ir.c",
-           "w83977af_net_open", 1156, (char *)"dev != NULL");
+    printk("Assertion failed! %s:%s:%d %s\n", (char *)"drivers/net/irda/nsc-ircc.c",
+           "nsc_ircc_net_open", 2179, (char *)"dev != NULL");
     }
     return (-1);
   } else {
   }
   {
   tmp = netdev_priv((struct net_device const *)dev);
-  self = (struct w83977af_ir *)tmp;
+  self = (struct nsc_ircc_cb *)tmp;
   }
-  if ((unsigned long )self == (unsigned long )((struct w83977af_ir *)0)) {
+  if ((unsigned long )self == (unsigned long )((struct nsc_ircc_cb *)0)) {
     {
-    printk("Assertion failed! %s:%s:%d %s\n", (char *)"drivers/net/irda/w83977af_ir.c",
-           "w83977af_net_open", 1159, (char *)"self != NULL");
+    printk("Assertion failed! %s:%s:%d %s\n", (char *)"drivers/net/irda/nsc-ircc.c",
+           "nsc_ircc_net_open", 2182, (char *)"self != NULL");
     }
     return (0);
   } else {
   }
   {
   iobase = self->io.fir_base;
-  tmp___0 = ldv_request_irq_75((unsigned int )self->io.irq, & w83977af_interrupt,
+  tmp___1 = ldv_request_irq_93((unsigned int )self->io.irq, & nsc_ircc_interrupt,
                                0UL, (char const *)(& dev->name), (void *)dev);
-  }
-  if (tmp___0 != 0) {
-    return (-11);
-  } else {
-  }
-  {
-  tmp___1 = request_dma((unsigned int )self->io.dma, (char const *)(& dev->name));
   }
   if (tmp___1 != 0) {
     {
-    ldv_free_irq_76((unsigned int )self->io.irq, (void *)dev);
+    tmp___0 = net_ratelimit();
+    }
+    if (tmp___0 != 0) {
+      {
+      printk("\f%s, unable to allocate irq=%d\n", driver_name, self->io.irq);
+      }
+    } else {
     }
     return (-11);
   } else {
   }
   {
-  set = inb(iobase + 3);
-  switch_bank(iobase, 3);
+  tmp___3 = request_dma((unsigned int )self->io.dma, (char const *)(& dev->name));
   }
-  if (self->io.speed > 115200U) {
+  if (tmp___3 != 0) {
     {
-    outb(64, iobase + 1);
-    w83977af_dma_receive(self);
+    tmp___2 = net_ratelimit();
     }
+    if (tmp___2 != 0) {
+      {
+      printk("\f%s, unable to allocate dma=%d\n", driver_name, self->io.dma);
+      }
+    } else {
+    }
+    {
+    ldv_free_irq_94((unsigned int )self->io.irq, (void *)dev);
+    }
+    return (-11);
   } else {
-    {
-    outb(1, iobase + 1);
-    }
   }
   {
-  outb((int )set, iobase + 3);
+  bank = inb(iobase + 3);
+  switch_bank(iobase, 3);
+  outb(5, iobase + 1);
+  outb((int )bank, iobase + 3);
   netif_start_queue(dev);
-  sprintf((char *)(& hwname), "w83977af @ 0x%03x", self->io.fir_base);
+  sprintf((char *)(& hwname), "NSC-FIR @ 0x%03x", self->io.fir_base);
   self->irlap = irlap_open(dev, & self->qos, (char const *)(& hwname));
   }
   return (0);
 }
 }
-static int w83977af_net_close(struct net_device *dev )
+static int nsc_ircc_net_close(struct net_device *dev )
 {
-  struct w83977af_ir *self ;
+  struct nsc_ircc_cb *self ;
   int iobase ;
-  __u8 set ;
+  __u8 bank ;
   void *tmp ;
   {
-  {
-  printk("\017%s()\n", "w83977af_net_close");
+  if (irda_debug > 3U) {
+    {
+    printk("\017%s()\n", "nsc_ircc_net_close");
+    }
+  } else {
   }
   if ((unsigned long )dev == (unsigned long )((struct net_device *)0)) {
     {
-    printk("Assertion failed! %s:%s:%d %s\n", (char *)"drivers/net/irda/w83977af_ir.c",
-           "w83977af_net_close", 1219, (char *)"dev != NULL");
+    printk("Assertion failed! %s:%s:%d %s\n", (char *)"drivers/net/irda/nsc-ircc.c",
+           "nsc_ircc_net_close", 2241, (char *)"dev != NULL");
     }
     return (-1);
   } else {
   }
   {
   tmp = netdev_priv((struct net_device const *)dev);
-  self = (struct w83977af_ir *)tmp;
+  self = (struct nsc_ircc_cb *)tmp;
   }
-  if ((unsigned long )self == (unsigned long )((struct w83977af_ir *)0)) {
+  if ((unsigned long )self == (unsigned long )((struct nsc_ircc_cb *)0)) {
     {
-    printk("Assertion failed! %s:%s:%d %s\n", (char *)"drivers/net/irda/w83977af_ir.c",
-           "w83977af_net_close", 1223, (char *)"self != NULL");
+    printk("Assertion failed! %s:%s:%d %s\n", (char *)"drivers/net/irda/nsc-ircc.c",
+           "nsc_ircc_net_close", 2244, (char *)"self != NULL");
     }
     return (0);
   } else {
   }
   {
-  iobase = self->io.fir_base;
   netif_stop_queue(dev);
   }
   if ((unsigned long )self->irlap != (unsigned long )((struct irlap_cb *)0)) {
@@ -7433,21 +9488,22 @@ static int w83977af_net_close(struct net_device *dev )
   }
   {
   self->irlap = (struct irlap_cb *)0;
+  iobase = self->io.fir_base;
   disable_dma((unsigned int )self->io.dma);
-  set = inb(iobase + 3);
+  bank = inb(iobase + 3);
   switch_bank(iobase, 3);
   outb(0, iobase + 1);
-  ldv_free_irq_77((unsigned int )self->io.irq, (void *)dev);
+  ldv_free_irq_95((unsigned int )self->io.irq, (void *)dev);
   free_dma((unsigned int )self->io.dma);
-  outb((int )set, iobase + 3);
+  outb((int )bank, iobase + 3);
   }
   return (0);
 }
 }
-static int w83977af_net_ioctl(struct net_device *dev , struct ifreq *rq , int cmd )
+static int nsc_ircc_net_ioctl(struct net_device *dev , struct ifreq *rq , int cmd )
 {
   struct if_irda_req *irq___0 ;
-  struct w83977af_ir *self ;
+  struct nsc_ircc_cb *self ;
   unsigned long flags = 0 ;
   int ret ;
   void *tmp ;
@@ -7461,33 +9517,30 @@ static int w83977af_net_ioctl(struct net_device *dev , struct ifreq *rq , int cm
   ret = 0;
   if ((unsigned long )dev == (unsigned long )((struct net_device *)0)) {
     {
-    printk("Assertion failed! %s:%s:%d %s\n", (char *)"drivers/net/irda/w83977af_ir.c",
-           "w83977af_net_ioctl", 1266, (char *)"dev != NULL");
+    printk("Assertion failed! %s:%s:%d %s\n", (char *)"drivers/net/irda/nsc-ircc.c",
+           "nsc_ircc_net_ioctl", 2287, (char *)"dev != NULL");
     }
     return (-1);
   } else {
   }
   {
   tmp = netdev_priv((struct net_device const *)dev);
-  self = (struct w83977af_ir *)tmp;
+  self = (struct nsc_ircc_cb *)tmp;
   }
-  if ((unsigned long )self == (unsigned long )((struct w83977af_ir *)0)) {
+  if ((unsigned long )self == (unsigned long )((struct nsc_ircc_cb *)0)) {
     {
-    printk("Assertion failed! %s:%s:%d %s\n", (char *)"drivers/net/irda/w83977af_ir.c",
-           "w83977af_net_ioctl", 1270, (char *)"self != NULL");
+    printk("Assertion failed! %s:%s:%d %s\n", (char *)"drivers/net/irda/nsc-ircc.c",
+           "nsc_ircc_net_ioctl", 2291, (char *)"self != NULL");
     }
     return (-1);
   } else {
   }
   if (irda_debug > 1U) {
     {
-    printk("\017%s(), %s, (cmd=0x%X)\n", "w83977af_net_ioctl", (char *)(& dev->name),
+    printk("\017%s(), %s, (cmd=0x%X)\n", "nsc_ircc_net_ioctl", (char *)(& dev->name),
            cmd);
     }
   } else {
-  }
-  {
-  ldv___ldv_spin_lock_78(& self->lock);
   }
   {
   if (cmd == 35314) {
@@ -7514,13 +9567,15 @@ static int w83977af_net_ioctl(struct net_device *dev , struct ifreq *rq , int cm
   }
   if (tmp___1) {
     ret = -1;
-    goto out;
+    goto ldv_46137;
   } else {
   }
   {
-  w83977af_change_speed(self, (__u32 )irq___0->ifr_ifru.ifru_qos.baudrate);
+  ldv___ldv_spin_lock_96(& self->lock);
+  nsc_ircc_change_speed(self, (__u32 )irq___0->ifr_ifru.ifru_qos.baudrate);
+  ldv_spin_unlock_irqrestore_84(& self->lock, flags);
   }
-  goto ldv_45106;
+  goto ldv_46137;
   case_35315:
   {
   tmp___2 = capable(12);
@@ -7532,51 +9587,178 @@ static int w83977af_net_ioctl(struct net_device *dev , struct ifreq *rq , int cm
   }
   if (tmp___3) {
     ret = -1;
-    goto out;
+    goto ldv_46137;
   } else {
   }
   {
   irda_device_set_media_busy(self->netdev, 1);
   }
-  goto ldv_45106;
+  goto ldv_46137;
   case_35317:
   {
-  tmp___4 = w83977af_is_receiving(self);
+  tmp___4 = nsc_ircc_is_receiving(self);
   irq___0->ifr_ifru.ifru_receiving = (unsigned int )tmp___4;
   }
-  goto ldv_45106;
+  goto ldv_46137;
   switch_default:
   ret = -95;
   switch_break: ;
   }
-  ldv_45106: ;
-  out:
-  {
-  ldv_spin_unlock_irqrestore_79(& self->lock, flags);
-  }
+  ldv_46137: ;
   return (ret);
 }
 }
-void ldv_dispatch_deregister_9_1(struct net_device *arg0 ) ;
-void ldv_dispatch_insmod_deregister_10_2(void) ;
-void ldv_dispatch_insmod_register_10_3(void) ;
-void ldv_dispatch_irq_deregister_5_1(int arg0 ) ;
-void ldv_dispatch_irq_register_8_3(int arg0 , irqreturn_t (*arg1)(int , void * ) ,
-                                   irqreturn_t (*arg2)(int , void * ) , void *arg3 ) ;
-void ldv_dispatch_register_7_4(struct net_device *arg0 ) ;
+static int nsc_ircc_suspend(struct platform_device *dev , pm_message_t state )
+{
+  struct nsc_ircc_cb *self ;
+  void *tmp ;
+  int bank ;
+  unsigned long flags = 0 ;
+  int iobase ;
+  unsigned char tmp___0 ;
+  bool tmp___1 ;
+  {
+  {
+  tmp = platform_get_drvdata((struct platform_device const *)dev);
+  self = (struct nsc_ircc_cb *)tmp;
+  iobase = self->io.fir_base;
+  }
+  if (self->io.suspended != 0) {
+    return (0);
+  } else {
+  }
+  if (irda_debug != 0U) {
+    {
+    printk("\017%s, Suspending\n", driver_name);
+    }
+  } else {
+  }
+  {
+  rtnl_lock();
+  tmp___1 = netif_running((struct net_device const *)self->netdev);
+  }
+  if ((int )tmp___1) {
+    {
+    netif_device_detach(self->netdev);
+    ldv___ldv_spin_lock_98(& self->lock);
+    tmp___0 = inb(iobase + 3);
+    bank = (int )tmp___0;
+    switch_bank(iobase, 3);
+    outb(0, iobase + 1);
+    outb((int )((unsigned char )bank), iobase + 3);
+    ldv_spin_unlock_irqrestore_84(& self->lock, flags);
+    ldv_free_irq_100((unsigned int )self->io.irq, (void *)self->netdev);
+    disable_dma((unsigned int )self->io.dma);
+    }
+  } else {
+  }
+  {
+  self->io.suspended = 1;
+  rtnl_unlock();
+  }
+  return (0);
+}
+}
+static int nsc_ircc_resume(struct platform_device *dev )
+{
+  struct nsc_ircc_cb *self ;
+  void *tmp ;
+  unsigned long flags = 0 ;
+  int tmp___0 ;
+  int tmp___1 ;
+  bool tmp___2 ;
+  {
+  {
+  tmp = platform_get_drvdata((struct platform_device const *)dev);
+  self = (struct nsc_ircc_cb *)tmp;
+  }
+  if (self->io.suspended == 0) {
+    return (0);
+  } else {
+  }
+  if (irda_debug != 0U) {
+    {
+    printk("\017%s, Waking up\n", driver_name);
+    }
+  } else {
+  }
+  {
+  rtnl_lock();
+  nsc_ircc_setup(& self->io);
+  nsc_ircc_init_dongle_interface(self->io.fir_base, self->io.dongle_id);
+  tmp___2 = netif_running((struct net_device const *)self->netdev);
+  }
+  if ((int )tmp___2) {
+    {
+    tmp___1 = ldv_request_irq_93((unsigned int )self->io.irq, & nsc_ircc_interrupt,
+                                 0UL, (char const *)(& (self->netdev)->name), (void *)self->netdev);
+    }
+    if (tmp___1 != 0) {
+      {
+      tmp___0 = net_ratelimit();
+      }
+      if (tmp___0 != 0) {
+        {
+        printk("\f%s, unable to allocate irq=%d\n", driver_name, self->io.irq);
+        }
+      } else {
+      }
+      {
+      unregister_netdevice(self->netdev);
+      }
+    } else {
+      {
+      ldv___ldv_spin_lock_102(& self->lock);
+      nsc_ircc_change_speed(self, self->io.speed);
+      ldv_spin_unlock_irqrestore_84(& self->lock, flags);
+      netif_device_attach(self->netdev);
+      }
+    }
+  } else {
+    {
+    ldv___ldv_spin_lock_104(& self->lock);
+    nsc_ircc_change_speed(self, 9600U);
+    ldv_spin_unlock_irqrestore_84(& self->lock, flags);
+    }
+  }
+  {
+  self->io.suspended = 0;
+  rtnl_unlock();
+  }
+  return (0);
+}
+}
+void ldv_dispatch_deregister_10_1(struct platform_driver *arg0 ) ;
+void ldv_dispatch_deregister_13_1(struct net_device *arg0 ) ;
+void ldv_dispatch_insmod_deregister_14_2(void) ;
+void ldv_dispatch_insmod_register_14_3(void) ;
+void ldv_dispatch_irq_deregister_8_1(int arg0 ) ;
+void ldv_dispatch_irq_register_12_3(int arg0 , irqreturn_t (*arg1)(int , void * ) ,
+                                    irqreturn_t (*arg2)(int , void * ) , void *arg3 ) ;
+void ldv_dispatch_pm_deregister_4_5(void) ;
+void ldv_dispatch_pm_register_4_6(void) ;
+void ldv_dispatch_register_11_4(struct net_device *arg0 ) ;
+void ldv_dispatch_register_7_3(struct platform_driver *arg0 ) ;
+int ldv_emg___platform_driver_register(struct platform_driver *arg0 , struct module *arg1 ) ;
 void ldv_emg_free_irq(int arg0 , void *arg1 ) ;
 void ldv_emg_free_netdev(struct net_device *arg0 ) ;
+void ldv_emg_platform_driver_unregister(struct platform_driver *arg0 ) ;
 int ldv_emg_register_netdev(struct net_device *arg0 ) ;
 int ldv_emg_request_irq(unsigned int arg0 , irqreturn_t (*arg1)(int , void * ) ,
                         unsigned long arg2 , char *arg3 , void *arg4 ) ;
 void ldv_emg_unregister_netdev(struct net_device *arg0 ) ;
-void *ldv_insmod_4(void *arg0 ) ;
-void ldv_insmod_w83977af_cleanup_4_2(void (*arg0)(void) ) ;
-int ldv_insmod_w83977af_init_4_6(int (*arg0)(void) ) ;
+void *ldv_insmod_6(void *arg0 ) ;
+void ldv_insmod_nsc_ircc_cleanup_6_2(void (*arg0)(void) ) ;
+int ldv_insmod_nsc_ircc_init_6_6(int (*arg0)(void) ) ;
 void *ldv_interrupt_scenario_2(void *arg0 ) ;
 enum irqreturn ldv_interrupt_scenario_handler_2_5(irqreturn_t (*arg0)(int , void * ) ,
                                                   int arg1 , void *arg2 ) ;
-void *ldv_main_10(void *arg0 ) ;
+void *ldv_main_14(void *arg0 ) ;
+void *ldv_platform_instance_4(void *arg0 ) ;
+void ldv_platform_instance_callback_4_18(int (*arg0)(struct platform_device * , pm_message_t ) ,
+                                         struct platform_device *arg1 , struct pm_message *arg2 ) ;
+void ldv_platform_instance_callback_4_7(int (*arg0)(struct platform_device * ) , struct platform_device *arg1 ) ;
+void *ldv_pm_ops_scenario_5(void *arg0 ) ;
 void *ldv_random_allocationless_scenario_3(void *arg0 ) ;
 void ldv_random_allocationless_scenario_callback_3_3(int (*arg0)(struct net_device * ,
                                                                  struct ifreq * ,
@@ -7585,24 +9767,15 @@ void ldv_random_allocationless_scenario_callback_3_3(int (*arg0)(struct net_devi
 void ldv_random_allocationless_scenario_callback_3_8(netdev_tx_t (*arg0)(struct sk_buff * ,
                                                                          struct net_device * ) ,
                                                      struct sk_buff *arg1 , struct net_device *arg2 ) ;
-int ldv_register_netdev_open_7_6(int (*arg0)(struct net_device * ) , struct net_device *arg1 ) ;
-void ldv_unregister_netdev_stop_9_2(int (*arg0)(struct net_device * ) , struct net_device *arg1 ) ;
+int ldv_register_netdev_open_11_6(int (*arg0)(struct net_device * ) , struct net_device *arg1 ) ;
+void ldv_unregister_netdev_stop_13_2(int (*arg0)(struct net_device * ) , struct net_device *arg1 ) ;
 int main(void) ;
 pthread_t ldv_thread_2 ;
 pthread_t ldv_thread_3 ;
 pthread_t ldv_thread_4 ;
-void ldv_dispatch_deregister_9_1(struct net_device *arg0 )
-{
-  int ret ;
-  {
-  {
-  ret = pthread_join(ldv_thread_3, (void **)0);
-  __VERIFIER_assume(ret == 0);
-  }
-  return;
-}
-}
-void ldv_dispatch_insmod_deregister_10_2(void)
+pthread_t ldv_thread_5 ;
+pthread_t ldv_thread_6 ;
+void ldv_dispatch_deregister_10_1(struct platform_driver *arg0 )
 {
   int ret ;
   {
@@ -7613,23 +9786,45 @@ void ldv_dispatch_insmod_deregister_10_2(void)
   return;
 }
 }
-void ldv_dispatch_insmod_register_10_3(void)
+void ldv_dispatch_deregister_13_1(struct net_device *arg0 )
 {
   int ret ;
-  struct ldv_struct_main_10 *cf_arg_4 ;
-  void *tmp ;
   {
   {
-  tmp = ldv_xmalloc(4UL);
-  cf_arg_4 = (struct ldv_struct_main_10 *)tmp;
-  ret = pthread_create(& ldv_thread_4, (pthread_attr_t const *)0, & ldv_insmod_4,
-                       (void *)cf_arg_4);
+  ret = pthread_join(ldv_thread_3, (void **)0);
   __VERIFIER_assume(ret == 0);
   }
   return;
 }
 }
-void ldv_dispatch_irq_deregister_5_1(int arg0 )
+void ldv_dispatch_insmod_deregister_14_2(void)
+{
+  int ret ;
+  {
+  {
+  ret = pthread_join(ldv_thread_6, (void **)0);
+  __VERIFIER_assume(ret == 0);
+  }
+  return;
+}
+}
+void ldv_dispatch_insmod_register_14_3(void)
+{
+  int ret ;
+  struct ldv_struct_platform_instance_4 *cf_arg_6 ;
+  void *tmp ;
+  {
+  {
+  tmp = ldv_xmalloc(16UL);
+  cf_arg_6 = (struct ldv_struct_platform_instance_4 *)tmp;
+  ret = pthread_create(& ldv_thread_6, (pthread_attr_t const *)0, & ldv_insmod_6,
+                       (void *)cf_arg_6);
+  __VERIFIER_assume(ret == 0);
+  }
+  return;
+}
+}
+void ldv_dispatch_irq_deregister_8_1(int arg0 )
 {
   int ret ;
   {
@@ -7640,8 +9835,8 @@ void ldv_dispatch_irq_deregister_5_1(int arg0 )
   return;
 }
 }
-void ldv_dispatch_irq_register_8_3(int arg0 , irqreturn_t (*arg1)(int , void * ) ,
-                                   irqreturn_t (*arg2)(int , void * ) , void *arg3 )
+void ldv_dispatch_irq_register_12_3(int arg0 , irqreturn_t (*arg1)(int , void * ) ,
+                                    irqreturn_t (*arg2)(int , void * ) , void *arg3 )
 {
   int ret ;
   struct ldv_struct_interrupt_scenario_2 *cf_arg_2 ;
@@ -7661,7 +9856,34 @@ void ldv_dispatch_irq_register_8_3(int arg0 , irqreturn_t (*arg1)(int , void * )
   return;
 }
 }
-void ldv_dispatch_register_7_4(struct net_device *arg0 )
+void ldv_dispatch_pm_deregister_4_5(void)
+{
+  int ret ;
+  {
+  {
+  ret = pthread_join(ldv_thread_5, (void **)0);
+  __VERIFIER_assume(ret == 0);
+  }
+  return;
+}
+}
+void ldv_dispatch_pm_register_4_6(void)
+{
+  int ret ;
+  struct ldv_struct_platform_instance_4 *cf_arg_5 ;
+  void *tmp ;
+  {
+  {
+  tmp = ldv_xmalloc(16UL);
+  cf_arg_5 = (struct ldv_struct_platform_instance_4 *)tmp;
+  ret = pthread_create(& ldv_thread_5, (pthread_attr_t const *)0, & ldv_pm_ops_scenario_5,
+                       (void *)cf_arg_5);
+  __VERIFIER_assume(ret == 0);
+  }
+  return;
+}
+}
+void ldv_dispatch_register_11_4(struct net_device *arg0 )
 {
   int ret ;
   struct ldv_struct_random_allocationless_scenario_3 *cf_arg_3 ;
@@ -7678,13 +9900,56 @@ void ldv_dispatch_register_7_4(struct net_device *arg0 )
   return;
 }
 }
+void ldv_dispatch_register_7_3(struct platform_driver *arg0 )
+{
+  int ret ;
+  struct ldv_struct_platform_instance_4 *cf_arg_4 ;
+  void *tmp ;
+  {
+  {
+  tmp = ldv_xmalloc(16UL);
+  cf_arg_4 = (struct ldv_struct_platform_instance_4 *)tmp;
+  cf_arg_4->arg0 = arg0;
+  ret = pthread_create(& ldv_thread_4, (pthread_attr_t const *)0, & ldv_platform_instance_4,
+                       (void *)cf_arg_4);
+  __VERIFIER_assume(ret == 0);
+  }
+  return;
+}
+}
+int ldv_emg___platform_driver_register(struct platform_driver *arg0 , struct module *arg1 )
+{
+  struct platform_driver *ldv_7_platform_driver_platform_driver ;
+  void *tmp ;
+  int tmp___0 ;
+  int tmp___1 ;
+  {
+  {
+  tmp = external_allocated_data();
+  ldv_7_platform_driver_platform_driver = (struct platform_driver *)tmp;
+  tmp___1 = ldv_undef_int();
+  }
+  if (tmp___1 != 0) {
+    {
+    ldv_7_platform_driver_platform_driver = arg0;
+    ldv_dispatch_register_7_3(ldv_7_platform_driver_platform_driver);
+    }
+    return (0);
+  } else {
+    {
+    tmp___0 = ldv_undef_int_negative();
+    }
+    return (tmp___0);
+  }
+}
+}
 void ldv_emg_free_irq(int arg0 , void *arg1 )
 {
-  int ldv_5_line_line ;
+  int ldv_8_line_line ;
   {
   {
-  ldv_5_line_line = arg0;
-  ldv_dispatch_irq_deregister_5_1(ldv_5_line_line);
+  ldv_8_line_line = arg0;
+  ldv_dispatch_irq_deregister_8_1(ldv_8_line_line);
   }
   return;
   return;
@@ -7692,14 +9957,29 @@ void ldv_emg_free_irq(int arg0 , void *arg1 )
 }
 void ldv_emg_free_netdev(struct net_device *arg0 )
 {
-  struct net_device *ldv_6_netdev_net_device ;
+  struct net_device *ldv_9_netdev_net_device ;
   void *tmp ;
   {
   {
   tmp = external_allocated_data();
-  ldv_6_netdev_net_device = (struct net_device *)tmp;
-  ldv_6_netdev_net_device = arg0;
-  ldv_free((void *)ldv_6_netdev_net_device);
+  ldv_9_netdev_net_device = (struct net_device *)tmp;
+  ldv_9_netdev_net_device = arg0;
+  ldv_free((void *)ldv_9_netdev_net_device);
+  }
+  return;
+  return;
+}
+}
+void ldv_emg_platform_driver_unregister(struct platform_driver *arg0 )
+{
+  struct platform_driver *ldv_10_platform_driver_platform_driver ;
+  void *tmp ;
+  {
+  {
+  tmp = external_allocated_data();
+  ldv_10_platform_driver_platform_driver = (struct platform_driver *)tmp;
+  ldv_10_platform_driver_platform_driver = arg0;
+  ldv_dispatch_deregister_10_1(ldv_10_platform_driver_platform_driver);
   }
   return;
   return;
@@ -7707,8 +9987,8 @@ void ldv_emg_free_netdev(struct net_device *arg0 )
 }
 int ldv_emg_register_netdev(struct net_device *arg0 )
 {
-  struct net_device *ldv_7_netdev_net_device ;
-  int ldv_7_ret_default ;
+  struct net_device *ldv_11_netdev_net_device ;
+  int ldv_11_ret_default ;
   void *tmp ;
   int tmp___0 ;
   int tmp___1 ;
@@ -7717,26 +9997,26 @@ int ldv_emg_register_netdev(struct net_device *arg0 )
   {
   {
   tmp = external_allocated_data();
-  ldv_7_netdev_net_device = (struct net_device *)tmp;
-  ldv_7_ret_default = ldv_undef_int();
+  ldv_11_netdev_net_device = (struct net_device *)tmp;
+  ldv_11_ret_default = ldv_undef_int();
   tmp___3 = ldv_undef_int();
   }
   if (tmp___3 != 0) {
     {
-    ldv_7_netdev_net_device = arg0;
-    ldv_7_ret_default = ldv_register_netdev_open_7_6((ldv_7_netdev_net_device->netdev_ops)->ndo_open,
-                                                     ldv_7_netdev_net_device);
+    ldv_11_netdev_net_device = arg0;
+    ldv_11_ret_default = ldv_register_netdev_open_11_6((ldv_11_netdev_net_device->netdev_ops)->ndo_open,
+                                                       ldv_11_netdev_net_device);
     tmp___1 = ldv_undef_int();
     }
     if (tmp___1 != 0) {
       {
-      __VERIFIER_assume(ldv_7_ret_default == 0);
-      ldv_dispatch_register_7_4(ldv_7_netdev_net_device);
+      __VERIFIER_assume(ldv_11_ret_default == 0);
+      ldv_dispatch_register_11_4(ldv_11_netdev_net_device);
       }
       return (0);
     } else {
       {
-      __VERIFIER_assume(ldv_7_ret_default == 0);
+      __VERIFIER_assume(ldv_11_ret_default == 0);
       ldv_failed_register_netdev();
       tmp___0 = ldv_undef_int_negative();
       }
@@ -7754,10 +10034,10 @@ int ldv_emg_register_netdev(struct net_device *arg0 )
 int ldv_emg_request_irq(unsigned int arg0 , irqreturn_t (*arg1)(int , void * ) ,
                         unsigned long arg2 , char *arg3 , void *arg4 )
 {
-  irqreturn_t (*ldv_8_callback_handler)(int , void * ) ;
-  void *ldv_8_data_data ;
-  int ldv_8_line_line ;
-  irqreturn_t (*ldv_8_thread_thread)(int , void * ) ;
+  irqreturn_t (*ldv_12_callback_handler)(int , void * ) ;
+  void *ldv_12_data_data ;
+  int ldv_12_line_line ;
+  irqreturn_t (*ldv_12_thread_thread)(int , void * ) ;
   void *tmp ;
   void *tmp___0 ;
   int tmp___1 ;
@@ -7765,20 +10045,20 @@ int ldv_emg_request_irq(unsigned int arg0 , irqreturn_t (*arg1)(int , void * ) ,
   {
   {
   tmp = external_allocated_data();
-  ldv_8_callback_handler = (irqreturn_t (*)(int , void * ))tmp;
-  ldv_8_data_data = external_allocated_data();
+  ldv_12_callback_handler = (irqreturn_t (*)(int , void * ))tmp;
+  ldv_12_data_data = external_allocated_data();
   tmp___0 = external_allocated_data();
-  ldv_8_thread_thread = (irqreturn_t (*)(int , void * ))tmp___0;
+  ldv_12_thread_thread = (irqreturn_t (*)(int , void * ))tmp___0;
   tmp___2 = ldv_undef_int();
   }
   if (tmp___2 != 0) {
     {
-    ldv_8_line_line = (int )arg0;
-    ldv_8_callback_handler = arg1;
-    ldv_8_thread_thread = (irqreturn_t (*)(int , void * ))0;
-    ldv_8_data_data = arg4;
-    ldv_dispatch_irq_register_8_3(ldv_8_line_line, ldv_8_callback_handler, ldv_8_thread_thread,
-                                  ldv_8_data_data);
+    ldv_12_line_line = (int )arg0;
+    ldv_12_callback_handler = arg1;
+    ldv_12_thread_thread = (irqreturn_t (*)(int , void * ))0;
+    ldv_12_data_data = arg4;
+    ldv_dispatch_irq_register_12_3(ldv_12_line_line, ldv_12_callback_handler, ldv_12_thread_thread,
+                                   ldv_12_data_data);
     }
     return (0);
   } else {
@@ -7791,70 +10071,70 @@ int ldv_emg_request_irq(unsigned int arg0 , irqreturn_t (*arg1)(int , void * ) ,
 }
 void ldv_emg_unregister_netdev(struct net_device *arg0 )
 {
-  struct net_device *ldv_9_netdev_net_device ;
+  struct net_device *ldv_13_netdev_net_device ;
   void *tmp ;
   {
   {
   tmp = external_allocated_data();
-  ldv_9_netdev_net_device = (struct net_device *)tmp;
-  ldv_9_netdev_net_device = arg0;
-  ldv_unregister_netdev_stop_9_2((ldv_9_netdev_net_device->netdev_ops)->ndo_stop,
-                                 ldv_9_netdev_net_device);
-  ldv_dispatch_deregister_9_1(ldv_9_netdev_net_device);
+  ldv_13_netdev_net_device = (struct net_device *)tmp;
+  ldv_13_netdev_net_device = arg0;
+  ldv_unregister_netdev_stop_13_2((ldv_13_netdev_net_device->netdev_ops)->ndo_stop,
+                                  ldv_13_netdev_net_device);
+  ldv_dispatch_deregister_13_1(ldv_13_netdev_net_device);
   }
   return;
   return;
 }
 }
-void *ldv_insmod_4(void *arg0 )
+void *ldv_insmod_6(void *arg0 )
 {
-  int ldv_4_ret_default ;
-  void (*ldv_4_w83977af_cleanup_default)(void) ;
-  int (*ldv_4_w83977af_init_default)(void) ;
+  void (*ldv_6_nsc_ircc_cleanup_default)(void) ;
+  int (*ldv_6_nsc_ircc_init_default)(void) ;
+  int ldv_6_ret_default ;
   void *tmp ;
   void *tmp___0 ;
   int tmp___1 ;
   {
   {
   tmp = external_allocated_data();
-  ldv_4_w83977af_cleanup_default = (void (*)(void))tmp;
+  ldv_6_nsc_ircc_cleanup_default = (void (*)(void))tmp;
   tmp___0 = external_allocated_data();
-  ldv_4_w83977af_init_default = (int (*)(void))tmp___0;
+  ldv_6_nsc_ircc_init_default = (int (*)(void))tmp___0;
   ldv_free(arg0);
-  ldv_4_ret_default = ldv_insmod_w83977af_init_4_6(ldv_4_w83977af_init_default);
-  ldv_4_ret_default = ldv_post_init(ldv_4_ret_default);
+  ldv_6_ret_default = ldv_insmod_nsc_ircc_init_6_6(ldv_6_nsc_ircc_init_default);
+  ldv_6_ret_default = ldv_post_init(ldv_6_ret_default);
   tmp___1 = ldv_undef_int();
   }
   if (tmp___1 != 0) {
     {
-    __VERIFIER_assume(ldv_4_ret_default != 0);
+    __VERIFIER_assume(ldv_6_ret_default != 0);
     }
     return ((void *)0);
   } else {
     {
-    __VERIFIER_assume(ldv_4_ret_default == 0);
-    ldv_insmod_w83977af_cleanup_4_2(ldv_4_w83977af_cleanup_default);
+    __VERIFIER_assume(ldv_6_ret_default == 0);
+    ldv_insmod_nsc_ircc_cleanup_6_2(ldv_6_nsc_ircc_cleanup_default);
     }
     return ((void *)0);
   }
   return ((void *)0);
 }
 }
-void ldv_insmod_w83977af_cleanup_4_2(void (*arg0)(void) )
+void ldv_insmod_nsc_ircc_cleanup_6_2(void (*arg0)(void) )
 {
   {
   {
-  w83977af_cleanup();
+  nsc_ircc_cleanup();
   }
   return;
 }
 }
-int ldv_insmod_w83977af_init_4_6(int (*arg0)(void) )
+int ldv_insmod_nsc_ircc_init_6_6(int (*arg0)(void) )
 {
   int tmp ;
   {
   {
-  tmp = w83977af_init();
+  tmp = nsc_ircc_init();
   }
   return (tmp);
 }
@@ -7915,22 +10195,267 @@ enum irqreturn ldv_interrupt_scenario_handler_2_5(irqreturn_t (*arg0)(int , void
   irqreturn_t tmp ;
   {
   {
-  tmp = w83977af_interrupt(arg1, arg2);
+  tmp = nsc_ircc_interrupt(arg1, arg2);
   }
   return (tmp);
 }
 }
-void *ldv_main_10(void *arg0 )
+void *ldv_main_14(void *arg0 )
 {
   {
   {
   ldv_initialize();
-  ldv_dispatch_insmod_register_10_3();
-  ldv_dispatch_insmod_deregister_10_2();
+  ldv_dispatch_insmod_register_14_3();
+  ldv_dispatch_insmod_deregister_14_2();
   ldv_check_final_state();
   __VERIFIER_assume(0);
   }
   return ((void *)0);
+  return ((void *)0);
+}
+}
+void *ldv_platform_instance_4(void *arg0 )
+{
+  int (*ldv_4_callback_resume)(struct platform_device * ) ;
+  int (*ldv_4_callback_suspend)(struct platform_device * , pm_message_t ) ;
+  struct platform_driver *ldv_4_container_platform_driver ;
+  struct pm_message *ldv_4_ldv_param_18_1_default ;
+  int ldv_4_probed_default ;
+  struct platform_device *ldv_4_resource_platform_device ;
+  struct ldv_struct_platform_instance_4 *data ;
+  void *tmp ;
+  void *tmp___0 ;
+  void *tmp___1 ;
+  void *tmp___2 ;
+  void *tmp___3 ;
+  void *tmp___4 ;
+  int tmp___5 ;
+  int tmp___6 ;
+  int tmp___7 ;
+  void *tmp___8 ;
+  {
+  {
+  data = (struct ldv_struct_platform_instance_4 *)arg0;
+  tmp = external_allocated_data();
+  ldv_4_callback_resume = (int (*)(struct platform_device * ))tmp;
+  tmp___0 = external_allocated_data();
+  ldv_4_callback_suspend = (int (*)(struct platform_device * , pm_message_t ))tmp___0;
+  tmp___1 = external_allocated_data();
+  ldv_4_container_platform_driver = (struct platform_driver *)tmp___1;
+  tmp___2 = external_allocated_data();
+  ldv_4_ldv_param_18_1_default = (struct pm_message *)tmp___2;
+  ldv_4_probed_default = ldv_undef_int();
+  tmp___3 = external_allocated_data();
+  ldv_4_resource_platform_device = (struct platform_device *)tmp___3;
+  }
+  if ((unsigned long )data != (unsigned long )((struct ldv_struct_platform_instance_4 *)0)) {
+    {
+    ldv_4_container_platform_driver = data->arg0;
+    ldv_free((void *)data);
+    }
+  } else {
+  }
+  {
+  tmp___4 = ldv_xmalloc(1432UL);
+  ldv_4_resource_platform_device = (struct platform_device *)tmp___4;
+  }
+  goto ldv_main_4;
+  return ((void *)0);
+  ldv_main_4:
+  {
+  tmp___6 = ldv_undef_int();
+  }
+  if (tmp___6 != 0) {
+    {
+    tmp___5 = ldv_undef_int();
+    }
+    if (tmp___5 != 0) {
+      {
+      __VERIFIER_assume(ldv_4_probed_default == 0);
+      }
+      goto ldv_call_4;
+    } else {
+      {
+      __VERIFIER_assume(ldv_4_probed_default != 0);
+      }
+      goto ldv_main_4;
+    }
+  } else {
+    {
+    ldv_free((void *)ldv_4_resource_platform_device);
+    }
+    return ((void *)0);
+  }
+  return ((void *)0);
+  ldv_call_4:
+  {
+  tmp___7 = ldv_undef_int();
+  }
+  {
+  if (tmp___7 == 1) {
+    goto case_1;
+  } else {
+  }
+  if (tmp___7 == 2) {
+    goto case_2;
+  } else {
+  }
+  if (tmp___7 == 3) {
+    goto case_3;
+  } else {
+  }
+  if (tmp___7 == 4) {
+    goto case_4;
+  } else {
+  }
+  goto switch_default;
+  case_1:
+  {
+  tmp___8 = ldv_xmalloc_unknown_size(0UL);
+  ldv_4_ldv_param_18_1_default = (struct pm_message *)tmp___8;
+  ldv_platform_instance_callback_4_18(ldv_4_callback_suspend, ldv_4_resource_platform_device,
+                                      ldv_4_ldv_param_18_1_default);
+  ldv_free((void *)ldv_4_ldv_param_18_1_default);
+  }
+  goto ldv_call_4;
+  case_2:
+  {
+  ldv_platform_instance_callback_4_7(ldv_4_callback_resume, ldv_4_resource_platform_device);
+  }
+  goto ldv_call_4;
+  case_3:
+  {
+  ldv_dispatch_pm_register_4_6();
+  ldv_dispatch_pm_deregister_4_5();
+  }
+  goto ldv_call_4;
+  case_4:
+  ldv_4_probed_default = 1;
+  goto ldv_main_4;
+  switch_default:
+  {
+  __VERIFIER_assume(0);
+  }
+  switch_break: ;
+  }
+  return ((void *)0);
+}
+}
+void ldv_platform_instance_callback_4_18(int (*arg0)(struct platform_device * , pm_message_t ) ,
+                                         struct platform_device *arg1 , struct pm_message *arg2 )
+{
+  {
+  {
+  nsc_ircc_suspend(arg1, *arg2);
+  }
+  return;
+}
+}
+void ldv_platform_instance_callback_4_7(int (*arg0)(struct platform_device * ) , struct platform_device *arg1 )
+{
+  {
+  {
+  nsc_ircc_resume(arg1);
+  }
+  return;
+}
+}
+void *ldv_pm_ops_scenario_5(void *arg0 )
+{
+  struct device *ldv_5_device_device ;
+  struct dev_pm_ops *ldv_5_pm_ops_dev_pm_ops ;
+  void *tmp ;
+  void *tmp___0 ;
+  int tmp___1 ;
+  int tmp___2 ;
+  int tmp___3 ;
+  int tmp___4 ;
+  int tmp___5 ;
+  {
+  {
+  tmp = external_allocated_data();
+  ldv_5_device_device = (struct device *)tmp;
+  tmp___0 = external_allocated_data();
+  ldv_5_pm_ops_dev_pm_ops = (struct dev_pm_ops *)tmp___0;
+  ldv_free(arg0);
+  }
+  goto ldv_do_5;
+  return ((void *)0);
+  ldv_do_5:
+  {
+  tmp___1 = ldv_undef_int();
+  }
+  {
+  if (tmp___1 == 1) {
+    goto case_1;
+  } else {
+  }
+  if (tmp___1 == 2) {
+    goto case_2;
+  } else {
+  }
+  if (tmp___1 == 3) {
+    goto case_3;
+  } else {
+  }
+  if (tmp___1 == 4) {
+    goto case_4;
+  } else {
+  }
+  goto switch_default___0;
+  case_1: ;
+  goto ldv_do_5;
+  case_2: ;
+  goto ldv_do_5;
+  case_3:
+  {
+  tmp___2 = ldv_undef_int();
+  }
+  {
+  if (tmp___2 == 1) {
+    goto case_1___0;
+  } else {
+  }
+  if (tmp___2 == 2) {
+    goto case_2___0;
+  } else {
+  }
+  if (tmp___2 == 3) {
+    goto case_3___0;
+  } else {
+  }
+  goto switch_default;
+  case_1___0:
+  {
+  tmp___3 = ldv_undef_int();
+  }
+  goto ldv_46543;
+  case_2___0:
+  {
+  tmp___4 = ldv_undef_int();
+  }
+  goto ldv_46543;
+  case_3___0:
+  {
+  tmp___5 = ldv_undef_int();
+  }
+  goto ldv_46543;
+  switch_default:
+  {
+  __VERIFIER_assume(0);
+  }
+  switch_break___0: ;
+  }
+  ldv_46543: ;
+  goto ldv_do_5;
+  case_4: ;
+  return ((void *)0);
+  switch_default___0:
+  {
+  __VERIFIER_assume(0);
+  }
+  switch_break: ;
+  }
   return ((void *)0);
 }
 }
@@ -7940,7 +10465,7 @@ void *ldv_random_allocationless_scenario_3(void *arg0 )
   netdev_tx_t (*ldv_3_callback_ndo_start_xmit)(struct sk_buff * , struct net_device * ) ;
   struct net_device *ldv_3_container_net_device ;
   struct ifreq *ldv_3_ldv_param_3_1_default ;
-  int ldv_3_ldv_param_3_2_default = ldv_undef_int() ;
+  int ldv_3_ldv_param_3_2_default = 0;
   struct sk_buff *ldv_3_ldv_param_8_0_default ;
   struct ldv_struct_random_allocationless_scenario_3 *data ;
   void *tmp ;
@@ -8019,7 +10544,7 @@ void ldv_random_allocationless_scenario_callback_3_3(int (*arg0)(struct net_devi
 {
   {
   {
-  w83977af_net_ioctl(arg1, arg2, arg3);
+  nsc_ircc_net_ioctl(arg1, arg2, arg3);
   }
   return;
 }
@@ -8030,26 +10555,26 @@ void ldv_random_allocationless_scenario_callback_3_8(netdev_tx_t (*arg0)(struct 
 {
   {
   {
-  w83977af_hard_xmit(arg1, arg2);
+  nsc_ircc_hard_xmit_sir(arg1, arg2);
   }
   return;
 }
 }
-int ldv_register_netdev_open_7_6(int (*arg0)(struct net_device * ) , struct net_device *arg1 )
+int ldv_register_netdev_open_11_6(int (*arg0)(struct net_device * ) , struct net_device *arg1 )
 {
   int tmp ;
   {
   {
-  tmp = w83977af_net_open(arg1);
+  tmp = nsc_ircc_net_open(arg1);
   }
   return (tmp);
 }
 }
-void ldv_unregister_netdev_stop_9_2(int (*arg0)(struct net_device * ) , struct net_device *arg1 )
+void ldv_unregister_netdev_stop_13_2(int (*arg0)(struct net_device * ) , struct net_device *arg1 )
 {
   {
   {
-  w83977af_net_close(arg1);
+  nsc_ircc_net_close(arg1);
   }
   return;
 }
@@ -8058,12 +10583,81 @@ int main(void)
 {
   {
   {
-  ldv_main_10((void *)0);
+  ldv_main_14((void *)0);
   }
   return (0);
 }
 }
-static int ldv_register_netdev_71(struct net_device *ldv_func_arg1 )
+__inline static long PTR_ERR(void const *ptr )
+{
+  long tmp ;
+  {
+  {
+  tmp = ldv_ptr_err(ptr);
+  }
+  return (tmp);
+}
+}
+__inline static long IS_ERR(void const *ptr )
+{
+  long tmp ;
+  {
+  {
+  tmp = ldv_is_err(ptr);
+  }
+  return (tmp);
+}
+}
+static void *ldv_dev_get_drvdata_65(struct device const *dev )
+{
+  void *tmp ;
+  {
+  {
+  tmp = ldv_dev_get_drvdata(dev);
+  }
+  return (tmp);
+}
+}
+static int ldv_dev_set_drvdata_66(struct device *dev , void *data )
+{
+  int tmp ;
+  {
+  {
+  tmp = ldv_dev_set_drvdata(dev, data);
+  }
+  return (tmp);
+}
+}
+static int ldv___platform_driver_register_75(struct platform_driver *ldv_func_arg1 ,
+                                             struct module *ldv_func_arg2 )
+{
+  int tmp ;
+  {
+  {
+  tmp = ldv_emg___platform_driver_register(ldv_func_arg1, ldv_func_arg2);
+  }
+  return (tmp);
+}
+}
+static void ldv_platform_driver_unregister_76(struct platform_driver *ldv_func_arg1 )
+{
+  {
+  {
+  ldv_emg_platform_driver_unregister(ldv_func_arg1);
+  }
+  return;
+}
+}
+static void ldv_platform_driver_unregister_77(struct platform_driver *ldv_func_arg1 )
+{
+  {
+  {
+  ldv_emg_platform_driver_unregister(ldv_func_arg1);
+  }
+  return;
+}
+}
+static int ldv_register_netdev_78(struct net_device *ldv_func_arg1 )
 {
   int tmp ;
   {
@@ -8073,16 +10667,7 @@ static int ldv_register_netdev_71(struct net_device *ldv_func_arg1 )
   return (tmp);
 }
 }
-static void ldv_free_netdev_72(struct net_device *ldv_func_arg1 )
-{
-  {
-  {
-  ldv_emg_free_netdev(ldv_func_arg1);
-  }
-  return;
-}
-}
-static void ldv_unregister_netdev_73(struct net_device *ldv_func_arg1 )
+static void ldv_unregister_netdev_79(struct net_device *ldv_func_arg1 )
 {
   {
   {
@@ -8091,7 +10676,7 @@ static void ldv_unregister_netdev_73(struct net_device *ldv_func_arg1 )
   return;
 }
 }
-static void ldv_free_netdev_74(struct net_device *ldv_func_arg1 )
+static void ldv_free_netdev_80(struct net_device *ldv_func_arg1 )
 {
   {
   {
@@ -8100,7 +10685,85 @@ static void ldv_free_netdev_74(struct net_device *ldv_func_arg1 )
   return;
 }
 }
-__inline static int ldv_request_irq_75(unsigned int irq___0 , irqreturn_t (*handler)(int ,
+static void ldv_unregister_netdev_81(struct net_device *ldv_func_arg1 )
+{
+  {
+  {
+  ldv_emg_unregister_netdev(ldv_func_arg1);
+  }
+  return;
+}
+}
+static void ldv_free_netdev_82(struct net_device *ldv_func_arg1 )
+{
+  {
+  {
+  ldv_emg_free_netdev(ldv_func_arg1);
+  }
+  return;
+}
+}
+static void ldv___ldv_spin_lock_83(spinlock_t *ldv_func_arg1 )
+{
+  {
+  {
+  ldv_spin_lock_lock_of_nsc_ircc_cb();
+  __ldv_spin_lock(ldv_func_arg1);
+  }
+  return;
+}
+}
+__inline static void ldv_spin_unlock_irqrestore_84(spinlock_t *lock , unsigned long flags )
+{
+  {
+  {
+  ldv_spin_unlock_lock_of_nsc_ircc_cb();
+  spin_unlock_irqrestore(lock, flags);
+  }
+  return;
+}
+}
+static void ldv___ldv_spin_lock_86(spinlock_t *ldv_func_arg1 )
+{
+  {
+  {
+  ldv_spin_lock_lock_of_nsc_ircc_cb();
+  __ldv_spin_lock(ldv_func_arg1);
+  }
+  return;
+}
+}
+__inline static void ldv_spin_lock_89(spinlock_t *lock )
+{
+  {
+  {
+  ldv_spin_lock_lock_of_nsc_ircc_cb();
+  spin_lock(lock);
+  }
+  return;
+}
+}
+__inline static void ldv_spin_unlock_90(spinlock_t *lock )
+{
+  {
+  {
+  ldv_spin_unlock_lock_of_nsc_ircc_cb();
+  spin_unlock(lock);
+  }
+  return;
+}
+}
+static void ldv___ldv_spin_lock_91(spinlock_t *ldv_func_arg1 )
+{
+  {
+  {
+  ldv_spin_lock_lock_of_nsc_ircc_cb();
+  __ldv_spin_lock(ldv_func_arg1);
+  }
+  return;
+}
+}
+__inline static int ldv_request_irq_93(unsigned int irq___0 , irqreturn_t (*handler)(int ,
                                                                                      void * ) ,
                                        unsigned long flags , char const *name ,
                                        void *dev )
@@ -8113,7 +10776,7 @@ __inline static int ldv_request_irq_75(unsigned int irq___0 , irqreturn_t (*hand
   return (tmp);
 }
 }
-static void ldv_free_irq_76(unsigned int ldv_func_arg1 , void *ldv_func_arg2 )
+static void ldv_free_irq_94(unsigned int ldv_func_arg1 , void *ldv_func_arg2 )
 {
   {
   {
@@ -8122,7 +10785,7 @@ static void ldv_free_irq_76(unsigned int ldv_func_arg1 , void *ldv_func_arg2 )
   return;
 }
 }
-static void ldv_free_irq_77(unsigned int ldv_func_arg1 , void *ldv_func_arg2 )
+static void ldv_free_irq_95(unsigned int ldv_func_arg1 , void *ldv_func_arg2 )
 {
   {
   {
@@ -8131,22 +10794,51 @@ static void ldv_free_irq_77(unsigned int ldv_func_arg1 , void *ldv_func_arg2 )
   return;
 }
 }
-static void ldv___ldv_spin_lock_78(spinlock_t *ldv_func_arg1 )
+static void ldv___ldv_spin_lock_96(spinlock_t *ldv_func_arg1 )
 {
   {
   {
-  ldv_spin_lock_lock_of_w83977af_ir();
+  ldv_spin_lock_lock_of_nsc_ircc_cb();
   __ldv_spin_lock(ldv_func_arg1);
   }
   return;
 }
 }
-__inline static void ldv_spin_unlock_irqrestore_79(spinlock_t *lock , unsigned long flags )
+static void ldv___ldv_spin_lock_98(spinlock_t *ldv_func_arg1 )
 {
   {
   {
-  ldv_spin_unlock_lock_of_w83977af_ir();
-  spin_unlock_irqrestore(lock, flags);
+  ldv_spin_lock_lock_of_nsc_ircc_cb();
+  __ldv_spin_lock(ldv_func_arg1);
+  }
+  return;
+}
+}
+static void ldv_free_irq_100(unsigned int ldv_func_arg1 , void *ldv_func_arg2 )
+{
+  {
+  {
+  ldv_emg_free_irq((int )ldv_func_arg1, ldv_func_arg2);
+  }
+  return;
+}
+}
+static void ldv___ldv_spin_lock_102(spinlock_t *ldv_func_arg1 )
+{
+  {
+  {
+  ldv_spin_lock_lock_of_nsc_ircc_cb();
+  __ldv_spin_lock(ldv_func_arg1);
+  }
+  return;
+}
+}
+static void ldv___ldv_spin_lock_104(spinlock_t *ldv_func_arg1 )
+{
+  {
+  {
+  ldv_spin_lock_lock_of_nsc_ircc_cb();
+  __ldv_spin_lock(ldv_func_arg1);
   }
   return;
 }
@@ -8310,7 +11002,6 @@ void *ldv_zalloc_unknown_size(void) ;
 extern void *malloc(size_t ) ;
 extern void *calloc(size_t , size_t ) ;
 extern void free(void * ) ;
-extern void *memset(void * , int , size_t ) ;
 void *ldv_malloc(size_t size )
 {
   void *res ;
@@ -9517,42 +12208,42 @@ int ldv_atomic_dec_and_lock_lock_of_NOT_ARG_SIGN(void)
   return (0);
 }
 }
-pthread_mutex_t smutex_lock_of_w83977af_ir ;
-void ldv_spin_lock_lock_of_w83977af_ir(void)
+pthread_mutex_t smutex_lock_of_nsc_ircc_cb ;
+void ldv_spin_lock_lock_of_nsc_ircc_cb(void)
 {
   {
   {
-  pthread_mutex_lock(& smutex_lock_of_w83977af_ir);
+  pthread_mutex_lock(& smutex_lock_of_nsc_ircc_cb);
   }
   return;
 }
 }
-void ldv_spin_unlock_lock_of_w83977af_ir(void)
+void ldv_spin_unlock_lock_of_nsc_ircc_cb(void)
 {
   {
   {
-  pthread_mutex_unlock(& smutex_lock_of_w83977af_ir);
+  pthread_mutex_unlock(& smutex_lock_of_nsc_ircc_cb);
   }
   return;
 }
 }
-int ldv_spin_trylock_lock_of_w83977af_ir(void)
+int ldv_spin_trylock_lock_of_nsc_ircc_cb(void)
 {
   int tmp ;
   {
   {
-  tmp = pthread_mutex_trylock(& smutex_lock_of_w83977af_ir);
+  tmp = pthread_mutex_trylock(& smutex_lock_of_nsc_ircc_cb);
   }
   return (tmp);
 }
 }
-void ldv_spin_unlock_wait_lock_of_w83977af_ir(void)
+void ldv_spin_unlock_wait_lock_of_nsc_ircc_cb(void)
 {
   {
   return;
 }
 }
-int ldv_spin_is_locked_lock_of_w83977af_ir(void)
+int ldv_spin_is_locked_lock_of_nsc_ircc_cb(void)
 {
   int tmp ;
   {
@@ -9566,17 +12257,17 @@ int ldv_spin_is_locked_lock_of_w83977af_ir(void)
   }
 }
 }
-int ldv_spin_can_lock_lock_of_w83977af_ir(void)
+int ldv_spin_can_lock_lock_of_nsc_ircc_cb(void)
 {
   int tmp ;
   {
   {
-  tmp = ldv_spin_is_locked_lock_of_w83977af_ir();
+  tmp = ldv_spin_is_locked_lock_of_nsc_ircc_cb();
   }
   return (tmp == 0);
 }
 }
-int ldv_spin_is_contended_lock_of_w83977af_ir(void)
+int ldv_spin_is_contended_lock_of_nsc_ircc_cb(void)
 {
   int is_spin_contended ;
   {
@@ -9590,7 +12281,7 @@ int ldv_spin_is_contended_lock_of_w83977af_ir(void)
   }
 }
 }
-int ldv_atomic_dec_and_lock_lock_of_w83977af_ir(void)
+int ldv_atomic_dec_and_lock_lock_of_nsc_ircc_cb(void)
 {
   int atomic_value_after_dec ;
   {
@@ -9599,7 +12290,7 @@ int ldv_atomic_dec_and_lock_lock_of_w83977af_ir(void)
   }
   if (atomic_value_after_dec == 0) {
     {
-    ldv_spin_lock_lock_of_w83977af_ir();
+    ldv_spin_lock_lock_of_nsc_ircc_cb();
     }
     return (1);
   } else {
@@ -10065,6 +12756,10 @@ void free(void *);
 void kfree(void const *p) {
   free((void *)p);
 }
+void *external_alloc(void);
+struct platform_device *platform_device_register_full(const struct platform_device_info *arg0){
+  return (struct platform_device *)external_alloc();
+}
 void debug_dma_alloc_coherent(struct device *arg0, size_t arg1, dma_addr_t arg2, void *arg3){
   return;
 }
@@ -10077,6 +12772,10 @@ void async_unwrap_char(struct net_device *arg0, struct net_device_stats *arg1, i
 }
 void __raw_spin_lock_init(raw_spinlock_t *arg0, const char *arg1, struct lock_class_key *arg2){
   return;
+}
+void *external_alloc(void);
+struct resource *pnp_get_resource(struct pnp_dev *arg0, unsigned long arg1, unsigned int arg2){
+  return (struct resource *)external_alloc();
 }
 void consume_skb(struct sk_buff *arg0){
   return;
@@ -10094,6 +12793,9 @@ void _raw_spin_unlock_irqrestore(raw_spinlock_t *arg0, unsigned long arg1){
 void irda_setup_dma(int arg0, dma_addr_t arg1, int arg2, int arg3){
   return;
 }
+void rtnl_lock(){
+  return;
+}
 void ldv_after_alloc(void *arg0){
   return;
 }
@@ -10104,13 +12806,28 @@ int __VEFIRIER_nondet_int(void);
 int netif_rx(struct sk_buff *arg0){
   return __VEFIRIER_nondet_int();
 }
+void pnp_unregister_driver(struct pnp_driver *arg0){
+  return;
+}
+void platform_device_unregister(struct platform_device *arg0){
+  return;
+}
 void ldv_switch_to_interrupt_context(){
+  return;
+}
+void _raw_spin_unlock(raw_spinlock_t *arg0){
   return;
 }
 void ldv_check_alloc_flags(gfp_t arg0){
   return;
 }
 void irda_init_max_qos_capabilies(struct qos_info *arg0){
+  return;
+}
+void rtnl_unlock(){
+  return;
+}
+void netif_device_attach(struct net_device *arg0){
   return;
 }
 void __release_region(struct resource *arg0, resource_size_t arg1, resource_size_t arg2){
@@ -10120,6 +12837,9 @@ void __ldv_spin_lock(spinlock_t *arg0){
   return;
 }
 void ldv_switch_to_process_context(){
+  return;
+}
+void unregister_netdevice_queue(struct net_device *arg0, struct list_head *arg1){
   return;
 }
 void *external_alloc(void);
@@ -10141,15 +12861,21 @@ void *external_alloc(void);
 unsigned char *skb_put(struct sk_buff *arg0, unsigned int arg1){
   return (unsigned char *)external_alloc();
 }
+void do_gettimeofday(struct timeval *arg0){
+  return;
+}
+void netif_device_detach(struct net_device *arg0){
+  return;
+}
+int __VEFIRIER_nondet_int(void);
+int net_ratelimit(){
+  return __VEFIRIER_nondet_int();
+}
 void __udelay(unsigned long arg0){
   return;
 }
 int __VEFIRIER_nondet_int(void);
 int request_dma(unsigned int arg0, const char *arg1){
-  return __VEFIRIER_nondet_int();
-}
-int __VEFIRIER_nondet_int(void);
-int net_ratelimit(){
   return __VEFIRIER_nondet_int();
 }
 void *external_alloc(void);
@@ -10162,6 +12888,9 @@ void irlap_close(struct irlap_cb *arg0){
 int __VEFIRIER_nondet_int(void);
 int ldv_failed_register_netdev(){
   return __VEFIRIER_nondet_int();
+}
+void _raw_spin_lock(raw_spinlock_t *arg0){
+  return;
 }
 void *external_alloc(void);
 struct resource *__request_region(struct resource *arg0, resource_size_t arg1, resource_size_t arg2, const char *arg3, int arg4){
@@ -10194,4 +12923,8 @@ void irda_device_set_media_busy(struct net_device *arg0, int arg1){
 }
 void __netif_schedule(struct Qdisc *arg0){
   return;
+}
+int __VEFIRIER_nondet_int(void);
+int pnp_register_driver(struct pnp_driver *arg0){
+  return __VEFIRIER_nondet_int();
 }

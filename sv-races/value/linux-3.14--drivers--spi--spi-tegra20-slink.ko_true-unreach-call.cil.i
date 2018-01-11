@@ -4334,8 +4334,8 @@ static irqreturn_t handle_cpu_based_xfer(struct tegra_slink_data *tspi )
     dev_err((struct device const *)tspi->dev, "CpuXfer ERROR bit set 0x%x\n", tspi->status_reg);
     dev_err((struct device const *)tspi->dev, "CpuXfer 0x%08x:0x%08x:0x%08x\n",
             tspi->command_reg, tspi->command2_reg, tspi->dma_control_reg);
-    tmp = tspi->rst;
-    ldv_assert("", tmp == tspi->rst);
+    tmp = tspi_rst;
+    ldv_assert("", tmp == tspi_rst);
     reset_control_assert(tspi->rst);
     __const_udelay(8590UL);
     reset_control_deassert(tspi->rst);
@@ -4680,6 +4680,9 @@ static int tegra_slink_probe(struct platform_device *pdev )
   }
   {
   tspi->rst = devm_reset_control_get(& pdev->dev, "spi");
+  ldv___ldv_spin_lock_46(& tspi->lock);
+  tspi_rst = & pdev->dev;
+  ldv_spin_unlock_irqrestore_45(& tspi->lock, flags);
   tmp___6 = IS_ERR((void const *)tspi->rst);
   }
   if (tmp___6 != 0L) {

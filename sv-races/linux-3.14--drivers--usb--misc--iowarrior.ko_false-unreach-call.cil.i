@@ -4796,7 +4796,6 @@ static int iowarrior_release(struct inode *inode , struct file *file )
     }
   } else {
     dev->opened = 0;
-    old_var = old_var + 1;
     retval = 0;
     if (dev->present != 0) {
       {
@@ -5044,11 +5043,11 @@ static void iowarrior_disconnect(struct usb_interface *interface )
   usb_deregister_dev(interface, & iowarrior_class);
   ldv_mutex_lock_72(& dev->mutex);
   dev->present = 0;
-  old = old_var;
   ldv_mutex_unlock_73(& dev->mutex);
   ldv_mutex_unlock_74(& iowarrior_open_disc_lock);
   }
-  ldv_assert("", old == old_var);
+  old = dev->opened;
+  ldv_assert(old == dev->opened);
   if (dev->opened != 0) {
     {
     usb_kill_urb(dev->int_in_urb);

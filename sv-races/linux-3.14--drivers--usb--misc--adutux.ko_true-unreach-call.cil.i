@@ -4102,8 +4102,8 @@ static void adu_abort_transfers(struct adu_device *dev )
   {
   struct usb_device *tmp;
   ldv_mutex_lock_83(& dev->mtx);
-  tmp = dev_udev;
-  ldv_assert("", tmp == dev_udev);
+  tmp = dev->udev;
+  ldv_assert("", tmp == dev->udev);
   ldv_mutex_unlock_84(& dev->mtx);
   if ((unsigned long )dev->udev == (unsigned long )((struct usb_device *)0)) {
     return;
@@ -5632,7 +5632,6 @@ static void adu_disconnect(struct usb_interface *interface )
   dev = (struct adu_device *)tmp;
   ldv_mutex_lock_83(& dev->mtx);
   dev->udev = (struct usb_device *)0;
-  dev_udev = 1;
   minor = (int )dev->minor;
   usb_deregister_dev(interface, & adu_class);
   ldv_mutex_unlock_84(& dev->mtx);

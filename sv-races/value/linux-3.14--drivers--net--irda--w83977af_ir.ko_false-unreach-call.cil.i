@@ -6543,7 +6543,8 @@ static void w83977af_change_speed(struct w83977af_ir *self , __u32 speed )
   ir_mode = 96;
   iobase = self->io.fir_base;
   self->io.speed = speed;
-  ldv_assert("", self->io.speed == speed);
+  io_speed = speed;
+  ldv_assert("", io_speed == speed);
   set = inb(iobase + 3);
   switch_bank(iobase, 3);
   outb(0, iobase + 1);

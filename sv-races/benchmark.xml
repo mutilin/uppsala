@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!DOCTYPE benchmark PUBLIC "+//IDN sosy-lab.org//DTD BenchExec benchmark 1.0//EN" "http://www.sosy-lab.org/benchexec/benchmark-1.0.dtd">
+<benchmark tool="cpachecker" timelimit="900" hardtimelimit="1000" memlimit="8000" cpuCores="2">
+  <!-- This file contains regression tests from the LDV project.
+       It expects the git repository git@bitbucket.org:dbeyer/ldv-benchmarks.git
+       to be checked out at test/programs/ldv-benchmarks. -->
+
+  <option name="-setprop">statistics.memory=true</option>
+  <option name="-heap">7000M</option>
+  <option name="-valueAnalysisThread"/> 
+
+  <propertyfile>/home/alpha/git/sv-benchmarks/c/ReachSafety.prp</propertyfile>
+
+  <rundefinition>
+    <tasks name="DeviceDrivers64">
+    <includesfile>Drivers.set</includesfile>
+    </tasks>
+  </rundefinition>
+
+  <columns>
+    <column title="total states">Size of reached set</column>
+    <column title="inference objects">Inference objects number</column>
+    <column title="states from objects">Number of states due to inference objects</column>
+    <column title="stops">Number of stops for inference objects</column>
+    <column title="passes">Number of passes for inference objects</column>
+    <column title="merges">Number of merges for inference objects</column>
+    <column title="refinements">Number of refinements</column>
+  </columns>
+</benchmark>

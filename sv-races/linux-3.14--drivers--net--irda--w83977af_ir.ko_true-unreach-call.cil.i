@@ -6538,12 +6538,15 @@ static void w83977af_change_speed(struct w83977af_ir *self , __u32 speed )
   int ir_mode ;
   int iobase ;
   __u8 set ;
+  int flags;
   {
   {
   ir_mode = 96;
   iobase = self->io.fir_base;
+  ldv___ldv_spin_lock_78(& self->lock);
   self->io.speed = speed;
   ldv_assert("", self->io.speed == speed);
+  ldv_spin_unlock_irqrestore_79(& self->lock, flags);
   set = inb(iobase + 3);
   switch_bank(iobase, 3);
   outb(0, iobase + 1);

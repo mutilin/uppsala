@@ -7548,8 +7548,11 @@ static int mcam_alloc_dma_bufs(struct mcam_camera *cam , int loadtime )
   goto ldv_36036;
   ldv_36035:
   {
+  ldv_mutex_lock_114(& cam->s_mutex);
   cam->dma_bufs[i] = dma_alloc_attrs(cam->dev, (size_t )cam->dma_buf_size, (dma_addr_t *)(& cam->dma_handles + (unsigned long )i),
                                      208U, (struct dma_attrs *)0);
+  cam_dma_bufs = 1;
+  ldv_mutex_unlock_115(& cam->s_mutex);
   }
   if ((unsigned long )cam->dma_bufs[i] == (unsigned long )((void *)0)) {
     {
@@ -7616,7 +7619,8 @@ static void mcam_free_dma_bufs(struct mcam_camera *cam )
   dma_free_attrs(cam->dev, (size_t )cam->dma_buf_size, cam->dma_bufs[i], cam->dma_handles[i],
                  (struct dma_attrs *)0);
   cam->dma_bufs[i] = (void *)0;
-  ldv_assert("", cam->dma_bufs[i] == (void *)0);
+  cam_dma_bufs = 0;
+  ldv_assert("", cam_dma_bufs == (void *)0);
   i = i + 1;
   }
   ldv_36046: ;

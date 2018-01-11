@@ -217,14 +217,6 @@ struct thread_struct;
 struct mm_struct;
 struct cpumask;
 typedef void (*ctor_fn_t)(void);
-struct _ddebug {
-   char const *modname ;
-   char const *function ;
-   char const *filename ;
-   char const *format ;
-   unsigned int lineno : 18 ;
-   unsigned int flags : 8 ;
-};
 struct file_operations;
 struct completion;
 struct pid;
@@ -259,22 +251,6 @@ struct cpumask {
 typedef struct cpumask cpumask_t;
 typedef struct cpumask *cpumask_var_t;
 struct static_key;
-struct exec_domain;
-struct map_segment;
-struct exec_domain {
-   char const *name ;
-   void (*handler)(int , struct pt_regs * ) ;
-   unsigned char pers_low ;
-   unsigned char pers_high ;
-   unsigned long *signal_map ;
-   unsigned long *signal_invmap ;
-   struct map_segment *err_map ;
-   struct map_segment *socktype_map ;
-   struct map_segment *sockopt_map ;
-   struct map_segment *af_map ;
-   struct module *module ;
-   struct exec_domain *next ;
-};
 struct seq_operations;
 struct i387_fsave_struct {
    u32 cwd ;
@@ -398,10 +374,6 @@ struct thread_struct {
    unsigned int io_bitmap_max ;
    unsigned char fpu_counter ;
 };
-struct __anonstruct_mm_segment_t_27 {
-   unsigned long seg ;
-};
-typedef struct __anonstruct_mm_segment_t_27 mm_segment_t;
 typedef atomic64_t atomic_long_t;
 struct stack_trace {
    unsigned int nr_entries ;
@@ -497,51 +469,6 @@ struct mutex_waiter {
    void *magic ;
 };
 struct timespec;
-struct compat_timespec;
-struct __anonstruct_futex_32 {
-   u32 *uaddr ;
-   u32 val ;
-   u32 flags ;
-   u32 bitset ;
-   u64 time ;
-   u32 *uaddr2 ;
-};
-struct __anonstruct_nanosleep_33 {
-   clockid_t clockid ;
-   struct timespec *rmtp ;
-   struct compat_timespec *compat_rmtp ;
-   u64 expires ;
-};
-struct pollfd;
-struct __anonstruct_poll_34 {
-   struct pollfd *ufds ;
-   int nfds ;
-   int has_timeout ;
-   unsigned long tv_sec ;
-   unsigned long tv_nsec ;
-};
-union __anonunion____missing_field_name_31 {
-   struct __anonstruct_futex_32 futex ;
-   struct __anonstruct_nanosleep_33 nanosleep ;
-   struct __anonstruct_poll_34 poll ;
-};
-struct restart_block {
-   long (*fn)(struct restart_block * ) ;
-   union __anonunion____missing_field_name_31 __annonCompField20 ;
-};
-struct thread_info {
-   struct task_struct *task ;
-   struct exec_domain *exec_domain ;
-   __u32 flags ;
-   __u32 status ;
-   __u32 cpu ;
-   int saved_preempt_count ;
-   mm_segment_t addr_limit ;
-   struct restart_block restart_block ;
-   void *sysenter_return ;
-   unsigned int sig_on_uaccess_error : 1 ;
-   unsigned int uaccess_err : 1 ;
-};
 struct jump_entry;
 struct static_key_mod;
 struct static_key {
@@ -3248,72 +3175,11 @@ struct vm_operations_struct {
    int (*remap_pages)(struct vm_area_struct * , unsigned long , unsigned long ,
                       unsigned long ) ;
 };
-struct pollfd {
-   int fd ;
-   short events ;
-   short revents ;
-};
 struct poll_table_struct {
    void (*_qproc)(struct file * , wait_queue_head_t * , struct poll_table_struct * ) ;
    unsigned long _key ;
 };
-struct kmem_cache_cpu {
-   void **freelist ;
-   unsigned long tid ;
-   struct page *page ;
-   struct page *partial ;
-   unsigned int stat[26U] ;
-};
-struct kmem_cache_order_objects {
-   unsigned long x ;
-};
-struct memcg_cache_params;
-struct kmem_cache_node;
-struct kmem_cache {
-   struct kmem_cache_cpu *cpu_slab ;
-   unsigned long flags ;
-   unsigned long min_partial ;
-   int size ;
-   int object_size ;
-   int offset ;
-   int cpu_partial ;
-   struct kmem_cache_order_objects oo ;
-   struct kmem_cache_order_objects max ;
-   struct kmem_cache_order_objects min ;
-   gfp_t allocflags ;
-   int refcount ;
-   void (*ctor)(void * ) ;
-   int inuse ;
-   int align ;
-   int reserved ;
-   char const *name ;
-   struct list_head list ;
-   struct kobject kobj ;
-   struct memcg_cache_params *memcg_params ;
-   int max_attr_size ;
-   int remote_node_defrag_ratio ;
-   struct kmem_cache_node *node[1024U] ;
-};
-struct __anonstruct____missing_field_name_193 {
-   struct callback_head callback_head ;
-   struct kmem_cache *memcg_caches[0U] ;
-};
-struct __anonstruct____missing_field_name_194 {
-   struct mem_cgroup *memcg ;
-   struct list_head list ;
-   struct kmem_cache *root_cache ;
-   bool dead ;
-   atomic_t nr_pages ;
-   struct work_struct destroy ;
-};
-union __anonunion____missing_field_name_192 {
-   struct __anonstruct____missing_field_name_193 __annonCompField64 ;
-   struct __anonstruct____missing_field_name_194 __annonCompField65 ;
-};
-struct memcg_cache_params {
-   bool is_root_cache ;
-   union __anonunion____missing_field_name_192 __annonCompField66 ;
-};
+typedef struct poll_table_struct poll_table;
 typedef __u64 Elf64_Addr;
 typedef __u16 Elf64_Half;
 typedef __u32 Elf64_Word;
@@ -3336,7 +3202,7 @@ struct kernel_param_ops {
 };
 struct kparam_string;
 struct kparam_array;
-union __anonunion____missing_field_name_199 {
+union __anonunion____missing_field_name_196 {
    void *arg ;
    struct kparam_string const *str ;
    struct kparam_array const *arr ;
@@ -3346,7 +3212,7 @@ struct kernel_param {
    struct kernel_param_ops const *ops ;
    u16 perm ;
    s16 level ;
-   union __anonunion____missing_field_name_199 __annonCompField67 ;
+   union __anonunion____missing_field_name_196 __annonCompField64 ;
 };
 struct kparam_string {
    unsigned int maxlen ;
@@ -3474,29 +3340,96 @@ struct module {
    ctor_fn_t (**ctors)(void) ;
    unsigned int num_ctors ;
 };
-struct adu_device {
-   struct mutex mtx ;
+struct kmem_cache_cpu {
+   void **freelist ;
+   unsigned long tid ;
+   struct page *page ;
+   struct page *partial ;
+   unsigned int stat[26U] ;
+};
+struct kmem_cache_order_objects {
+   unsigned long x ;
+};
+struct memcg_cache_params;
+struct kmem_cache_node;
+struct kmem_cache {
+   struct kmem_cache_cpu *cpu_slab ;
+   unsigned long flags ;
+   unsigned long min_partial ;
+   int size ;
+   int object_size ;
+   int offset ;
+   int cpu_partial ;
+   struct kmem_cache_order_objects oo ;
+   struct kmem_cache_order_objects max ;
+   struct kmem_cache_order_objects min ;
+   gfp_t allocflags ;
+   int refcount ;
+   void (*ctor)(void * ) ;
+   int inuse ;
+   int align ;
+   int reserved ;
+   char const *name ;
+   struct list_head list ;
+   struct kobject kobj ;
+   struct memcg_cache_params *memcg_params ;
+   int max_attr_size ;
+   int remote_node_defrag_ratio ;
+   struct kmem_cache_node *node[1024U] ;
+};
+struct __anonstruct____missing_field_name_198 {
+   struct callback_head callback_head ;
+   struct kmem_cache *memcg_caches[0U] ;
+};
+struct __anonstruct____missing_field_name_199 {
+   struct mem_cgroup *memcg ;
+   struct list_head list ;
+   struct kmem_cache *root_cache ;
+   bool dead ;
+   atomic_t nr_pages ;
+   struct work_struct destroy ;
+};
+union __anonunion____missing_field_name_197 {
+   struct __anonstruct____missing_field_name_198 __annonCompField65 ;
+   struct __anonstruct____missing_field_name_199 __annonCompField66 ;
+};
+struct memcg_cache_params {
+   bool is_root_cache ;
+   union __anonunion____missing_field_name_197 __annonCompField67 ;
+};
+struct iowarrior_info {
+   __u32 vendor ;
+   __u32 product ;
+   __u8 serial[9U] ;
+   __u32 revision ;
+   __u32 speed ;
+   __u32 power ;
+   __u32 if_num ;
+   __u32 report_size ;
+};
+struct iowarrior {
+   struct mutex mutex ;
    struct usb_device *udev ;
    struct usb_interface *interface ;
-   unsigned int minor ;
-   char serial_number[8U] ;
-   int open_count ;
-   char *read_buffer_primary ;
-   int read_buffer_length ;
-   char *read_buffer_secondary ;
-   int secondary_head ;
-   int secondary_tail ;
-   spinlock_t buflock ;
+   unsigned char minor ;
+   struct usb_endpoint_descriptor *int_out_endpoint ;
+   struct usb_endpoint_descriptor *int_in_endpoint ;
+   struct urb *int_in_urb ;
+   unsigned char *int_in_buffer ;
+   unsigned char serial_number ;
+   unsigned char *read_queue ;
    wait_queue_head_t read_wait ;
    wait_queue_head_t write_wait ;
-   char *interrupt_in_buffer ;
-   struct usb_endpoint_descriptor *interrupt_in_endpoint ;
-   struct urb *interrupt_in_urb ;
-   int read_urb_finished ;
-   char *interrupt_out_buffer ;
-   struct usb_endpoint_descriptor *interrupt_out_endpoint ;
-   struct urb *interrupt_out_urb ;
-   int out_urb_finished ;
+   atomic_t write_busy ;
+   atomic_t read_idx ;
+   atomic_t intr_idx ;
+   spinlock_t intr_idx_lock ;
+   atomic_t overflow_flag ;
+   int present ;
+   int opened ;
+   char chip_serial[9U] ;
+   int report_size ;
+   u16 product_id ;
 };
 struct ldv_struct_insmod_4 {
    int signal_pending ;
@@ -3607,91 +3540,66 @@ long ldv__builtin_expect(long exp , long c ) ;
 void *ldv_dev_get_drvdata(struct device const *dev ) ;
 int ldv_dev_set_drvdata(struct device *dev , void *data ) ;
 void *ldv_kzalloc(size_t size , gfp_t flags ) ;
-static void ldv_mutex_lock_61(struct mutex *ldv_func_arg1 ) ;
-static void ldv_mutex_lock_83(struct mutex *ldv_func_arg1 ) ;
-static void ldv_mutex_lock_85(struct mutex *ldv_func_arg1 ) ;
-static int ldv_mutex_lock_interruptible_59(struct mutex *ldv_func_arg1 ) ;
-static int ldv_mutex_lock_interruptible_63(struct mutex *ldv_func_arg1 ) ;
-static int ldv_mutex_lock_interruptible_75(struct mutex *ldv_func_arg1 ) ;
-static int ldv_mutex_lock_interruptible_79(struct mutex *ldv_func_arg1 ) ;
-int ldv_mutex_lock_interruptible_or_killable_adutux_mutex(struct mutex *lock ) ;
-void ldv_mutex_lock_adutux_mutex(struct mutex *lock ) ;
-void ldv_mutex_unlock_adutux_mutex(struct mutex *lock ) ;
-int ldv_mutex_lock_interruptible_or_killable_mtx_of_adu_device(struct mutex *lock ) ;
-void ldv_mutex_lock_mtx_of_adu_device(struct mutex *lock ) ;
-void ldv_mutex_unlock_mtx_of_adu_device(struct mutex *lock ) ;
+static void ldv_mutex_lock_52(struct mutex *ldv_func_arg1 ) ;
+static void ldv_mutex_lock_54(struct mutex *ldv_func_arg1 ) ;
+static void ldv_mutex_lock_55(struct mutex *ldv_func_arg1 ) ;
+static void ldv_mutex_lock_58(struct mutex *ldv_func_arg1 ) ;
+static void ldv_mutex_lock_60(struct mutex *ldv_func_arg1 ) ;
+static void ldv_mutex_lock_63(struct mutex *ldv_func_arg1 ) ;
+static void ldv_mutex_lock_67(struct mutex *ldv_func_arg1 ) ;
+static void ldv_mutex_lock_71(struct mutex *ldv_func_arg1 ) ;
+static void ldv_mutex_lock_72(struct mutex *ldv_func_arg1 ) ;
+void ldv_mutex_lock_iowarrior_mutex(struct mutex *lock ) ;
+void ldv_mutex_unlock_iowarrior_mutex(struct mutex *lock ) ;
+void ldv_mutex_lock_iowarrior_open_disc_lock(struct mutex *lock ) ;
+void ldv_mutex_unlock_iowarrior_open_disc_lock(struct mutex *lock ) ;
+void ldv_mutex_lock_mutex_of_iowarrior(struct mutex *lock ) ;
+void ldv_mutex_unlock_mutex_of_iowarrior(struct mutex *lock ) ;
 extern struct module __this_module ;
-__inline static int variable_test_bit(long nr , unsigned long const volatile *addr )
+__inline static void INIT_LIST_HEAD(struct list_head *list )
 {
-  int oldbit ;
   {
-  __asm__ volatile ("bt %2,%1\n\tsbb %0,%0": "=r" (oldbit): "m" (*((unsigned long *)addr)),
-                       "Ir" (nr));
-  return (oldbit);
+  list->next = list;
+  list->prev = list;
+  return;
 }
 }
 extern int printk(char const * , ...) ;
-extern int __dynamic_dev_dbg(struct _ddebug * , struct device const * , char const *
-                             , ...) ;
 extern void might_fault(void) ;
-extern void __bad_percpu_size(void) ;
-extern struct task_struct *current_task ;
-__inline static struct task_struct *get_current(void)
-{
-  struct task_struct *pfo_ret__ ;
-  {
-  {
-  if (8UL == 1UL) {
-    goto case_1;
-  } else {
-  }
-  if (8UL == 2UL) {
-    goto case_2;
-  } else {
-  }
-  if (8UL == 4UL) {
-    goto case_4;
-  } else {
-  }
-  if (8UL == 8UL) {
-    goto case_8;
-  } else {
-  }
-  goto switch_default;
-  case_1:
-  __asm__ ("movb %%gs:%P1,%0": "=q" (pfo_ret__): "p" (& current_task));
-  goto ldv_3038;
-  case_2:
-  __asm__ ("movw %%gs:%P1,%0": "=r" (pfo_ret__): "p" (& current_task));
-  goto ldv_3038;
-  case_4:
-  __asm__ ("movl %%gs:%P1,%0": "=r" (pfo_ret__): "p" (& current_task));
-  goto ldv_3038;
-  case_8:
-  __asm__ ("movq %%gs:%P1,%0": "=r" (pfo_ret__): "p" (& current_task));
-  goto ldv_3038;
-  switch_default:
-  {
-  __bad_percpu_size();
-  }
-  switch_break: ;
-  }
-  ldv_3038: ;
-  return (pfo_ret__);
-}
-}
+extern char *kasprintf(gfp_t , char const * , ...) ;
 extern void *memcpy(void * , void const * , size_t ) ;
 extern void *memset(void * , int , size_t ) ;
-extern void __xchg_wrong_size(void) ;
-extern void __ldv_spin_lock(spinlock_t * ) ;
-static void ldv___ldv_spin_lock_49(spinlock_t *ldv_func_arg1 ) ;
-static void ldv___ldv_spin_lock_52(spinlock_t *ldv_func_arg1 ) ;
-static void ldv___ldv_spin_lock_64(spinlock_t *ldv_func_arg1 ) ;
-static void ldv___ldv_spin_lock_68(spinlock_t *ldv_func_arg1 ) ;
-static void ldv___ldv_spin_lock_71(spinlock_t *ldv_func_arg1 ) ;
-static void ldv___ldv_spin_lock_76(spinlock_t *ldv_func_arg1 ) ;
-void ldv_spin_lock_buflock_of_adu_device(void) ;
-void ldv_spin_unlock_buflock_of_adu_device(void) ;
+extern int memcmp(void const * , void const * , size_t ) ;
+extern size_t strlen(char const * ) ;
+__inline static int atomic_read(atomic_t const *v )
+{
+  {
+  return ((int )*((int volatile *)(& v->counter)));
+}
+}
+__inline static void atomic_set(atomic_t *v , int i )
+{
+  {
+  v->counter = i;
+  return;
+}
+}
+__inline static void atomic_inc(atomic_t *v )
+{
+  {
+  __asm__ volatile (".pushsection .smp_locks,\"a\"\n.balign 4\n.long 671f - .\n.popsection\n671:\n\tlock; incl %0": "+m" (v->counter));
+  return;
+}
+}
+__inline static void atomic_dec(atomic_t *v )
+{
+  {
+  __asm__ volatile (".pushsection .smp_locks,\"a\"\n.balign 4\n.long 671f - .\n.popsection\n671:\n\tlock; decl %0": "+m" (v->counter));
+  return;
+}
+}
+void ldv_spin_lock_intr_idx_lock_of_iowarrior(void) ;
+void ldv_spin_unlock_intr_idx_lock_of_iowarrior(void) ;
 void ldv_initialize(void) ;
 int ldv_post_init(int init_ret_val ) ;
 extern void ldv_pre_probe(void) ;
@@ -3707,28 +3615,24 @@ void *ldv_xmalloc(size_t size ) ;
 extern void *external_allocated_data(void) ;
 void *ldv_xmalloc_unknown_size(size_t size ) ;
 extern void __mutex_init(struct mutex * , char const * , struct lock_class_key * ) ;
-static void ldv_mutex_unlock_60(struct mutex *ldv_func_arg1 ) ;
+static void ldv_mutex_unlock_53(struct mutex *ldv_func_arg1 ) ;
+static void ldv_mutex_unlock_56(struct mutex *ldv_func_arg1 ) ;
+static void ldv_mutex_unlock_57(struct mutex *ldv_func_arg1 ) ;
+static void ldv_mutex_unlock_59(struct mutex *ldv_func_arg1 ) ;
+static void ldv_mutex_unlock_61(struct mutex *ldv_func_arg1 ) ;
 static void ldv_mutex_unlock_62(struct mutex *ldv_func_arg1 ) ;
+static void ldv_mutex_unlock_64(struct mutex *ldv_func_arg1 ) ;
+static void ldv_mutex_unlock_65(struct mutex *ldv_func_arg1 ) ;
+static void ldv_mutex_unlock_66(struct mutex *ldv_func_arg1 ) ;
+static void ldv_mutex_unlock_68(struct mutex *ldv_func_arg1 ) ;
+static void ldv_mutex_unlock_69(struct mutex *ldv_func_arg1 ) ;
+static void ldv_mutex_unlock_70(struct mutex *ldv_func_arg1 ) ;
+static void ldv_mutex_unlock_73(struct mutex *ldv_func_arg1 ) ;
 static void ldv_mutex_unlock_74(struct mutex *ldv_func_arg1 ) ;
-static void ldv_mutex_unlock_78(struct mutex *ldv_func_arg1 ) ;
-static void ldv_mutex_unlock_81(struct mutex *ldv_func_arg1 ) ;
-static void ldv_mutex_unlock_82(struct mutex *ldv_func_arg1 ) ;
-static void ldv_mutex_unlock_84(struct mutex *ldv_func_arg1 ) ;
-static void ldv_mutex_unlock_86(struct mutex *ldv_func_arg1 ) ;
-__inline static int test_ti_thread_flag(struct thread_info *ti , int flag )
-{
-  int tmp___0 ;
-  {
-  {
-  tmp___0 = variable_test_bit((long )flag, (unsigned long const volatile *)(& ti->flags));
-  }
-  return (tmp___0);
-}
-}
 extern void __raw_spin_lock_init(raw_spinlock_t * , char const * , struct lock_class_key * ) ;
 extern void _raw_spin_lock(raw_spinlock_t * ) ;
 extern void _raw_spin_unlock(raw_spinlock_t * ) ;
-extern void _raw_spin_unlock_irqrestore(raw_spinlock_t * , unsigned long ) ;
+int old_var;
 __inline static raw_spinlock_t *spinlock_check(spinlock_t *lock )
 {
   {
@@ -3744,8 +3648,7 @@ __inline static void spin_lock(spinlock_t *lock )
   return;
 }
 }
-__inline static void ldv_spin_lock_55(spinlock_t *lock ) ;
-__inline static void ldv_spin_lock_55(spinlock_t *lock ) ;
+__inline static void ldv_spin_lock_49(spinlock_t *lock ) ;
 __inline static void spin_unlock(spinlock_t *lock )
 {
   {
@@ -3755,37 +3658,18 @@ __inline static void spin_unlock(spinlock_t *lock )
   return;
 }
 }
-__inline static void ldv_spin_unlock_56(spinlock_t *lock ) ;
-__inline static void ldv_spin_unlock_56(spinlock_t *lock ) ;
-__inline static void spin_unlock_irqrestore(spinlock_t *lock , unsigned long flags )
+__inline static void ldv_spin_unlock_50(spinlock_t *lock ) ;
+__inline static void ldv_spin_unlock_50(spinlock_t *lock ) ;
+extern void __init_waitqueue_head(wait_queue_head_t * , char const * , struct lock_class_key * ) ;
+extern void __wake_up(wait_queue_head_t * , unsigned int , int , void * ) ;
+extern long prepare_to_wait_event(wait_queue_head_t * , wait_queue_t * , int ) ;
+extern void finish_wait(wait_queue_head_t * , wait_queue_t * ) ;
+__inline static char const *kobject_name(struct kobject const *kobj )
 {
   {
-  {
-  _raw_spin_unlock_irqrestore(& lock->__annonCompField19.rlock, flags);
-  }
-  return;
+  return ((char const *)kobj->name);
 }
 }
-__inline static void ldv_spin_unlock_irqrestore_50(spinlock_t *lock , unsigned long flags ) ;
-__inline static void ldv_spin_unlock_irqrestore_50(spinlock_t *lock , unsigned long flags ) ;
-__inline static void ldv_spin_unlock_irqrestore_50(spinlock_t *lock , unsigned long flags ) ;
-__inline static void ldv_spin_unlock_irqrestore_50(spinlock_t *lock , unsigned long flags ) ;
-__inline static void ldv_spin_unlock_irqrestore_50(spinlock_t *lock , unsigned long flags ) ;
-__inline static void ldv_spin_unlock_irqrestore_50(spinlock_t *lock , unsigned long flags ) ;
-__inline static void ldv_spin_unlock_irqrestore_50(spinlock_t *lock , unsigned long flags ) ;
-__inline static void ldv_spin_unlock_irqrestore_50(spinlock_t *lock , unsigned long flags ) ;
-__inline static void ldv_spin_unlock_irqrestore_50(spinlock_t *lock , unsigned long flags ) ;
-__inline static void ldv_spin_unlock_irqrestore_50(spinlock_t *lock , unsigned long flags ) ;
-__inline static void ldv_spin_unlock_irqrestore_50(spinlock_t *lock , unsigned long flags ) ;
-__inline static void ldv_spin_unlock_irqrestore_50(spinlock_t *lock , unsigned long flags ) ;
-__inline static void ldv_spin_unlock_irqrestore_50(spinlock_t *lock , unsigned long flags ) ;
-extern int default_wake_function(wait_queue_t * , unsigned int , int , void * ) ;
-extern void __init_waitqueue_head(wait_queue_head_t * , char const * , struct lock_class_key * ) ;
-extern void add_wait_queue(wait_queue_head_t * , wait_queue_t * ) ;
-extern void remove_wait_queue(wait_queue_head_t * , wait_queue_t * ) ;
-extern void __wake_up(wait_queue_head_t * , unsigned int , int , void * ) ;
-struct usb_device *dev_udev;
-
 __inline static int usb_endpoint_dir_in(struct usb_endpoint_descriptor const *epd )
 {
   {
@@ -3862,7 +3746,6 @@ extern unsigned long _copy_from_user(void * , void const * , unsigned int ) ;
 extern unsigned long _copy_to_user(void * , void const * , unsigned int ) ;
 extern void __copy_from_user_overflow(void) ;
 extern void __copy_to_user_overflow(void) ;
-void ldv_assert(char const *desc , int expr ) ;
 __inline static unsigned long copy_from_user(void *to , void const *from , unsigned long n )
 {
   int sz ;
@@ -3927,6 +3810,20 @@ __inline static unsigned long copy_to_user(void *to , void const *from , unsigne
   return (n);
 }
 }
+__inline static char const *dev_name(struct device const *dev )
+{
+  char const *tmp ;
+  {
+  if ((unsigned long )dev->init_name != (unsigned long )((char const * )0)) {
+    return ((char const *)dev->init_name);
+  } else {
+  }
+  {
+  tmp = kobject_name(& dev->kobj);
+  }
+  return (tmp);
+}
+}
 static void *ldv_dev_get_drvdata_45(struct device const *dev ) ;
 static int ldv_dev_set_drvdata_46(struct device *dev , void *data ) ;
 extern int dev_err(struct device const * , char const * , ...) ;
@@ -3938,29 +3835,7 @@ __inline static unsigned int iminor(struct inode const *inode )
 }
 }
 extern loff_t noop_llseek(struct file * , loff_t , int ) ;
-extern long schedule_timeout(long ) ;
-__inline static int test_tsk_thread_flag(struct task_struct *tsk , int flag )
-{
-  int tmp ;
-  {
-  {
-  tmp = test_ti_thread_flag((struct thread_info *)tsk->stack, flag);
-  }
-  return (tmp);
-}
-}
-__inline static int signal_pending(struct task_struct *p )
-{
-  int tmp ;
-  long tmp___0 ;
-  {
-  {
-  tmp = test_tsk_thread_flag(p, 2);
-  tmp___0 = ldv__builtin_expect(tmp != 0, 0L);
-  }
-  return ((int )tmp___0);
-}
-}
+extern void schedule(void) ;
 __inline static void *usb_get_intfdata(struct usb_interface *intf )
 {
   void *tmp ;
@@ -3989,9 +3864,9 @@ __inline static struct usb_device *interface_to_usbdev(struct usb_interface *int
 }
 }
 extern struct usb_interface *usb_find_interface(struct usb_driver * , int ) ;
-static int ldv_usb_register_driver_87(struct usb_driver *ldv_func_arg1 , struct module *ldv_func_arg2 ,
+static int ldv_usb_register_driver_75(struct usb_driver *ldv_func_arg1 , struct module *ldv_func_arg2 ,
                                       char const *ldv_func_arg3 ) ;
-static void ldv_usb_deregister_88(struct usb_driver *ldv_func_arg1 ) ;
+static void ldv_usb_deregister_76(struct usb_driver *ldv_func_arg1 ) ;
 extern int usb_register_dev(struct usb_interface * , struct usb_class_driver * ) ;
 extern void usb_deregister_dev(struct usb_interface * , struct usb_class_driver * ) ;
 __inline static void usb_fill_int_urb(struct urb *urb , struct usb_device *dev , unsigned int pipe ,
@@ -4027,11 +3902,31 @@ extern struct urb *usb_alloc_urb(int , gfp_t ) ;
 extern void usb_free_urb(struct urb * ) ;
 extern int usb_submit_urb(struct urb * , gfp_t ) ;
 extern void usb_kill_urb(struct urb * ) ;
+extern void *usb_alloc_coherent(struct usb_device * , size_t , gfp_t , dma_addr_t * ) ;
+extern void usb_free_coherent(struct usb_device * , size_t , void * , dma_addr_t ) ;
+extern int usb_control_msg(struct usb_device * , unsigned int , __u8 , __u8 , __u16 ,
+                           __u16 , void * , __u16 , int ) ;
 extern int usb_string(struct usb_device * , int , char * , size_t ) ;
+void ldv_assert(char const *desc , int expr ) ;
 __inline static unsigned int __create_pipe(struct usb_device *dev , unsigned int endpoint )
 {
   {
   return ((unsigned int )(dev->devnum << 8) | (endpoint << 15));
+}
+}
+__inline static void poll_wait(struct file *filp , wait_queue_head_t *wait_address ,
+                               poll_table *p )
+{
+  {
+  if ((unsigned long )p != (unsigned long )((poll_table *)0) && ((unsigned long )p->_qproc != (unsigned long )((void (*)(struct file * ,
+                                                                                                                         wait_queue_head_t * ,
+                                                                                                                         struct poll_table_struct * ))0) && (unsigned long )wait_address != (unsigned long )((wait_queue_head_t *)0))) {
+    {
+    (*(p->_qproc))(filp, wait_address, p);
+    }
+  } else {
+  }
+  return;
 }
 }
 extern void kfree(void const * ) ;
@@ -4047,1352 +3942,943 @@ __inline static void *kmalloc(size_t size , gfp_t flags )
 }
 }
 __inline static void *kzalloc(size_t size , gfp_t flags ) ;
-static struct usb_device_id const device_table[7U] = { {3U, 2567U, 100U, (unsigned short)0, (unsigned short)0, (unsigned char)0, (unsigned char)0,
+static struct mutex iowarrior_mutex = {{1}, {{{{{0U}}, 3735899821U, 4294967295U, (void *)-1, {0, {0, 0}, "iowarrior_mutex.wait_lock",
+                                                           0, 0UL}}}}, {& iowarrior_mutex.wait_list,
+                                                                        & iowarrior_mutex.wait_list},
+    0, 0, (void *)(& iowarrior_mutex), {0, {0, 0}, "iowarrior_mutex", 0, 0UL}};
+static bool debug = 0;
+static struct usb_driver iowarrior_driver ;
+static struct mutex iowarrior_open_disc_lock = {{1}, {{{{{0U}}, 3735899821U, 4294967295U, (void *)-1, {0, {0, 0}, "iowarrior_open_disc_lock.wait_lock",
+                                                           0, 0UL}}}}, {& iowarrior_open_disc_lock.wait_list,
+                                                                        & iowarrior_open_disc_lock.wait_list},
+    0, 0, (void *)(& iowarrior_open_disc_lock), {0, {0, 0}, "iowarrior_open_disc_lock",
+                                                 0, 0UL}};
+static int usb_get_report(struct usb_device *dev , struct usb_host_interface *inter ,
+                          unsigned char type , unsigned char id , void *buf , int size )
+{
+  unsigned int tmp ;
+  int tmp___0 ;
+  {
+  {
+  tmp = __create_pipe(dev, 0U);
+  tmp___0 = usb_control_msg(dev, tmp | 2147483776U, 1, 161, ((int )((__u16 )type) << 8U) + (int )((__u16 )id),
+                            (int )inter->desc.bInterfaceNumber, buf, (int )((__u16 )size),
+                            1250);
+  }
+  return (tmp___0);
+}
+}
+static int usb_set_report(struct usb_interface *intf , unsigned char type , unsigned char id ,
+                          void *buf , int size )
+{
+  struct usb_device *tmp ;
+  unsigned int tmp___0 ;
+  struct usb_device *tmp___1 ;
+  int tmp___2 ;
+  {
+  {
+  tmp = interface_to_usbdev(intf);
+  tmp___0 = __create_pipe(tmp, 0U);
+  tmp___1 = interface_to_usbdev(intf);
+  tmp___2 = usb_control_msg(tmp___1, tmp___0 | 2147483648U, 9, 33, ((int )((__u16 )type) << 8U) + (int )((__u16 )id),
+                            (int )(intf->cur_altsetting)->desc.bInterfaceNumber, buf,
+                            (int )((__u16 )size), 250);
+  }
+  return (tmp___2);
+}
+}
+static struct usb_device_id const iowarrior_ids[6U] = { {3U, 1984U, 5376U, (unsigned short)0, (unsigned short)0, (unsigned char)0, (unsigned char)0,
       (unsigned char)0, (unsigned char)0, (unsigned char)0, (unsigned char)0, (unsigned char)0,
       0UL},
-        {3U, 2567U, 120U, (unsigned short)0, (unsigned short)0, (unsigned char)0, (unsigned char)0,
+        {3U, 1984U, 5377U, (unsigned short)0, (unsigned short)0, (unsigned char)0, (unsigned char)0,
       (unsigned char)0, (unsigned char)0, (unsigned char)0, (unsigned char)0, (unsigned char)0,
       0UL},
-        {3U, 2567U, 130U, (unsigned short)0, (unsigned short)0, (unsigned char)0, (unsigned char)0,
+        {3U, 1984U, 5393U, (unsigned short)0, (unsigned short)0, (unsigned char)0, (unsigned char)0,
       (unsigned char)0, (unsigned char)0, (unsigned char)0, (unsigned char)0, (unsigned char)0,
       0UL},
-        {3U, 2567U, 200U, (unsigned short)0, (unsigned short)0, (unsigned char)0, (unsigned char)0,
+        {3U, 1984U, 5394U, (unsigned short)0, (unsigned short)0, (unsigned char)0, (unsigned char)0,
       (unsigned char)0, (unsigned char)0, (unsigned char)0, (unsigned char)0, (unsigned char)0,
       0UL},
-        {3U, 2567U, 208U, (unsigned short)0, (unsigned short)0, (unsigned char)0, (unsigned char)0,
-      (unsigned char)0, (unsigned char)0, (unsigned char)0, (unsigned char)0, (unsigned char)0,
-      0UL},
-        {3U, 2567U, 218U, (unsigned short)0, (unsigned short)0, (unsigned char)0, (unsigned char)0,
+        {3U, 1984U, 5379U, (unsigned short)0, (unsigned short)0, (unsigned char)0, (unsigned char)0,
       (unsigned char)0, (unsigned char)0, (unsigned char)0, (unsigned char)0, (unsigned char)0,
       0UL}};
 struct usb_device_id const __mod_usb_device_table ;
-static struct mutex adutux_mutex = {{1}, {{{{{0U}}, 3735899821U, 4294967295U, (void *)-1, {0, {0, 0}, "adutux_mutex.wait_lock",
-                                                           0, 0UL}}}}, {& adutux_mutex.wait_list,
-                                                                        & adutux_mutex.wait_list},
-    0, 0, (void *)(& adutux_mutex), {0, {0, 0}, "adutux_mutex", 0, 0UL}};
-static struct usb_driver adu_driver ;
-__inline static void adu_debug_data(struct device *dev , char const *function ,
-                                    int size , unsigned char const *data )
+static void iowarrior_callback(struct urb *urb )
 {
-  struct _ddebug descriptor ;
-  long tmp ;
+  struct iowarrior *dev ;
+  int intr_idx ;
+  int read_idx ;
+  int aux_idx ;
+  int offset ;
+  int status ;
+  int retval ;
+  int tmp ;
+  unsigned char tmp___0 ;
   {
+  dev = (struct iowarrior *)urb->context;
+  status = urb->status;
   {
-  descriptor.modname = "adutux";
-  descriptor.function = "adu_debug_data";
-  descriptor.filename = "drivers/usb/misc/adutux.c";
-  descriptor.format = "%s - length = %d, data = %*ph\n";
-  descriptor.lineno = 113U;
-  descriptor.flags = 0U;
-  tmp = ldv__builtin_expect((long )descriptor.flags & 1L, 0L);
+  if (status == 0) {
+    goto case_0;
+  } else {
   }
-  if (tmp != 0L) {
+  if (status == -104) {
+    goto case_neg_104;
+  } else {
+  }
+  if (status == -2) {
+    goto case_neg_2;
+  } else {
+  }
+  if (status == -108) {
+    goto case_neg_108;
+  } else {
+  }
+  goto switch_default;
+  case_0: ;
+  goto ldv_30568;
+  case_neg_104: ;
+  case_neg_2: ;
+  case_neg_108: ;
+  return;
+  switch_default: ;
+  goto exit;
+  switch_break: ;
+  }
+  ldv_30568:
+  {
+  ldv_spin_lock_49(& dev->intr_idx_lock);
+  intr_idx = atomic_read((atomic_t const *)(& dev->intr_idx));
+  aux_idx = intr_idx != 0 ? intr_idx + -1 : 15;
+  read_idx = atomic_read((atomic_t const *)(& dev->read_idx));
+  }
+  if (intr_idx != read_idx && (unsigned int )((dev->interface)->cur_altsetting)->desc.bInterfaceNumber == 0U) {
     {
-    __dynamic_dev_dbg(& descriptor, (struct device const *)dev, "%s - length = %d, data = %*ph\n",
-                      function, size, size, data);
+    offset = aux_idx * (dev->report_size + 1);
+    tmp = memcmp((void const *)(dev->read_queue + (unsigned long )offset), (void const *)urb->transfer_buffer,
+                 (size_t )dev->report_size);
+    }
+    if (tmp == 0) {
+      {
+      ldv_spin_unlock_50(& dev->intr_idx_lock);
+      }
+      goto exit;
+    } else {
+    }
+  } else {
+  }
+  aux_idx = intr_idx != 15 ? intr_idx + 1 : 0;
+  if (read_idx == aux_idx) {
+    {
+    read_idx = read_idx + 1;
+    read_idx = read_idx != 16 ? read_idx : 0;
+    atomic_set(& dev->read_idx, read_idx);
+    atomic_set(& dev->overflow_flag, 1);
+    }
+  } else {
+  }
+  {
+  offset = intr_idx * (dev->report_size + 1);
+  memcpy((void *)(dev->read_queue + (unsigned long )offset), (void const *)urb->transfer_buffer,
+         (size_t )dev->report_size);
+  tmp___0 = dev->serial_number;
+  dev->serial_number = (unsigned char )((int )dev->serial_number + 1);
+  *(dev->read_queue + ((unsigned long )offset + (unsigned long )dev->report_size)) = tmp___0;
+  atomic_set(& dev->intr_idx, aux_idx);
+  ldv_spin_unlock_50(& dev->intr_idx_lock);
+  __wake_up(& dev->read_wait, 1U, 1, (void *)0);
+  }
+  exit:
+  {
+  retval = usb_submit_urb(urb, 32U);
+  }
+  if (retval != 0) {
+    {
+    dev_err((struct device const *)(& (dev->interface)->dev), "%s - usb_submit_urb failed with result %d\n",
+            "iowarrior_callback", retval);
     }
   } else {
   }
   return;
 }
 }
-static void adu_abort_transfers(struct adu_device *dev )
+static void iowarrior_write_callback(struct urb *urb )
 {
-  unsigned long flags = 0 ;
+  struct iowarrior *dev ;
+  int status ;
   {
-  struct usb_device *tmp;
-  tmp = dev->udev;
-  ldv_assert("", tmp == dev->udev);
-  if ((unsigned long )dev->udev == (unsigned long )((struct usb_device *)0)) {
-    return;
+  status = urb->status;
+  dev = (struct iowarrior *)urb->context;
+  if (status != 0 && ((status != -2 && status != -104) && status != -108)) {
+    if ((int )debug) {
+      {
+      printk("\017drivers/usb/misc/iowarrior.c: %s - nonzero write bulk status received: %d\n",
+             "iowarrior_write_callback", status);
+      }
+    } else {
+    }
   } else {
   }
   {
-  ldv___ldv_spin_lock_49(& dev->buflock);
-  }
-  if (dev->read_urb_finished == 0) {
-    {
-    ldv_spin_unlock_irqrestore_50(& dev->buflock, flags);
-    usb_kill_urb(dev->interrupt_in_urb);
-    }
-  } else {
-    {
-    ldv_spin_unlock_irqrestore_50(& dev->buflock, flags);
-    }
-  }
-  {
-  ldv___ldv_spin_lock_52(& dev->buflock);
-  }
-  if (dev->out_urb_finished == 0) {
-    {
-    ldv_spin_unlock_irqrestore_50(& dev->buflock, flags);
-    usb_kill_urb(dev->interrupt_out_urb);
-    }
-  } else {
-    {
-    ldv_spin_unlock_irqrestore_50(& dev->buflock, flags);
-    }
+  usb_free_coherent(urb->dev, (size_t )urb->transfer_buffer_length, urb->transfer_buffer,
+                    urb->transfer_dma);
+  atomic_dec(& dev->write_busy);
+  __wake_up(& dev->write_wait, 1U, 1, (void *)0);
   }
   return;
 }
 }
-static void adu_delete(struct adu_device *dev )
+__inline static void iowarrior_delete(struct iowarrior *dev )
 {
   {
+  if ((int )debug) {
+    {
+    printk("\017drivers/usb/misc/iowarrior.c: %s - minor %d\n", "iowarrior_delete",
+           (int )dev->minor);
+    }
+  } else {
+  }
   {
-  usb_free_urb(dev->interrupt_in_urb);
-  usb_free_urb(dev->interrupt_out_urb);
-  kfree((void const *)dev->read_buffer_primary);
-  kfree((void const *)dev->read_buffer_secondary);
-  kfree((void const *)dev->interrupt_in_buffer);
-  kfree((void const *)dev->interrupt_out_buffer);
+  kfree((void const *)dev->int_in_buffer);
+  usb_free_urb(dev->int_in_urb);
+  kfree((void const *)dev->read_queue);
   kfree((void const *)dev);
   }
   return;
 }
 }
-static void adu_interrupt_in_callback(struct urb *urb )
+static int read_index(struct iowarrior *dev )
 {
-  struct adu_device *dev ;
-  int status ;
-  struct _ddebug descriptor ;
-  long tmp ;
-  struct _ddebug descriptor___0 ;
-  long tmp___0 ;
-  struct _ddebug descriptor___1 ;
-  long tmp___1 ;
-  int tmp___2 ;
+  int intr_idx ;
+  int read_idx ;
   {
   {
-  dev = (struct adu_device *)urb->context;
-  status = urb->status;
-  adu_debug_data(& (dev->udev)->dev, "adu_interrupt_in_callback", (int )urb->actual_length,
-                 (unsigned char const *)urb->transfer_buffer);
-  ldv_spin_lock_55(& dev->buflock);
+  read_idx = atomic_read((atomic_t const *)(& dev->read_idx));
+  intr_idx = atomic_read((atomic_t const *)(& dev->intr_idx));
   }
-  if (status != 0) {
-    if ((status != -2 && status != -104) && status != -108) {
-      {
-      descriptor.modname = "adutux";
-      descriptor.function = "adu_interrupt_in_callback";
-      descriptor.filename = "drivers/usb/misc/adutux.c";
-      descriptor.format = "%s : nonzero status received: %d\n";
-      descriptor.lineno = 172U;
-      descriptor.flags = 0U;
-      tmp = ldv__builtin_expect((long )descriptor.flags & 1L, 0L);
-      }
-      if (tmp != 0L) {
+  return (read_idx != intr_idx ? read_idx : -1);
+}
+}
+static ssize_t iowarrior_read(struct file *file , char *buffer , size_t count , loff_t *ppos )
+{
+  struct iowarrior *dev ;
+  int read_idx ;
+  int offset ;
+  int r ;
+  int __ret ;
+  wait_queue_t __wait ;
+  long __ret___0 ;
+  long __int ;
+  long tmp ;
+  unsigned long tmp___0 ;
+  int tmp___1 ;
+  {
+  dev = (struct iowarrior *)file->private_data;
+  if ((unsigned long )dev == (unsigned long )((struct iowarrior *)0) || dev->present == 0) {
+    return (-19L);
+  } else {
+  }
+  if ((int )debug) {
+    {
+    printk("\017drivers/usb/misc/iowarrior.c: %s - minor %d, count = %zd\n", "iowarrior_read",
+           (int )dev->minor, count);
+    }
+  } else {
+  }
+  if (count != (size_t )dev->report_size && count != (size_t )(dev->report_size + 1)) {
+    return (-22L);
+  } else {
+  }
+  ldv_30610:
+  {
+  atomic_set(& dev->overflow_flag, 0);
+  read_idx = read_index(dev);
+  }
+  if (read_idx == -1) {
+    if ((file->f_flags & 2048U) != 0U) {
+      return (-11L);
+    } else {
+      __ret = 0;
+      if (dev->present != 0) {
         {
-        __dynamic_dev_dbg(& descriptor, (struct device const *)(& (dev->udev)->dev),
-                          "%s : nonzero status received: %d\n", "adu_interrupt_in_callback",
-                          status);
+        read_idx = read_index(dev);
+        }
+        if (read_idx == -1) {
+          {
+          __ret___0 = 0L;
+          INIT_LIST_HEAD(& __wait.task_list);
+          __wait.flags = 0U;
+          }
+          ldv_30607:
+          {
+          tmp = prepare_to_wait_event(& dev->read_wait, & __wait, 1);
+          __int = tmp;
+          }
+          if (dev->present == 0) {
+            goto ldv_30606;
+          } else {
+            {
+            read_idx = read_index(dev);
+            }
+            if (read_idx != -1) {
+              goto ldv_30606;
+            } else {
+            }
+          }
+          if (__int != 0L) {
+            __ret___0 = __int;
+            goto ldv_30606;
+          } else {
+          }
+          {
+          schedule();
+          }
+          goto ldv_30607;
+          ldv_30606:
+          {
+          finish_wait(& dev->read_wait, & __wait);
+          }
+          __ret = (int )__ret___0;
+        } else {
         }
       } else {
       }
-    } else {
+      r = __ret;
+      if (r != 0) {
+        return (-85L);
+      } else {
+      }
+      if (dev->present == 0) {
+        return (-19L);
+      } else {
+      }
+      if (read_idx == -1) {
+        return (0L);
+      } else {
+      }
+    }
+  } else {
+  }
+  {
+  offset = read_idx * (dev->report_size + 1);
+  tmp___0 = copy_to_user((void *)buffer, (void const *)(dev->read_queue + (unsigned long )offset),
+                         count);
+  }
+  if (tmp___0 != 0UL) {
+    return (-14L);
+  } else {
+  }
+  {
+  tmp___1 = atomic_read((atomic_t const *)(& dev->overflow_flag));
+  }
+  if (tmp___1 != 0) {
+    goto ldv_30610;
+  } else {
+  }
+  {
+  read_idx = read_idx + 1;
+  read_idx = read_idx != 16 ? read_idx : 0;
+  atomic_set(& dev->read_idx, read_idx);
+  }
+  return ((ssize_t )count);
+}
+}
+static ssize_t iowarrior_write(struct file *file , char const *user_buffer , size_t count ,
+                               loff_t *ppos )
+{
+  struct iowarrior *dev ;
+  int retval ;
+  char *buf ;
+  struct urb *int_out_urb ;
+  void *tmp ;
+  unsigned long tmp___0 ;
+  int __ret ;
+  wait_queue_t __wait ;
+  long __ret___0 ;
+  long __int ;
+  long tmp___1 ;
+  int tmp___2 ;
+  int tmp___3 ;
+  int tmp___4 ;
+  void *tmp___5 ;
+  unsigned int tmp___6 ;
+  unsigned long tmp___7 ;
+  int tmp___8 ;
+  {
+  {
+  retval = 0;
+  buf = (char *)0;
+  int_out_urb = (struct urb *)0;
+  dev = (struct iowarrior *)file->private_data;
+  ldv_mutex_lock_52(& dev->mutex);
+  }
+  if (dev->present == 0) {
+    retval = -19;
+    goto exit;
+  } else {
+  }
+  if ((int )debug) {
+    {
+    printk("\017drivers/usb/misc/iowarrior.c: %s - minor %d, count = %zd\n", "iowarrior_write",
+           (int )dev->minor, count);
+    }
+  } else {
+  }
+  if (count == 0UL) {
+    retval = 0;
+    goto exit;
+  } else {
+  }
+  if (count != (size_t )dev->report_size) {
+    retval = -22;
+    goto exit;
+  } else {
+  }
+  {
+  if ((int )dev->product_id == 5377) {
+    goto case_5377;
+  } else {
+  }
+  if ((int )dev->product_id == 5393) {
+    goto case_5393;
+  } else {
+  }
+  if ((int )dev->product_id == 5394) {
+    goto case_5394;
+  } else {
+  }
+  if ((int )dev->product_id == 5376) {
+    goto case_5376;
+  } else {
+  }
+  if ((int )dev->product_id == 5379) {
+    goto case_5379;
+  } else {
+  }
+  goto switch_default;
+  case_5377: ;
+  case_5393: ;
+  case_5394: ;
+  case_5376:
+  {
+  tmp = kmalloc(count, 208U);
+  buf = (char *)tmp;
+  }
+  if ((unsigned long )buf == (unsigned long )((char *)0)) {
+    retval = -12;
+    goto exit;
+  } else {
+  }
+  {
+  tmp___0 = copy_from_user((void *)buf, (void const *)user_buffer, count);
+  }
+  if (tmp___0 != 0UL) {
+    {
+    retval = -14;
+    kfree((void const *)buf);
     }
     goto exit;
   } else {
   }
-  if (urb->actual_length != 0U && (int )((signed char )*(dev->interrupt_in_buffer)) != 0) {
-    {
-    tmp___2 = usb_endpoint_maxp((struct usb_endpoint_descriptor const *)dev->interrupt_in_endpoint);
-    }
-    if ((u32 )dev->read_buffer_length < (u32 )(tmp___2 * 4) - urb->actual_length) {
-      {
-      memcpy((void *)(dev->read_buffer_primary + (unsigned long )dev->read_buffer_length),
-             (void const *)dev->interrupt_in_buffer, (size_t )urb->actual_length);
-      dev->read_buffer_length = (int )((u32 )dev->read_buffer_length + urb->actual_length);
-      descriptor___0.modname = "adutux";
-      descriptor___0.function = "adu_interrupt_in_callback";
-      descriptor___0.filename = "drivers/usb/misc/adutux.c";
-      descriptor___0.format = "%s reading  %d\n";
-      descriptor___0.lineno = 187U;
-      descriptor___0.flags = 0U;
-      tmp___0 = ldv__builtin_expect((long )descriptor___0.flags & 1L, 0L);
-      }
-      if (tmp___0 != 0L) {
+  {
+  retval = usb_set_report(dev->interface, 2, 0, (void *)buf, (int )count);
+  kfree((void const *)buf);
+  }
+  goto exit;
+  case_5379:
+  {
+  tmp___4 = atomic_read((atomic_t const *)(& dev->write_busy));
+  }
+  if (tmp___4 == 4) {
+    if ((file->f_flags & 2048U) != 0U) {
+      retval = -11;
+      goto exit;
+    } else {
+      __ret = 0;
+      if (dev->present != 0) {
         {
-        __dynamic_dev_dbg(& descriptor___0, (struct device const *)(& (dev->udev)->dev),
-                          "%s reading  %d\n", "adu_interrupt_in_callback", urb->actual_length);
+        tmp___3 = atomic_read((atomic_t const *)(& dev->write_busy));
+        }
+        if (tmp___3 > 3) {
+          {
+          __ret___0 = 0L;
+          INIT_LIST_HEAD(& __wait.task_list);
+          __wait.flags = 0U;
+          }
+          ldv_30635:
+          {
+          tmp___1 = prepare_to_wait_event(& dev->write_wait, & __wait, 1);
+          __int = tmp___1;
+          }
+          if (dev->present == 0) {
+            goto ldv_30634;
+          } else {
+            {
+            tmp___2 = atomic_read((atomic_t const *)(& dev->write_busy));
+            }
+            if (tmp___2 <= 3) {
+              goto ldv_30634;
+            } else {
+            }
+          }
+          if (__int != 0L) {
+            __ret___0 = __int;
+            goto ldv_30634;
+          } else {
+          }
+          {
+          schedule();
+          }
+          goto ldv_30635;
+          ldv_30634:
+          {
+          finish_wait(& dev->write_wait, & __wait);
+          }
+          __ret = (int )__ret___0;
+        } else {
         }
       } else {
       }
-    } else {
-      {
-      descriptor___1.modname = "adutux";
-      descriptor___1.function = "adu_interrupt_in_callback";
-      descriptor___1.filename = "drivers/usb/misc/adutux.c";
-      descriptor___1.format = "%s : read_buffer overflow\n";
-      descriptor___1.lineno = 190U;
-      descriptor___1.flags = 0U;
-      tmp___1 = ldv__builtin_expect((long )descriptor___1.flags & 1L, 0L);
+      retval = __ret;
+      if (retval != 0) {
+        retval = -85;
+        goto exit;
+      } else {
       }
-      if (tmp___1 != 0L) {
-        {
-        __dynamic_dev_dbg(& descriptor___1, (struct device const *)(& (dev->udev)->dev),
-                          "%s : read_buffer overflow\n", "adu_interrupt_in_callback");
-        }
+      if (dev->present == 0) {
+        retval = -19;
+        goto exit;
+      } else {
+      }
+      if (dev->opened == 0) {
+        retval = -19;
+        goto exit;
       } else {
       }
     }
   } else {
+  }
+  {
+  atomic_inc(& dev->write_busy);
+  int_out_urb = usb_alloc_urb(0, 208U);
+  }
+  if ((unsigned long )int_out_urb == (unsigned long )((struct urb *)0)) {
+    retval = -12;
+    if ((int )debug) {
+      {
+      printk("\017drivers/usb/misc/iowarrior.c: %s Unable to allocate urb \n", "iowarrior_write");
+      }
+    } else {
+    }
+    goto error_no_urb;
+  } else {
+  }
+  {
+  tmp___5 = usb_alloc_coherent(dev->udev, (size_t )dev->report_size, 208U, & int_out_urb->transfer_dma);
+  buf = (char *)tmp___5;
+  }
+  if ((unsigned long )buf == (unsigned long )((char *)0)) {
+    retval = -12;
+    if ((int )debug) {
+      {
+      printk("\017drivers/usb/misc/iowarrior.c: %s Unable to allocate buffer \n",
+             "iowarrior_write");
+      }
+    } else {
+    }
+    goto error_no_buffer;
+  } else {
+  }
+  {
+  tmp___6 = __create_pipe(dev->udev, (unsigned int )(dev->int_out_endpoint)->bEndpointAddress);
+  usb_fill_int_urb(int_out_urb, dev->udev, tmp___6 | 1073741824U, (void *)buf, dev->report_size,
+                   & iowarrior_write_callback, (void *)dev, (int )(dev->int_out_endpoint)->bInterval);
+  int_out_urb->transfer_flags = int_out_urb->transfer_flags | 4U;
+  tmp___7 = copy_from_user((void *)buf, (void const *)user_buffer, count);
+  }
+  if (tmp___7 != 0UL) {
+    retval = -14;
+    goto error;
+  } else {
+  }
+  {
+  retval = usb_submit_urb(int_out_urb, 208U);
+  }
+  if (retval != 0) {
+    if ((int )debug) {
+      {
+      tmp___8 = atomic_read((atomic_t const *)(& dev->write_busy));
+      printk("\017drivers/usb/misc/iowarrior.c: %s submit error %d for urb nr.%d\n",
+             "iowarrior_write", retval, tmp___8);
+      }
+    } else {
+    }
+    goto error;
+  } else {
+  }
+  {
+  retval = (int )count;
+  usb_free_urb(int_out_urb);
+  }
+  goto exit;
+  switch_default:
+  {
+  dev_err((struct device const *)(& (dev->interface)->dev), "%s - not supported for product=0x%x\n",
+          "iowarrior_write", (int )dev->product_id);
+  retval = -14;
+  }
+  goto exit;
+  switch_break: ;
+  }
+  error:
+  {
+  usb_free_coherent(dev->udev, (size_t )dev->report_size, (void *)buf, int_out_urb->transfer_dma);
+  }
+  error_no_buffer:
+  {
+  usb_free_urb(int_out_urb);
+  }
+  error_no_urb:
+  {
+  atomic_dec(& dev->write_busy);
+  __wake_up(& dev->write_wait, 1U, 1, (void *)0);
   }
   exit:
   {
-  dev->read_urb_finished = 1;
-  ldv_spin_unlock_56(& dev->buflock);
-  __wake_up(& dev->read_wait, 1U, 1, (void *)0);
+  ldv_mutex_unlock_53(& dev->mutex);
   }
-  return;
+  return ((ssize_t )retval);
 }
 }
-static void adu_interrupt_out_callback(struct urb *urb )
+static long iowarrior_ioctl(struct file *file , unsigned int cmd , unsigned long arg )
 {
-  struct adu_device *dev ;
-  int status ;
-  struct _ddebug descriptor ;
-  long tmp ;
+  struct iowarrior *dev ;
+  __u8 *buffer ;
+  __u8 *user_buffer ;
+  int retval ;
+  int io_res ;
+  void *tmp ;
+  unsigned long tmp___0 ;
+  unsigned long tmp___1 ;
+  struct iowarrior_info info ;
+  struct usb_config_descriptor *cfg_descriptor ;
+  unsigned long tmp___2 ;
   {
-  {
-  dev = (struct adu_device *)urb->context;
-  status = urb->status;
-  adu_debug_data(& (dev->udev)->dev, "adu_interrupt_out_callback", (int )urb->actual_length,
-                 (unsigned char const *)urb->transfer_buffer);
-  }
-  if (status != 0) {
-    if (status != -2 && status != -104) {
-      {
-      descriptor.modname = "adutux";
-      descriptor.function = "adu_interrupt_out_callback";
-      descriptor.filename = "drivers/usb/misc/adutux.c";
-      descriptor.format = "%s :nonzero status received: %d\n";
-      descriptor.lineno = 214U;
-      descriptor.flags = 0U;
-      tmp = ldv__builtin_expect((long )descriptor.flags & 1L, 0L);
-      }
-      if (tmp != 0L) {
-        {
-        __dynamic_dev_dbg(& descriptor, (struct device const *)(& (dev->udev)->dev),
-                          "%s :nonzero status received: %d\n", "adu_interrupt_out_callback",
-                          status);
-        }
-      } else {
-      }
-    } else {
-    }
-    return;
+  dev = (struct iowarrior *)0;
+  dev = (struct iowarrior *)file->private_data;
+  if ((unsigned long )dev == (unsigned long )((struct iowarrior *)0)) {
+    return (-19L);
   } else {
   }
   {
-  ldv_spin_lock_55(& dev->buflock);
-  dev->out_urb_finished = 1;
-  __wake_up(& dev->write_wait, 3U, 1, (void *)0);
-  ldv_spin_unlock_56(& dev->buflock);
+  tmp = kzalloc((size_t )dev->report_size, 208U);
+  buffer = (__u8 *)tmp;
   }
-  return;
+  if ((unsigned long )buffer == (unsigned long )((__u8 *)0U)) {
+    return (-12L);
+  } else {
+  }
+  {
+  ldv_mutex_lock_54(& iowarrior_mutex);
+  ldv_mutex_lock_55(& dev->mutex);
+  }
+  if (dev->present == 0) {
+    retval = -19;
+    goto error_out;
+  } else {
+  }
+  if ((int )debug) {
+    {
+    printk("\017drivers/usb/misc/iowarrior.c: %s - minor %d, cmd 0x%.4x, arg %ld\n",
+           "iowarrior_ioctl", (int )dev->minor, cmd, arg);
+    }
+  } else {
+  }
+  retval = 0;
+  io_res = 0;
+  {
+  if (cmd == 1074315265U) {
+    goto case_1074315265;
+  } else {
+  }
+  if (cmd == 1074315266U) {
+    goto case_1074315266;
+  } else {
+  }
+  if (cmd == 2150154243U) {
+    goto case_2150154243;
+  } else {
+  }
+  goto switch_default;
+  case_1074315265: ;
+  if ((((unsigned int )dev->product_id == 5377U || (unsigned int )dev->product_id == 5393U) || (unsigned int )dev->product_id == 5394U) || (unsigned int )dev->product_id == 5376U) {
+    {
+    user_buffer = (__u8 *)arg;
+    tmp___0 = copy_from_user((void *)buffer, (void const *)user_buffer, (unsigned long )dev->report_size);
+    io_res = (int )tmp___0;
+    }
+    if (io_res != 0) {
+      retval = -14;
+    } else {
+      {
+      io_res = usb_set_report(dev->interface, 2, 0, (void *)buffer, dev->report_size);
+      }
+      if (io_res < 0) {
+        retval = io_res;
+      } else {
+      }
+    }
+  } else {
+    {
+    retval = -22;
+    dev_err((struct device const *)(& (dev->interface)->dev), "ioctl \'IOW_WRITE\' is not supported for product=0x%x.\n",
+            (int )dev->product_id);
+    }
+  }
+  goto ldv_30655;
+  case_1074315266:
+  {
+  user_buffer = (__u8 *)arg;
+  io_res = usb_get_report(dev->udev, (dev->interface)->cur_altsetting, 1, 0, (void *)buffer,
+                          dev->report_size);
+  }
+  if (io_res < 0) {
+    retval = io_res;
+  } else {
+    {
+    tmp___1 = copy_to_user((void *)user_buffer, (void const *)buffer, (unsigned long )dev->report_size);
+    io_res = (int )tmp___1;
+    }
+    if (io_res != 0) {
+      retval = -14;
+    } else {
+    }
+  }
+  goto ldv_30655;
+  case_2150154243:
+  {
+  cfg_descriptor = & ((dev->udev)->actconfig)->desc;
+  memset((void *)(& info), 0, 40UL);
+  info.vendor = (__u32 )(dev->udev)->descriptor.idVendor;
+  info.product = (__u32 )dev->product_id;
+  info.revision = (__u32 )(dev->udev)->descriptor.bcdDevice;
+  info.speed = (__u32 )((unsigned short )(dev->udev)->speed);
+  info.if_num = (__u32 )((dev->interface)->cur_altsetting)->desc.bInterfaceNumber;
+  info.report_size = (__u32 )dev->report_size;
+  memcpy((void *)(& info.serial), (void const *)(& dev->chip_serial), 9UL);
+  }
+  if ((unsigned long )cfg_descriptor == (unsigned long )((struct usb_config_descriptor *)0)) {
+    info.power = 4294967295U;
+  } else {
+    info.power = (__u32 )((int )cfg_descriptor->bMaxPower * 2);
+  }
+  {
+  tmp___2 = copy_to_user((void *)arg, (void const *)(& info), 40UL);
+  io_res = (int )tmp___2;
+  }
+  if (io_res != 0) {
+    retval = -14;
+  } else {
+  }
+  goto ldv_30655;
+  switch_default:
+  retval = -25;
+  goto ldv_30655;
+  switch_break: ;
+  }
+  ldv_30655: ;
+  error_out:
+  {
+  ldv_mutex_unlock_56(& dev->mutex);
+  ldv_mutex_unlock_57(& iowarrior_mutex);
+  kfree((void const *)buffer);
+  }
+  return ((long )retval);
 }
 }
-static int adu_open(struct inode *inode , struct file *file )
+static int iowarrior_open(struct inode *inode , struct file *file )
 {
-  struct adu_device *dev ;
+  struct iowarrior *dev ;
   struct usb_interface *interface ;
   int subminor ;
   int retval ;
   unsigned int tmp ;
   void *tmp___0 ;
-  struct _ddebug descriptor ;
-  long tmp___1 ;
-  int tmp___2 ;
-  unsigned int tmp___3 ;
-  int tmp___4 ;
   {
-  {
-  dev = (struct adu_device *)0;
-  tmp = iminor((struct inode const *)inode);
-  subminor = (int )tmp;
-  retval = ldv_mutex_lock_interruptible_59(& adutux_mutex);
-  }
-  if (retval != 0) {
-    goto exit_no_lock;
+  dev = (struct iowarrior *)0;
+  retval = 0;
+  if ((int )debug) {
+    {
+    printk("\017drivers/usb/misc/iowarrior.c: %s\n", "iowarrior_open");
+    }
   } else {
   }
   {
-  interface = usb_find_interface(& adu_driver, subminor);
+  ldv_mutex_lock_58(& iowarrior_mutex);
+  tmp = iminor((struct inode const *)inode);
+  subminor = (int )tmp;
+  interface = usb_find_interface(& iowarrior_driver, subminor);
   }
   if ((unsigned long )interface == (unsigned long )((struct usb_interface *)0)) {
     {
-    printk("\vadutux: %s - error, can\'t find device for minor %d\n", "adu_open",
-           subminor);
-    retval = -19;
+    ldv_mutex_unlock_59(& iowarrior_mutex);
+    printk("\v%s - error, can\'t find device for minor %d\n", "iowarrior_open", subminor);
     }
-    goto exit_no_device;
+    return (-19);
   } else {
   }
   {
+  ldv_mutex_lock_60(& iowarrior_open_disc_lock);
   tmp___0 = usb_get_intfdata(interface);
-  dev = (struct adu_device *)tmp___0;
+  dev = (struct iowarrior *)tmp___0;
   }
-  if ((unsigned long )dev == (unsigned long )((struct adu_device *)0) || (unsigned long )dev->udev == (unsigned long )((struct usb_device *)0)) {
-    retval = -19;
-    goto exit_no_device;
+  if ((unsigned long )dev == (unsigned long )((struct iowarrior *)0)) {
+    {
+    ldv_mutex_unlock_61(& iowarrior_open_disc_lock);
+    ldv_mutex_unlock_62(& iowarrior_mutex);
+    }
+    return (-19);
   } else {
   }
-  if (dev->open_count != 0) {
+  {
+  ldv_mutex_lock_63(& dev->mutex);
+  ldv_mutex_unlock_64(& iowarrior_open_disc_lock);
+  }
+  if (dev->opened != 0) {
     retval = -16;
-    goto exit_no_device;
+    goto out;
   } else {
   }
   {
-  dev->open_count = dev->open_count + 1;
-  descriptor.modname = "adutux";
-  descriptor.function = "adu_open";
-  descriptor.filename = "drivers/usb/misc/adutux.c";
-  descriptor.format = "%s: open count %d\n";
-  descriptor.lineno = 260U;
-  descriptor.flags = 0U;
-  tmp___1 = ldv__builtin_expect((long )descriptor.flags & 1L, 0L);
+  retval = usb_submit_urb(dev->int_in_urb, 208U);
   }
-  if (tmp___1 != 0L) {
+  if (retval < 0) {
     {
-    __dynamic_dev_dbg(& descriptor, (struct device const *)(& (dev->udev)->dev),
-                      "%s: open count %d\n", "adu_open", dev->open_count);
+    dev_err((struct device const *)(& interface->dev), "Error %d while submitting URB\n",
+            retval);
+    retval = -14;
     }
+    goto out;
   } else {
   }
-  {
+  dev->opened = dev->opened + 1;
   file->private_data = (void *)dev;
-  dev->read_buffer_length = 0;
-  tmp___2 = usb_endpoint_maxp((struct usb_endpoint_descriptor const *)dev->interrupt_in_endpoint);
-  tmp___3 = __create_pipe(dev->udev, (unsigned int )(dev->interrupt_in_endpoint)->bEndpointAddress);
-  usb_fill_int_urb(dev->interrupt_in_urb, dev->udev, tmp___3 | 1073741952U, (void *)dev->interrupt_in_buffer,
-                   tmp___2, & adu_interrupt_in_callback, (void *)dev, (int )(dev->interrupt_in_endpoint)->bInterval);
-  dev->read_urb_finished = 0;
-  tmp___4 = usb_submit_urb(dev->interrupt_in_urb, 208U);
-  }
-  if (tmp___4 != 0) {
-    dev->read_urb_finished = 1;
-  } else {
-  }
-  dev->out_urb_finished = 1;
   retval = 0;
-  exit_no_device:
+  out:
   {
-  ldv_mutex_unlock_60(& adutux_mutex);
+  ldv_mutex_unlock_65(& dev->mutex);
+  ldv_mutex_unlock_66(& iowarrior_mutex);
   }
-  exit_no_lock: ;
   return (retval);
 }
 }
-static void adu_release_internal(struct adu_device *dev )
+static int iowarrior_release(struct inode *inode , struct file *file )
 {
-  struct _ddebug descriptor ;
-  long tmp ;
-  {
-  {
-  dev->open_count = dev->open_count - 1;
-  descriptor.modname = "adutux";
-  descriptor.function = "adu_release_internal";
-  descriptor.filename = "drivers/usb/misc/adutux.c";
-  descriptor.format = "%s : open count %d\n";
-  descriptor.lineno = 298U;
-  descriptor.flags = 0U;
-  tmp = ldv__builtin_expect((long )descriptor.flags & 1L, 0L);
-  }
-  if (tmp != 0L) {
-    {
-    __dynamic_dev_dbg(& descriptor, (struct device const *)(& (dev->udev)->dev),
-                      "%s : open count %d\n", "adu_release_internal", dev->open_count);
-    }
-  } else {
-  }
-  if (dev->open_count <= 0) {
-    {
-    adu_abort_transfers(dev);
-    dev->open_count = 0;
-    }
-  } else {
-  }
-  return;
-}
-}
-static int adu_release(struct inode *inode , struct file *file )
-{
-  struct adu_device *dev ;
+  struct iowarrior *dev ;
   int retval ;
-  struct _ddebug descriptor ;
-  long tmp ;
   {
   retval = 0;
-  if ((unsigned long )file == (unsigned long )((struct file *)0)) {
-    retval = -19;
-    goto exit;
-  } else {
-  }
-  dev = (struct adu_device *)file->private_data;
-  if ((unsigned long )dev == (unsigned long )((struct adu_device *)0)) {
-    retval = -19;
-    goto exit;
-  } else {
-  }
-  {
-  ldv_mutex_lock_61(& adutux_mutex);
-  }
-  if (dev->open_count <= 0) {
+  dev = (struct iowarrior *)file->private_data;
+  if ((int )debug) {
     {
-    descriptor.modname = "adutux";
-    descriptor.function = "adu_release";
-    descriptor.filename = "drivers/usb/misc/adutux.c";
-    descriptor.format = "%s : device not opened\n";
-    descriptor.lineno = 324U;
-    descriptor.flags = 0U;
-    tmp = ldv__builtin_expect((long )descriptor.flags & 1L, 0L);
+    printk("\017drivers/usb/misc/iowarrior.c: %s - minor %d\n", "iowarrior_release",
+           (int )dev->minor);
     }
-    if (tmp != 0L) {
-      {
-      __dynamic_dev_dbg(& descriptor, (struct device const *)(& (dev->udev)->dev),
-                        "%s : device not opened\n", "adu_release");
-      }
-    } else {
-    }
+  } else {
+  }
+  {
+  ldv_mutex_lock_67(& dev->mutex);
+  }
+  if (dev->opened <= 0) {
+    {
     retval = -19;
-    goto unlock;
-  } else {
-  }
-  {
-  adu_release_internal(dev);
-  }
-  if ((unsigned long )dev->udev == (unsigned long )((struct usb_device *)0)) {
-    if (dev->open_count == 0) {
-      {
-      adu_delete(dev);
-      }
-    } else {
+    ldv_mutex_unlock_68(& dev->mutex);
     }
   } else {
+    dev->opened = 0;
+    old_var = old_var + 1;
+    retval = 0;
+    if (dev->present != 0) {
+      {
+      usb_kill_urb(dev->int_in_urb);
+      __wake_up(& dev->read_wait, 1U, 1, (void *)0);
+      __wake_up(& dev->write_wait, 1U, 1, (void *)0);
+      ldv_mutex_unlock_69(& dev->mutex);
+      }
+    } else {
+      {
+      ldv_mutex_unlock_70(& dev->mutex);
+      iowarrior_delete(dev);
+      }
+    }
   }
-  unlock:
-  {
-  ldv_mutex_unlock_62(& adutux_mutex);
-  }
-  exit: ;
   return (retval);
 }
 }
-static ssize_t adu_read(struct file *file , char *buffer , size_t count , loff_t *ppos )
+static unsigned int iowarrior_poll(struct file *file , poll_table *wait )
 {
-  struct adu_device *dev ;
-  size_t bytes_read ;
-  size_t bytes_to_read ;
-  int i ;
-  int retval ;
-  int timeout ;
-  int should_submit ;
-  unsigned long flags = 0 ;
-  wait_queue_t wait ;
-  struct task_struct *tmp ;
+  struct iowarrior *dev ;
+  unsigned int mask ;
+  int tmp ;
   int tmp___0 ;
-  struct _ddebug descriptor ;
-  long tmp___1 ;
-  struct _ddebug descriptor___0 ;
-  long tmp___2 ;
-  int data_in_secondary ;
-  struct _ddebug descriptor___1 ;
-  long tmp___3 ;
-  int amount ;
-  unsigned long tmp___4 ;
-  char *tmp___5 ;
-  struct _ddebug descriptor___2 ;
-  long tmp___6 ;
-  struct _ddebug descriptor___3 ;
-  long tmp___7 ;
-  struct _ddebug descriptor___4 ;
-  long tmp___8 ;
-  int tmp___9 ;
-  unsigned int tmp___10 ;
-  struct _ddebug descriptor___5 ;
-  long tmp___11 ;
-  long volatile __ret ;
-  struct task_struct *tmp___12 ;
-  struct task_struct *tmp___13 ;
-  struct task_struct *tmp___14 ;
-  struct task_struct *tmp___15 ;
-  long tmp___16 ;
-  long volatile __ret___0 ;
-  struct task_struct *tmp___17 ;
-  struct task_struct *tmp___18 ;
-  struct task_struct *tmp___19 ;
-  struct task_struct *tmp___20 ;
-  struct _ddebug descriptor___6 ;
-  long tmp___21 ;
-  struct _ddebug descriptor___7 ;
-  long tmp___22 ;
-  struct task_struct *tmp___23 ;
-  int tmp___24 ;
-  int tmp___25 ;
-  unsigned int tmp___26 ;
-  int tmp___27 ;
   {
-  {
-  bytes_read = 0UL;
-  bytes_to_read = count;
-  retval = 0;
-  timeout = 0;
-  should_submit = 0;
-  tmp = get_current();
-  wait.flags = 0U;
-  wait.private = (void *)tmp;
-  wait.func = & default_wake_function;
-  wait.task_list.next = (struct list_head *)0;
-  wait.task_list.prev = (struct list_head *)0;
-  dev = (struct adu_device *)file->private_data;
-  tmp___0 = ldv_mutex_lock_interruptible_63(& dev->mtx);
-  }
-  if (tmp___0 != 0) {
-    return (-512L);
-  } else {
-  }
-  if ((unsigned long )dev->udev == (unsigned long )((struct usb_device *)0)) {
-    {
-    retval = -19;
-    printk("\vadutux: No device or device unplugged %d\n", retval);
-    }
-    goto exit;
-  } else {
-  }
-  if (count == 0UL) {
-    {
-    descriptor.modname = "adutux";
-    descriptor.function = "adu_read";
-    descriptor.filename = "drivers/usb/misc/adutux.c";
-    descriptor.format = "%s : read request of 0 bytes\n";
-    descriptor.lineno = 368U;
-    descriptor.flags = 0U;
-    tmp___1 = ldv__builtin_expect((long )descriptor.flags & 1L, 0L);
-    }
-    if (tmp___1 != 0L) {
-      {
-      __dynamic_dev_dbg(& descriptor, (struct device const *)(& (dev->udev)->dev),
-                        "%s : read request of 0 bytes\n", "adu_read");
-      }
-    } else {
-    }
-    goto exit;
+  dev = (struct iowarrior *)file->private_data;
+  mask = 0U;
+  if (dev->present == 0) {
+    return (24U);
   } else {
   }
   {
-  timeout = 500;
-  descriptor___0.modname = "adutux";
-  descriptor___0.function = "adu_read";
-  descriptor___0.filename = "drivers/usb/misc/adutux.c";
-  descriptor___0.format = "%s : about to start looping\n";
-  descriptor___0.lineno = 373U;
-  descriptor___0.flags = 0U;
-  tmp___2 = ldv__builtin_expect((long )descriptor___0.flags & 1L, 0L);
+  poll_wait(file, & dev->read_wait, wait);
+  poll_wait(file, & dev->write_wait, wait);
   }
-  if (tmp___2 != 0L) {
-    {
-    __dynamic_dev_dbg(& descriptor___0, (struct device const *)(& (dev->udev)->dev),
-                      "%s : about to start looping\n", "adu_read");
-    }
-  } else {
-  }
-  goto ldv_30705;
-  ldv_30704:
-  {
-  data_in_secondary = dev->secondary_tail - dev->secondary_head;
-  descriptor___1.modname = "adutux";
-  descriptor___1.function = "adu_read";
-  descriptor___1.filename = "drivers/usb/misc/adutux.c";
-  descriptor___1.format = "%s : while, data_in_secondary=%d, status=%d\n";
-  descriptor___1.lineno = 379U;
-  descriptor___1.flags = 0U;
-  tmp___3 = ldv__builtin_expect((long )descriptor___1.flags & 1L, 0L);
-  }
-  if (tmp___3 != 0L) {
-    {
-    __dynamic_dev_dbg(& descriptor___1, (struct device const *)(& (dev->udev)->dev),
-                      "%s : while, data_in_secondary=%d, status=%d\n", "adu_read",
-                      data_in_secondary, (dev->interrupt_in_urb)->status);
-    }
-  } else {
-  }
-  if (data_in_secondary != 0) {
-    {
-    amount = (int )(bytes_to_read < (size_t )data_in_secondary ? bytes_to_read : (size_t )data_in_secondary);
-    tmp___4 = copy_to_user((void *)buffer, (void const *)(dev->read_buffer_secondary + (unsigned long )dev->secondary_head),
-                           (unsigned long )amount);
-    i = (int )tmp___4;
-    }
-    if (i != 0) {
-      retval = -14;
-      goto exit;
-    } else {
-    }
-    dev->secondary_head = dev->secondary_head + (amount - i);
-    bytes_read = bytes_read + (size_t )(amount - i);
-    bytes_to_read = bytes_to_read - (size_t )(amount - i);
-    if (i != 0) {
-      retval = bytes_read != 0UL ? (int )bytes_read : -14;
-      goto exit;
-    } else {
-    }
-  } else {
-    {
-    ldv___ldv_spin_lock_64(& dev->buflock);
-    }
-    if (dev->read_buffer_length != 0) {
-      {
-      descriptor___2.modname = "adutux";
-      descriptor___2.function = "adu_read";
-      descriptor___2.filename = "drivers/usb/misc/adutux.c";
-      descriptor___2.format = "%s : swap, read_buffer_length = %d\n";
-      descriptor___2.lineno = 404U;
-      descriptor___2.flags = 0U;
-      tmp___6 = ldv__builtin_expect((long )descriptor___2.flags & 1L, 0L);
-      }
-      if (tmp___6 != 0L) {
-        {
-        __dynamic_dev_dbg(& descriptor___2, (struct device const *)(& (dev->udev)->dev),
-                          "%s : swap, read_buffer_length = %d\n", "adu_read", dev->read_buffer_length);
-        }
-      } else {
-      }
-      {
-      tmp___5 = dev->read_buffer_secondary;
-      dev->read_buffer_secondary = dev->read_buffer_primary;
-      dev->read_buffer_primary = tmp___5;
-      dev->secondary_head = 0;
-      dev->secondary_tail = dev->read_buffer_length;
-      dev->read_buffer_length = 0;
-      ldv_spin_unlock_irqrestore_50(& dev->buflock, flags);
-      should_submit = 1;
-      }
-    } else {
-      if (dev->read_urb_finished == 0) {
-        {
-        ldv_spin_unlock_irqrestore_50(& dev->buflock, flags);
-        descriptor___3.modname = "adutux";
-        descriptor___3.function = "adu_read";
-        descriptor___3.filename = "drivers/usb/misc/adutux.c";
-        descriptor___3.format = "%s : submitted already\n";
-        descriptor___3.lineno = 421U;
-        descriptor___3.flags = 0U;
-        tmp___7 = ldv__builtin_expect((long )descriptor___3.flags & 1L, 0L);
-        }
-        if (tmp___7 != 0L) {
-          {
-          __dynamic_dev_dbg(& descriptor___3, (struct device const *)(& (dev->udev)->dev),
-                            "%s : submitted already\n", "adu_read");
-          }
-        } else {
-        }
-      } else {
-        {
-        descriptor___4.modname = "adutux";
-        descriptor___4.function = "adu_read";
-        descriptor___4.filename = "drivers/usb/misc/adutux.c";
-        descriptor___4.format = "%s : initiate input\n";
-        descriptor___4.lineno = 426U;
-        descriptor___4.flags = 0U;
-        tmp___8 = ldv__builtin_expect((long )descriptor___4.flags & 1L, 0L);
-        }
-        if (tmp___8 != 0L) {
-          {
-          __dynamic_dev_dbg(& descriptor___4, (struct device const *)(& (dev->udev)->dev),
-                            "%s : initiate input\n", "adu_read");
-          }
-        } else {
-        }
-        {
-        dev->read_urb_finished = 0;
-        ldv_spin_unlock_irqrestore_50(& dev->buflock, flags);
-        tmp___9 = usb_endpoint_maxp((struct usb_endpoint_descriptor const *)dev->interrupt_in_endpoint);
-        tmp___10 = __create_pipe(dev->udev, (unsigned int )(dev->interrupt_in_endpoint)->bEndpointAddress);
-        usb_fill_int_urb(dev->interrupt_in_urb, dev->udev, tmp___10 | 1073741952U,
-                         (void *)dev->interrupt_in_buffer, tmp___9, & adu_interrupt_in_callback,
-                         (void *)dev, (int )(dev->interrupt_in_endpoint)->bInterval);
-        retval = usb_submit_urb(dev->interrupt_in_urb, 208U);
-        }
-        if (retval != 0) {
-          dev->read_urb_finished = 1;
-          if (retval == -12) {
-            retval = bytes_read != 0UL ? (int )bytes_read : -12;
-          } else {
-          }
-          {
-          descriptor___5.modname = "adutux";
-          descriptor___5.function = "adu_read";
-          descriptor___5.filename = "drivers/usb/misc/adutux.c";
-          descriptor___5.format = "%s : submit failed\n";
-          descriptor___5.lineno = 446U;
-          descriptor___5.flags = 0U;
-          tmp___11 = ldv__builtin_expect((long )descriptor___5.flags & 1L, 0L);
-          }
-          if (tmp___11 != 0L) {
-            {
-            __dynamic_dev_dbg(& descriptor___5, (struct device const *)(& (dev->udev)->dev),
-                              "%s : submit failed\n", "adu_read");
-            }
-          } else {
-          }
-          goto exit;
-        } else {
-        }
-      }
-      __ret = 1L;
-      {
-      if (8UL == 1UL) {
-        goto case_1;
-      } else {
-      }
-      if (8UL == 2UL) {
-        goto case_2;
-      } else {
-      }
-      if (8UL == 4UL) {
-        goto case_4;
-      } else {
-      }
-      if (8UL == 8UL) {
-        goto case_8;
-      } else {
-      }
-      goto switch_default;
-      case_1:
-      {
-      tmp___12 = get_current();
-      __asm__ volatile ("xchgb %b0, %1\n": "+q" (__ret), "+m" (tmp___12->state): : "memory",
-                           "cc");
-      }
-      goto ldv_30688;
-      case_2:
-      {
-      tmp___13 = get_current();
-      __asm__ volatile ("xchgw %w0, %1\n": "+r" (__ret), "+m" (tmp___13->state): : "memory",
-                           "cc");
-      }
-      goto ldv_30688;
-      case_4:
-      {
-      tmp___14 = get_current();
-      __asm__ volatile ("xchgl %0, %1\n": "+r" (__ret), "+m" (tmp___14->state): : "memory",
-                           "cc");
-      }
-      goto ldv_30688;
-      case_8:
-      {
-      tmp___15 = get_current();
-      __asm__ volatile ("xchgq %q0, %1\n": "+r" (__ret), "+m" (tmp___15->state): : "memory",
-                           "cc");
-      }
-      goto ldv_30688;
-      switch_default:
-      {
-      __xchg_wrong_size();
-      }
-      switch_break: ;
-      }
-      ldv_30688:
-      {
-      add_wait_queue(& dev->read_wait, & wait);
-      ldv___ldv_spin_lock_68(& dev->buflock);
-      }
-      if (dev->read_urb_finished == 0) {
-        {
-        ldv_spin_unlock_irqrestore_50(& dev->buflock, flags);
-        tmp___16 = schedule_timeout(500L);
-        timeout = (int )tmp___16;
-        }
-      } else {
-        {
-        ldv_spin_unlock_irqrestore_50(& dev->buflock, flags);
-        __ret___0 = 0L;
-        }
-        {
-        if (8UL == 1UL) {
-          goto case_1___0;
-        } else {
-        }
-        if (8UL == 2UL) {
-          goto case_2___0;
-        } else {
-        }
-        if (8UL == 4UL) {
-          goto case_4___0;
-        } else {
-        }
-        if (8UL == 8UL) {
-          goto case_8___0;
-        } else {
-        }
-        goto switch_default___0;
-        case_1___0:
-        {
-        tmp___17 = get_current();
-        __asm__ volatile ("xchgb %b0, %1\n": "+q" (__ret___0), "+m" (tmp___17->state): : "memory",
-                             "cc");
-        }
-        goto ldv_30696;
-        case_2___0:
-        {
-        tmp___18 = get_current();
-        __asm__ volatile ("xchgw %w0, %1\n": "+r" (__ret___0), "+m" (tmp___18->state): : "memory",
-                             "cc");
-        }
-        goto ldv_30696;
-        case_4___0:
-        {
-        tmp___19 = get_current();
-        __asm__ volatile ("xchgl %0, %1\n": "+r" (__ret___0), "+m" (tmp___19->state): : "memory",
-                             "cc");
-        }
-        goto ldv_30696;
-        case_8___0:
-        {
-        tmp___20 = get_current();
-        __asm__ volatile ("xchgq %q0, %1\n": "+r" (__ret___0), "+m" (tmp___20->state): : "memory",
-                             "cc");
-        }
-        goto ldv_30696;
-        switch_default___0:
-        {
-        __xchg_wrong_size();
-        }
-        switch_break___0: ;
-        }
-        ldv_30696: ;
-      }
-      {
-      remove_wait_queue(& dev->read_wait, & wait);
-      }
-      if (timeout <= 0) {
-        {
-        descriptor___6.modname = "adutux";
-        descriptor___6.function = "adu_read";
-        descriptor___6.filename = "drivers/usb/misc/adutux.c";
-        descriptor___6.format = "%s : timeout\n";
-        descriptor___6.lineno = 466U;
-        descriptor___6.flags = 0U;
-        tmp___21 = ldv__builtin_expect((long )descriptor___6.flags & 1L, 0L);
-        }
-        if (tmp___21 != 0L) {
-          {
-          __dynamic_dev_dbg(& descriptor___6, (struct device const *)(& (dev->udev)->dev),
-                            "%s : timeout\n", "adu_read");
-          }
-        } else {
-        }
-        retval = bytes_read != 0UL ? (int )bytes_read : -110;
-        goto exit;
-      } else {
-      }
-      {
-      tmp___23 = get_current();
-      tmp___24 = signal_pending(tmp___23);
-      }
-      if (tmp___24 != 0) {
-        {
-        descriptor___7.modname = "adutux";
-        descriptor___7.function = "adu_read";
-        descriptor___7.filename = "drivers/usb/misc/adutux.c";
-        descriptor___7.format = "%s : signal pending\n";
-        descriptor___7.lineno = 474U;
-        descriptor___7.flags = 0U;
-        tmp___22 = ldv__builtin_expect((long )descriptor___7.flags & 1L, 0L);
-        }
-        if (tmp___22 != 0L) {
-          {
-          __dynamic_dev_dbg(& descriptor___7, (struct device const *)(& (dev->udev)->dev),
-                            "%s : signal pending\n", "adu_read");
-          }
-        } else {
-        }
-        retval = bytes_read != 0UL ? (int )bytes_read : -4;
-        goto exit;
-      } else {
-      }
-    }
-  }
-  ldv_30705: ;
-  if (bytes_to_read != 0UL) {
-    goto ldv_30704;
+  if (dev->present == 0) {
+    return (24U);
   } else {
   }
   {
-  retval = (int )bytes_read;
-  ldv___ldv_spin_lock_71(& dev->buflock);
+  tmp = read_index(dev);
   }
-  if (should_submit != 0 && dev->read_urb_finished != 0) {
-    {
-    dev->read_urb_finished = 0;
-    ldv_spin_unlock_irqrestore_50(& dev->buflock, flags);
-    tmp___25 = usb_endpoint_maxp((struct usb_endpoint_descriptor const *)dev->interrupt_in_endpoint);
-    tmp___26 = __create_pipe(dev->udev, (unsigned int )(dev->interrupt_in_endpoint)->bEndpointAddress);
-    usb_fill_int_urb(dev->interrupt_in_urb, dev->udev, tmp___26 | 1073741952U, (void *)dev->interrupt_in_buffer,
-                     tmp___25, & adu_interrupt_in_callback, (void *)dev, (int )(dev->interrupt_in_endpoint)->bInterval);
-    tmp___27 = usb_submit_urb(dev->interrupt_in_urb, 208U);
-    }
-    if (tmp___27 != 0) {
-      dev->read_urb_finished = 1;
-    } else {
-    }
+  if (tmp != -1) {
+    mask = mask | 65U;
   } else {
-    {
-    ldv_spin_unlock_irqrestore_50(& dev->buflock, flags);
-    }
   }
-  exit:
   {
-  ldv_mutex_unlock_74(& dev->mtx);
+  tmp___0 = atomic_read((atomic_t const *)(& dev->write_busy));
   }
-  return ((ssize_t )retval);
+  if (tmp___0 <= 3) {
+    mask = mask | 260U;
+  } else {
+  }
+  return (mask);
 }
 }
-static ssize_t adu_write(struct file *file , char const *buffer , size_t count ,
-                         loff_t *ppos )
+static struct file_operations const iowarrior_fops =
+     {& __this_module, & noop_llseek, & iowarrior_read, & iowarrior_write, 0, 0, 0,
+    & iowarrior_poll, & iowarrior_ioctl, 0, 0, & iowarrior_open, 0, & iowarrior_release,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+static char *iowarrior_devnode(struct device *dev , umode_t *mode )
 {
-  wait_queue_t waita ;
-  struct task_struct *tmp ;
-  struct adu_device *dev ;
-  size_t bytes_written ;
-  size_t bytes_to_write ;
-  size_t buffer_size ;
-  unsigned long flags = 0 ;
-  int retval ;
-  struct _ddebug descriptor ;
-  long tmp___0 ;
-  long volatile __ret ;
-  struct task_struct *tmp___1 ;
-  struct task_struct *tmp___2 ;
-  struct task_struct *tmp___3 ;
-  struct task_struct *tmp___4 ;
-  struct _ddebug descriptor___0 ;
-  long tmp___5 ;
-  long volatile __ret___0 ;
-  struct task_struct *tmp___6 ;
-  struct task_struct *tmp___7 ;
-  struct task_struct *tmp___8 ;
-  struct task_struct *tmp___9 ;
-  struct task_struct *tmp___10 ;
-  int tmp___11 ;
-  struct _ddebug descriptor___1 ;
-  long tmp___12 ;
-  long tmp___13 ;
-  struct _ddebug descriptor___2 ;
-  long tmp___14 ;
-  long volatile __ret___1 ;
-  struct task_struct *tmp___15 ;
-  struct task_struct *tmp___16 ;
-  struct task_struct *tmp___17 ;
-  struct task_struct *tmp___18 ;
-  struct _ddebug descriptor___3 ;
-  long tmp___19 ;
-  int tmp___20 ;
-  struct _ddebug descriptor___4 ;
-  long tmp___21 ;
-  unsigned long tmp___22 ;
-  unsigned int tmp___23 ;
+  char const *tmp ;
+  char *tmp___0 ;
   {
   {
-  tmp = get_current();
-  waita.flags = 0U;
-  waita.private = (void *)tmp;
-  waita.func = & default_wake_function;
-  waita.task_list.next = (struct list_head *)0;
-  waita.task_list.prev = (struct list_head *)0;
-  bytes_written = 0UL;
-  dev = (struct adu_device *)file->private_data;
-  retval = ldv_mutex_lock_interruptible_75(& dev->mtx);
+  tmp = dev_name((struct device const *)dev);
+  tmp___0 = kasprintf(208U, "usb/%s", tmp);
   }
-  if (retval != 0) {
-    goto exit_nolock;
-  } else {
-  }
-  if ((unsigned long )dev->udev == (unsigned long )((struct usb_device *)0)) {
-    {
-    retval = -19;
-    printk("\vadutux: No device or device unplugged %d\n", retval);
-    }
-    goto exit;
-  } else {
-  }
-  if (count == 0UL) {
-    {
-    descriptor.modname = "adutux";
-    descriptor.function = "adu_write";
-    descriptor.filename = "drivers/usb/misc/adutux.c";
-    descriptor.format = "%s : write request of 0 bytes\n";
-    descriptor.lineno = 537U;
-    descriptor.flags = 0U;
-    tmp___0 = ldv__builtin_expect((long )descriptor.flags & 1L, 0L);
-    }
-    if (tmp___0 != 0L) {
-      {
-      __dynamic_dev_dbg(& descriptor, (struct device const *)(& (dev->udev)->dev),
-                        "%s : write request of 0 bytes\n", "adu_write");
-      }
-    } else {
-    }
-    goto exit;
-  } else {
-  }
-  goto ldv_30755;
-  ldv_30754:
-  {
-  add_wait_queue(& dev->write_wait, & waita);
-  __ret = 1L;
-  }
-  {
-  if (8UL == 1UL) {
-    goto case_1;
-  } else {
-  }
-  if (8UL == 2UL) {
-    goto case_2;
-  } else {
-  }
-  if (8UL == 4UL) {
-    goto case_4;
-  } else {
-  }
-  if (8UL == 8UL) {
-    goto case_8;
-  } else {
-  }
-  goto switch_default;
-  case_1:
-  {
-  tmp___1 = get_current();
-  __asm__ volatile ("xchgb %b0, %1\n": "+q" (__ret), "+m" (tmp___1->state): : "memory",
-                       "cc");
-  }
-  goto ldv_30726;
-  case_2:
-  {
-  tmp___2 = get_current();
-  __asm__ volatile ("xchgw %w0, %1\n": "+r" (__ret), "+m" (tmp___2->state): : "memory",
-                       "cc");
-  }
-  goto ldv_30726;
-  case_4:
-  {
-  tmp___3 = get_current();
-  __asm__ volatile ("xchgl %0, %1\n": "+r" (__ret), "+m" (tmp___3->state): : "memory",
-                       "cc");
-  }
-  goto ldv_30726;
-  case_8:
-  {
-  tmp___4 = get_current();
-  __asm__ volatile ("xchgq %q0, %1\n": "+r" (__ret), "+m" (tmp___4->state): : "memory",
-                       "cc");
-  }
-  goto ldv_30726;
-  switch_default:
-  {
-  __xchg_wrong_size();
-  }
-  switch_break: ;
-  }
-  ldv_30726:
-  {
-  ldv___ldv_spin_lock_76(& dev->buflock);
-  }
-  if (dev->out_urb_finished == 0) {
-    {
-    ldv_spin_unlock_irqrestore_50(& dev->buflock, flags);
-    ldv_mutex_unlock_78(& dev->mtx);
-    tmp___10 = get_current();
-    tmp___11 = signal_pending(tmp___10);
-    }
-    if (tmp___11 != 0) {
-      {
-      descriptor___0.modname = "adutux";
-      descriptor___0.function = "adu_write";
-      descriptor___0.filename = "drivers/usb/misc/adutux.c";
-      descriptor___0.format = "%s : interrupted\n";
-      descriptor___0.lineno = 551U;
-      descriptor___0.flags = 0U;
-      tmp___5 = ldv__builtin_expect((long )descriptor___0.flags & 1L, 0L);
-      }
-      if (tmp___5 != 0L) {
-        {
-        __dynamic_dev_dbg(& descriptor___0, (struct device const *)(& (dev->udev)->dev),
-                          "%s : interrupted\n", "adu_write");
-        }
-      } else {
-      }
-      __ret___0 = 0L;
-      {
-      if (8UL == 1UL) {
-        goto case_1___0;
-      } else {
-      }
-      if (8UL == 2UL) {
-        goto case_2___0;
-      } else {
-      }
-      if (8UL == 4UL) {
-        goto case_4___0;
-      } else {
-      }
-      if (8UL == 8UL) {
-        goto case_8___0;
-      } else {
-      }
-      goto switch_default___0;
-      case_1___0:
-      {
-      tmp___6 = get_current();
-      __asm__ volatile ("xchgb %b0, %1\n": "+q" (__ret___0), "+m" (tmp___6->state): : "memory",
-                           "cc");
-      }
-      goto ldv_30735;
-      case_2___0:
-      {
-      tmp___7 = get_current();
-      __asm__ volatile ("xchgw %w0, %1\n": "+r" (__ret___0), "+m" (tmp___7->state): : "memory",
-                           "cc");
-      }
-      goto ldv_30735;
-      case_4___0:
-      {
-      tmp___8 = get_current();
-      __asm__ volatile ("xchgl %0, %1\n": "+r" (__ret___0), "+m" (tmp___8->state): : "memory",
-                           "cc");
-      }
-      goto ldv_30735;
-      case_8___0:
-      {
-      tmp___9 = get_current();
-      __asm__ volatile ("xchgq %q0, %1\n": "+r" (__ret___0), "+m" (tmp___9->state): : "memory",
-                           "cc");
-      }
-      goto ldv_30735;
-      switch_default___0:
-      {
-      __xchg_wrong_size();
-      }
-      switch_break___0: ;
-      }
-      ldv_30735:
-      retval = -4;
-      goto exit_onqueue;
-    } else {
-    }
-    {
-    tmp___13 = schedule_timeout(500L);
-    }
-    if (tmp___13 == 0L) {
-      {
-      descriptor___1.modname = "adutux";
-      descriptor___1.function = "adu_write";
-      descriptor___1.filename = "drivers/usb/misc/adutux.c";
-      descriptor___1.format = "%s - command timed out.\n";
-      descriptor___1.lineno = 558U;
-      descriptor___1.flags = 0U;
-      tmp___12 = ldv__builtin_expect((long )descriptor___1.flags & 1L, 0L);
-      }
-      if (tmp___12 != 0L) {
-        {
-        __dynamic_dev_dbg(& descriptor___1, (struct device const *)(& (dev->udev)->dev),
-                          "%s - command timed out.\n", "adu_write");
-        }
-      } else {
-      }
-      retval = -110;
-      goto exit_onqueue;
-    } else {
-    }
-    {
-    remove_wait_queue(& dev->write_wait, & waita);
-    retval = ldv_mutex_lock_interruptible_79(& dev->mtx);
-    }
-    if (retval != 0) {
-      retval = bytes_written != 0UL ? (int )bytes_written : retval;
-      goto exit_nolock;
-    } else {
-    }
-    {
-    descriptor___2.modname = "adutux";
-    descriptor___2.function = "adu_write";
-    descriptor___2.filename = "drivers/usb/misc/adutux.c";
-    descriptor___2.format = "%s : in progress, count = %Zd\n";
-    descriptor___2.lineno = 571U;
-    descriptor___2.flags = 0U;
-    tmp___14 = ldv__builtin_expect((long )descriptor___2.flags & 1L, 0L);
-    }
-    if (tmp___14 != 0L) {
-      {
-      __dynamic_dev_dbg(& descriptor___2, (struct device const *)(& (dev->udev)->dev),
-                        "%s : in progress, count = %Zd\n", "adu_write", count);
-      }
-    } else {
-    }
-  } else {
-    {
-    ldv_spin_unlock_irqrestore_50(& dev->buflock, flags);
-    __ret___1 = 0L;
-    }
-    {
-    if (8UL == 1UL) {
-      goto case_1___1;
-    } else {
-    }
-    if (8UL == 2UL) {
-      goto case_2___1;
-    } else {
-    }
-    if (8UL == 4UL) {
-      goto case_4___1;
-    } else {
-    }
-    if (8UL == 8UL) {
-      goto case_8___1;
-    } else {
-    }
-    goto switch_default___1;
-    case_1___1:
-    {
-    tmp___15 = get_current();
-    __asm__ volatile ("xchgb %b0, %1\n": "+q" (__ret___1), "+m" (tmp___15->state): : "memory",
-                         "cc");
-    }
-    goto ldv_30746;
-    case_2___1:
-    {
-    tmp___16 = get_current();
-    __asm__ volatile ("xchgw %w0, %1\n": "+r" (__ret___1), "+m" (tmp___16->state): : "memory",
-                         "cc");
-    }
-    goto ldv_30746;
-    case_4___1:
-    {
-    tmp___17 = get_current();
-    __asm__ volatile ("xchgl %0, %1\n": "+r" (__ret___1), "+m" (tmp___17->state): : "memory",
-                         "cc");
-    }
-    goto ldv_30746;
-    case_8___1:
-    {
-    tmp___18 = get_current();
-    __asm__ volatile ("xchgq %q0, %1\n": "+r" (__ret___1), "+m" (tmp___18->state): : "memory",
-                         "cc");
-    }
-    goto ldv_30746;
-    switch_default___1:
-    {
-    __xchg_wrong_size();
-    }
-    switch_break___1: ;
-    }
-    ldv_30746:
-    {
-    remove_wait_queue(& dev->write_wait, & waita);
-    descriptor___3.modname = "adutux";
-    descriptor___3.function = "adu_write";
-    descriptor___3.filename = "drivers/usb/misc/adutux.c";
-    descriptor___3.format = "%s : sending, count = %Zd\n";
-    descriptor___3.lineno = 577U;
-    descriptor___3.flags = 0U;
-    tmp___19 = ldv__builtin_expect((long )descriptor___3.flags & 1L, 0L);
-    }
-    if (tmp___19 != 0L) {
-      {
-      __dynamic_dev_dbg(& descriptor___3, (struct device const *)(& (dev->udev)->dev),
-                        "%s : sending, count = %Zd\n", "adu_write", count);
-      }
-    } else {
-    }
-    {
-    tmp___20 = usb_endpoint_maxp((struct usb_endpoint_descriptor const *)dev->interrupt_out_endpoint);
-    buffer_size = (size_t )tmp___20;
-    bytes_to_write = buffer_size < count ? buffer_size : count;
-    descriptor___4.modname = "adutux";
-    descriptor___4.function = "adu_write";
-    descriptor___4.filename = "drivers/usb/misc/adutux.c";
-    descriptor___4.format = "%s : buffer_size = %Zd, count = %Zd, bytes_to_write = %Zd\n";
-    descriptor___4.lineno = 584U;
-    descriptor___4.flags = 0U;
-    tmp___21 = ldv__builtin_expect((long )descriptor___4.flags & 1L, 0L);
-    }
-    if (tmp___21 != 0L) {
-      {
-      __dynamic_dev_dbg(& descriptor___4, (struct device const *)(& (dev->udev)->dev),
-                        "%s : buffer_size = %Zd, count = %Zd, bytes_to_write = %Zd\n",
-                        "adu_write", buffer_size, count, bytes_to_write);
-      }
-    } else {
-    }
-    {
-    tmp___22 = copy_from_user((void *)dev->interrupt_out_buffer, (void const *)buffer,
-                              bytes_to_write);
-    }
-    if (tmp___22 != 0UL) {
-      retval = -14;
-      goto exit;
-    } else {
-    }
-    {
-    tmp___23 = __create_pipe(dev->udev, (unsigned int )(dev->interrupt_out_endpoint)->bEndpointAddress);
-    usb_fill_int_urb(dev->interrupt_out_urb, dev->udev, tmp___23 | 1073741824U, (void *)dev->interrupt_out_buffer,
-                     (int )bytes_to_write, & adu_interrupt_out_callback, (void *)dev,
-                     (int )(dev->interrupt_out_endpoint)->bInterval);
-    (dev->interrupt_out_urb)->actual_length = (u32 )bytes_to_write;
-    dev->out_urb_finished = 0;
-    retval = usb_submit_urb(dev->interrupt_out_urb, 208U);
-    }
-    if (retval < 0) {
-      {
-      dev->out_urb_finished = 1;
-      dev_err((struct device const *)(& (dev->udev)->dev), "Couldn\'t submit interrupt_out_urb %d\n",
-              retval);
-      }
-      goto exit;
-    } else {
-    }
-    buffer = buffer + bytes_to_write;
-    count = count - bytes_to_write;
-    bytes_written = bytes_written + bytes_to_write;
-  }
-  ldv_30755: ;
-  if (count != 0UL) {
-    goto ldv_30754;
-  } else {
-  }
-  {
-  ldv_mutex_unlock_81(& dev->mtx);
-  }
-  return ((ssize_t )bytes_written);
-  exit:
-  {
-  ldv_mutex_unlock_82(& dev->mtx);
-  }
-  exit_nolock: ;
-  return ((ssize_t )retval);
-  exit_onqueue:
-  {
-  remove_wait_queue(& dev->write_wait, & waita);
-  }
-  return ((ssize_t )retval);
+  return (tmp___0);
 }
 }
-static struct file_operations const adu_fops =
-     {& __this_module, & noop_llseek, & adu_read, & adu_write, 0, 0, 0, 0, 0, 0, 0,
-    & adu_open, 0, & adu_release, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-static struct usb_class_driver adu_class = {(char *)"usb/adutux%d", 0, & adu_fops, 0};
-static int adu_probe(struct usb_interface *interface , struct usb_device_id const *id )
+static struct usb_class_driver iowarrior_class = {(char *)"iowarrior%d", & iowarrior_devnode, & iowarrior_fops, 0};
+static int iowarrior_probe(struct usb_interface *interface , struct usb_device_id const *id )
 {
   struct usb_device *udev ;
   struct usb_device *tmp ;
-  struct adu_device *dev ;
+  struct iowarrior *dev ;
   struct usb_host_interface *iface_desc ;
   struct usb_endpoint_descriptor *endpoint ;
-  int retval ;
-  int in_end_size ;
-  int out_end_size ;
   int i ;
+  int retval ;
   void *tmp___0 ;
   struct lock_class_key __key ;
   struct lock_class_key __key___0 ;
@@ -5401,142 +4887,70 @@ static int adu_probe(struct usb_interface *interface , struct usb_device_id cons
   int tmp___1 ;
   int tmp___2 ;
   void *tmp___3 ;
-  void *tmp___4 ;
+  unsigned int tmp___4 ;
   void *tmp___5 ;
-  void *tmp___6 ;
-  int tmp___7 ;
-  struct _ddebug descriptor ;
-  long tmp___8 ;
+  size_t tmp___6 ;
+  unsigned int tmp___7 ;
   {
   {
   tmp = interface_to_usbdev(interface);
   udev = tmp;
-  dev = (struct adu_device *)0;
-  retval = -19;
-  }
-  if ((unsigned long )udev == (unsigned long )((struct usb_device *)0)) {
-    {
-    dev_err((struct device const *)(& interface->dev), "udev is NULL.\n");
-    }
-    goto exit;
-  } else {
+  dev = (struct iowarrior *)0;
+  retval = -12;
+  tmp___0 = kzalloc(536UL, 208U);
+  dev = (struct iowarrior *)tmp___0;
   }
   {
-  tmp___0 = kzalloc(544UL, 208U);
-  dev = (struct adu_device *)tmp___0;
-  }
-  if ((unsigned long )dev == (unsigned long )((struct adu_device *)0)) {
-    {
-    dev_err((struct device const *)(& interface->dev), "Out of memory\n");
-    retval = -12;
-    }
-    goto exit;
-  } else {
-  }
-  {
-  __mutex_init(& dev->mtx, "&dev->mtx", & __key);
-  spinlock_check(& dev->buflock);
-  __raw_spin_lock_init(& dev->buflock.__annonCompField19.rlock, "&(&dev->buflock)->rlock",
+  __mutex_init(& dev->mutex, "&dev->mutex", & __key);
+  atomic_set(& dev->intr_idx, 0);
+  atomic_set(& dev->read_idx, 0);
+  spinlock_check(& dev->intr_idx_lock);
+  __raw_spin_lock_init(& dev->intr_idx_lock.__annonCompField19.rlock, "&(&dev->intr_idx_lock)->rlock",
                        & __key___0);
-  dev->udev = udev;
-  //dev_udev = udev;
+  atomic_set(& dev->overflow_flag, 0);
   __init_waitqueue_head(& dev->read_wait, "&dev->read_wait", & __key___1);
+  atomic_set(& dev->write_busy, 0);
   __init_waitqueue_head(& dev->write_wait, "&dev->write_wait", & __key___2);
-  iface_desc = interface->altsetting;
+  dev->udev = udev;
+  dev->interface = interface;
+  iface_desc = interface->cur_altsetting;
+  dev->product_id = udev->descriptor.idProduct;
   i = 0;
   }
-  goto ldv_30777;
-  ldv_30776:
+  goto ldv_30705;
+  ldv_30704:
   {
   endpoint = & (iface_desc->endpoint + (unsigned long )i)->desc;
   tmp___1 = usb_endpoint_is_int_in((struct usb_endpoint_descriptor const *)endpoint);
   }
   if (tmp___1 != 0) {
-    dev->interrupt_in_endpoint = endpoint;
+    dev->int_in_endpoint = endpoint;
   } else {
   }
   {
   tmp___2 = usb_endpoint_is_int_out((struct usb_endpoint_descriptor const *)endpoint);
   }
   if (tmp___2 != 0) {
-    dev->interrupt_out_endpoint = endpoint;
+    dev->int_out_endpoint = endpoint;
   } else {
   }
   i = i + 1;
-  ldv_30777: ;
+  ldv_30705: ;
   if (i < (int )iface_desc->desc.bNumEndpoints) {
-    goto ldv_30776;
-  } else {
-  }
-  if ((unsigned long )dev->interrupt_in_endpoint == (unsigned long )((struct usb_endpoint_descriptor *)0)) {
-    {
-    dev_err((struct device const *)(& interface->dev), "interrupt in endpoint not found\n");
-    }
-    goto error;
-  } else {
-  }
-  if ((unsigned long )dev->interrupt_out_endpoint == (unsigned long )((struct usb_endpoint_descriptor *)0)) {
-    {
-    dev_err((struct device const *)(& interface->dev), "interrupt out endpoint not found\n");
-    }
-    goto error;
+    goto ldv_30704;
   } else {
   }
   {
-  in_end_size = usb_endpoint_maxp((struct usb_endpoint_descriptor const *)dev->interrupt_in_endpoint);
-  out_end_size = usb_endpoint_maxp((struct usb_endpoint_descriptor const *)dev->interrupt_out_endpoint);
-  tmp___3 = kmalloc((size_t )(in_end_size * 4), 208U);
-  dev->read_buffer_primary = (char *)tmp___3;
+  dev->report_size = usb_endpoint_maxp((struct usb_endpoint_descriptor const *)dev->int_in_endpoint);
   }
-  if ((unsigned long )dev->read_buffer_primary == (unsigned long )((char *)0)) {
-    {
-    dev_err((struct device const *)(& interface->dev), "Couldn\'t allocate read_buffer_primary\n");
-    retval = -12;
-    }
-    goto error;
+  if ((unsigned int )((dev->interface)->cur_altsetting)->desc.bInterfaceNumber == 0U && (unsigned int )dev->product_id == 5379U) {
+    dev->report_size = 7;
   } else {
   }
   {
-  memset((void *)dev->read_buffer_primary, 97, (size_t )in_end_size);
-  memset((void *)(dev->read_buffer_primary + (unsigned long )in_end_size), 98, (size_t )in_end_size);
-  memset((void *)(dev->read_buffer_primary + (unsigned long )(in_end_size * 2)), 99,
-         (size_t )in_end_size);
-  memset((void *)(dev->read_buffer_primary + (unsigned long )(in_end_size * 3)), 100,
-         (size_t )in_end_size);
-  tmp___4 = kmalloc((size_t )(in_end_size * 4), 208U);
-  dev->read_buffer_secondary = (char *)tmp___4;
+  dev->int_in_urb = usb_alloc_urb(0, 208U);
   }
-  if ((unsigned long )dev->read_buffer_secondary == (unsigned long )((char *)0)) {
-    {
-    dev_err((struct device const *)(& interface->dev), "Couldn\'t allocate read_buffer_secondary\n");
-    retval = -12;
-    }
-    goto error;
-  } else {
-  }
-  {
-  memset((void *)dev->read_buffer_secondary, 101, (size_t )in_end_size);
-  memset((void *)(dev->read_buffer_secondary + (unsigned long )in_end_size), 102,
-         (size_t )in_end_size);
-  memset((void *)(dev->read_buffer_secondary + (unsigned long )(in_end_size * 2)),
-         103, (size_t )in_end_size);
-  memset((void *)(dev->read_buffer_secondary + (unsigned long )(in_end_size * 3)),
-         104, (size_t )in_end_size);
-  tmp___5 = kmalloc((size_t )in_end_size, 208U);
-  dev->interrupt_in_buffer = (char *)tmp___5;
-  }
-  if ((unsigned long )dev->interrupt_in_buffer == (unsigned long )((char *)0)) {
-    {
-    dev_err((struct device const *)(& interface->dev), "Couldn\'t allocate interrupt_in_buffer\n");
-    }
-    goto error;
-  } else {
-  }
-  {
-  memset((void *)dev->interrupt_in_buffer, 105, (size_t )in_end_size);
-  dev->interrupt_in_urb = usb_alloc_urb(0, 208U);
-  }
-  if ((unsigned long )dev->interrupt_in_urb == (unsigned long )((struct urb *)0)) {
+  if ((unsigned long )dev->int_in_urb == (unsigned long )((struct urb *)0)) {
     {
     dev_err((struct device const *)(& interface->dev), "Couldn\'t allocate interrupt_in_urb\n");
     }
@@ -5544,56 +4958,53 @@ static int adu_probe(struct usb_interface *interface , struct usb_device_id cons
   } else {
   }
   {
-  tmp___6 = kmalloc((size_t )out_end_size, 208U);
-  dev->interrupt_out_buffer = (char *)tmp___6;
+  tmp___3 = kmalloc((size_t )dev->report_size, 208U);
+  dev->int_in_buffer = (unsigned char *)tmp___3;
   }
-  if ((unsigned long )dev->interrupt_out_buffer == (unsigned long )((char *)0)) {
+  if ((unsigned long )dev->int_in_buffer == (unsigned long )((unsigned char *)0U)) {
     {
-    dev_err((struct device const *)(& interface->dev), "Couldn\'t allocate interrupt_out_buffer\n");
+    dev_err((struct device const *)(& interface->dev), "Couldn\'t allocate int_in_buffer\n");
     }
     goto error;
   } else {
   }
   {
-  dev->interrupt_out_urb = usb_alloc_urb(0, 208U);
+  tmp___4 = __create_pipe(dev->udev, (unsigned int )(dev->int_in_endpoint)->bEndpointAddress);
+  usb_fill_int_urb(dev->int_in_urb, dev->udev, tmp___4 | 1073741952U, (void *)dev->int_in_buffer,
+                   dev->report_size, & iowarrior_callback, (void *)dev, (int )(dev->int_in_endpoint)->bInterval);
+  tmp___5 = kmalloc((size_t )((dev->report_size + 1) * 16), 208U);
+  dev->read_queue = (unsigned char *)tmp___5;
   }
-  if ((unsigned long )dev->interrupt_out_urb == (unsigned long )((struct urb *)0)) {
+  if ((unsigned long )dev->read_queue == (unsigned long )((unsigned char *)0U)) {
     {
-    dev_err((struct device const *)(& interface->dev), "Couldn\'t allocate interrupt_out_urb\n");
+    dev_err((struct device const *)(& interface->dev), "Couldn\'t allocate read_queue\n");
     }
     goto error;
   } else {
   }
   {
-  tmp___7 = usb_string(udev, (int )udev->descriptor.iSerialNumber, (char *)(& dev->serial_number),
-                       8UL);
+  memset((void *)(& dev->chip_serial), 0, 9UL);
+  usb_string(udev, (int )udev->descriptor.iSerialNumber, (char *)(& dev->chip_serial),
+             9UL);
+  tmp___6 = strlen((char const *)(& dev->chip_serial));
   }
-  if (tmp___7 == 0) {
+  if (tmp___6 != 8UL) {
     {
-    dev_err((struct device const *)(& interface->dev), "Could not retrieve serial number\n");
+    memset((void *)(& dev->chip_serial), 0, 9UL);
     }
-    goto error;
   } else {
   }
-  {
-  descriptor.modname = "adutux";
-  descriptor.function = "adu_probe";
-  descriptor.filename = "drivers/usb/misc/adutux.c";
-  descriptor.format = "serial_number=%s";
-  descriptor.lineno = 767U;
-  descriptor.flags = 0U;
-  tmp___8 = ldv__builtin_expect((long )descriptor.flags & 1L, 0L);
-  }
-  if (tmp___8 != 0L) {
+  if ((unsigned int )((dev->interface)->cur_altsetting)->desc.bInterfaceNumber == 0U) {
     {
-    __dynamic_dev_dbg(& descriptor, (struct device const *)(& interface->dev), "serial_number=%s",
-                      (char *)(& dev->serial_number));
+    tmp___7 = __create_pipe(udev, 0U);
+    usb_control_msg(udev, tmp___7 | 2147483648U, 10, 33, 0, 0, (void *)0, 0, 5000);
     }
   } else {
   }
   {
+  dev->present = 1;
   usb_set_intfdata(interface, (void *)dev);
-  retval = usb_register_dev(interface, & adu_class);
+  retval = usb_register_dev(interface, & iowarrior_class);
   }
   if (retval != 0) {
     {
@@ -5604,96 +5015,93 @@ static int adu_probe(struct usb_interface *interface , struct usb_device_id cons
   } else {
   }
   {
-  dev->minor = (unsigned int )interface->minor;
-  _dev_info((struct device const *)(& interface->dev), "ADU%d %s now attached to /dev/usb/adutux%d\n",
-            (int )udev->descriptor.idProduct, (char *)(& dev->serial_number), dev->minor);
+  dev->minor = (unsigned char )interface->minor;
+  _dev_info((struct device const *)(& interface->dev), "IOWarrior product=0x%x, serial=%s interface=%d now attached to iowarrior%d\n",
+            (int )dev->product_id, (char *)(& dev->chip_serial), (int )iface_desc->desc.bInterfaceNumber,
+            (int )dev->minor);
   }
-  exit: ;
   return (retval);
   error:
   {
-  adu_delete(dev);
+  iowarrior_delete(dev);
   }
   return (retval);
 }
 }
-static void adu_disconnect(struct usb_interface *interface )
+static void iowarrior_disconnect(struct usb_interface *interface )
 {
-  struct adu_device *dev ;
+  struct iowarrior *dev ;
   int minor ;
   void *tmp ;
-  struct _ddebug descriptor ;
-  long tmp___0 ;
+  int old;
   {
   {
   tmp = usb_get_intfdata(interface);
-  dev = (struct adu_device *)tmp;
-  ldv_mutex_lock_83(& dev->mtx);
-  dev->udev = (struct usb_device *)0;
-  minor = (int )dev->minor;
-  usb_deregister_dev(interface, & adu_class);
-  ldv_mutex_unlock_84(& dev->mtx);
-  ldv_mutex_lock_85(& adutux_mutex);
+  dev = (struct iowarrior *)tmp;
+  ldv_mutex_lock_71(& iowarrior_open_disc_lock);
   usb_set_intfdata(interface, (void *)0);
-  descriptor.modname = "adutux";
-  descriptor.function = "adu_disconnect";
-  descriptor.filename = "drivers/usb/misc/adutux.c";
-  descriptor.format = "%s : open count %d\n";
-  descriptor.lineno = 818U;
-  descriptor.flags = 0U;
-  tmp___0 = ldv__builtin_expect((long )descriptor.flags & 1L, 0L);
+  minor = (int )dev->minor;
+  usb_deregister_dev(interface, & iowarrior_class);
+  ldv_mutex_lock_72(& dev->mutex);
+  dev->present = 0;
+  old = old_var;
+  ldv_assert("", old == old_var);
+  ldv_mutex_unlock_73(& dev->mutex);
+  ldv_mutex_unlock_74(& iowarrior_open_disc_lock);
   }
-  if (tmp___0 != 0L) {
+  if (dev->opened != 0) {
     {
-    __dynamic_dev_dbg(& descriptor, (struct device const *)(& (dev->udev)->dev),
-                      "%s : open count %d\n", "adu_disconnect", dev->open_count);
+    usb_kill_urb(dev->int_in_urb);
+    __wake_up(& dev->read_wait, 1U, 1, (void *)0);
+    __wake_up(& dev->write_wait, 1U, 1, (void *)0);
     }
   } else {
-  }
-  if (dev->open_count == 0) {
     {
-    adu_delete(dev);
+    iowarrior_delete(dev);
     }
-  } else {
   }
   {
-  ldv_mutex_unlock_86(& adutux_mutex);
-  _dev_info((struct device const *)(& interface->dev), "ADU device adutux%d now disconnected\n",
+  _dev_info((struct device const *)(& interface->dev), "I/O-Warror #%d now disconnected\n",
             minor);
   }
   return;
 }
 }
-static struct usb_driver adu_driver =
-     {"adutux", & adu_probe, & adu_disconnect, 0, 0, 0, 0, 0, 0, (struct usb_device_id const *)(& device_table),
+static struct usb_driver iowarrior_driver =
+     {"iowarrior", & iowarrior_probe, & iowarrior_disconnect, 0, 0, 0, 0, 0, 0, (struct usb_device_id const *)(& iowarrior_ids),
     {{{{{{0U}}, 0U, 0U, 0, {0, {0, 0}, 0, 0, 0UL}}}}, {0, 0}}, {{0, 0, 0, 0, (_Bool)0,
                                                                  0, 0, 0, 0, 0, 0,
                                                                  0, 0, 0, 0}, 0},
     0U, 0U, 0U, 0U};
-static int adu_driver_init(void)
+static int iowarrior_driver_init(void)
 {
   int tmp ;
   {
   {
-  tmp = ldv_usb_register_driver_87(& adu_driver, & __this_module, "adutux");
+  tmp = ldv_usb_register_driver_75(& iowarrior_driver, & __this_module, "iowarrior");
   }
   return (tmp);
 }
 }
-static void adu_driver_exit(void)
+static void iowarrior_driver_exit(void)
 {
   {
   {
-  ldv_usb_deregister_88(& adu_driver);
+  ldv_usb_deregister_76(& iowarrior_driver);
   }
   return;
 }
 }
 void *ldv_character_driver_scenario_2(void *arg0 ) ;
-void ldv_character_driver_scenario_callback_2_22(ssize_t (*arg0)(struct file * , char * ,
+void ldv_character_driver_scenario_callback_2_22(gfp_t (*arg0)(struct file * , poll_table * ) ,
+                                                 struct file *arg1 , struct poll_table_struct *arg2 ) ;
+void ldv_character_driver_scenario_callback_2_25(ssize_t (*arg0)(struct file * , char * ,
                                                                  size_t , loff_t * ) ,
                                                  struct file *arg1 , char *arg2 ,
                                                  unsigned long arg3 , long long *arg4 ) ;
+void ldv_character_driver_scenario_callback_2_28(ssize_t (*arg0)(struct file * , gfp_t ,
+                                                                 size_t ) , struct file *arg1 ,
+                                                 unsigned int arg2 , unsigned long arg3 ) ;
 void ldv_character_driver_scenario_callback_2_5(loff_t (*arg0)(struct file * , loff_t ,
                                                                int ) , struct file *arg1 ,
                                                 long long arg2 , int arg3 ) ;
@@ -5714,8 +5122,8 @@ void ldv_dispatch_register_6_3(struct usb_driver *arg0 ) ;
 void ldv_emg_usb_deregister(struct usb_driver *arg0 ) ;
 int ldv_emg_usb_register_driver(struct usb_driver *arg0 , struct module *arg1 , char *arg2 ) ;
 void *ldv_insmod_4(void *arg0 ) ;
-void ldv_insmod_adu_driver_exit_4_2(void (*arg0)(void) ) ;
-int ldv_insmod_adu_driver_init_4_9(int (*arg0)(void) ) ;
+void ldv_insmod_iowarrior_driver_exit_4_2(void (*arg0)(void) ) ;
+int ldv_insmod_iowarrior_driver_init_4_9(int (*arg0)(void) ) ;
 void *ldv_main_7(void *arg0 ) ;
 void *ldv_usb_scenario_3(void *arg0 ) ;
 int ldv_usb_scenario_probe_3_14(int (*arg0)(struct usb_interface * , struct usb_device_id * ) ,
@@ -5728,12 +5136,16 @@ pthread_t ldv_thread_4 ;
 void *ldv_character_driver_scenario_2(void *arg0 )
 {
   loff_t (*ldv_2_callback_llseek)(struct file * , loff_t , int ) ;
+  gfp_t (*ldv_2_callback_poll)(struct file * , poll_table * ) ;
   ssize_t (*ldv_2_callback_read)(struct file * , char * , size_t , loff_t * ) ;
+  ssize_t (*ldv_2_callback_unlocked_ioctl)(struct file * , gfp_t , size_t ) ;
   struct file_operations *ldv_2_container_file_operations ;
-  char *ldv_2_ldv_param_22_1_default ;
-  long long *ldv_2_ldv_param_22_3_default ;
+  struct poll_table_struct *ldv_2_ldv_param_22_1_default ;
+  char *ldv_2_ldv_param_25_1_default ;
+  long long *ldv_2_ldv_param_25_3_default ;
+  unsigned int ldv_2_ldv_param_28_1_default = 0;
   char *ldv_2_ldv_param_4_1_default ;
-  long long *ldv_2_ldv_param_4_3_default = 0 ;
+  long long *ldv_2_ldv_param_4_3_default ;
   long long ldv_2_ldv_param_5_1_default = 0 ;
   int ldv_2_ldv_param_5_2_default = ldv_undef_int() ;
   struct file *ldv_2_resource_file ;
@@ -5752,61 +5164,71 @@ void *ldv_character_driver_scenario_2(void *arg0 )
   void *tmp___8 ;
   void *tmp___9 ;
   void *tmp___10 ;
-  int tmp___11 ;
-  int tmp___12 ;
-  int tmp___13 ;
+  void *tmp___11 ;
+  void *tmp___12 ;
+  void *tmp___13 ;
   int tmp___14 ;
-  void *tmp___15 ;
-  void *tmp___16 ;
-  void *tmp___17 ;
+  int tmp___15 ;
+  int tmp___16 ;
+  int tmp___17 ;
   void *tmp___18 ;
-  int tmp___19 ;
+  void *tmp___19 ;
+  int tmp___20 ;
+  void *tmp___21 ;
+  void *tmp___22 ;
+  void *tmp___23 ;
   {
   {
   tmp = external_allocated_data();
   ldv_2_callback_llseek = (loff_t (*)(struct file * , loff_t , int ))tmp;
   tmp___0 = external_allocated_data();
-  ldv_2_callback_read = (ssize_t (*)(struct file * , char * , size_t , loff_t * ))tmp___0;
+  ldv_2_callback_poll = (gfp_t (*)(struct file * , poll_table * ))tmp___0;
   tmp___1 = external_allocated_data();
-  ldv_2_container_file_operations = (struct file_operations *)tmp___1;
+  ldv_2_callback_read = (ssize_t (*)(struct file * , char * , size_t , loff_t * ))tmp___1;
   tmp___2 = external_allocated_data();
-  ldv_2_ldv_param_22_1_default = (char *)tmp___2;
+  ldv_2_callback_unlocked_ioctl = (ssize_t (*)(struct file * , gfp_t , size_t ))tmp___2;
   tmp___3 = external_allocated_data();
-  ldv_2_ldv_param_22_3_default = (long long *)tmp___3;
+  ldv_2_container_file_operations = (struct file_operations *)tmp___3;
   tmp___4 = external_allocated_data();
-  ldv_2_ldv_param_4_1_default = (char *)tmp___4;
+  ldv_2_ldv_param_22_1_default = (struct poll_table_struct *)tmp___4;
   tmp___5 = external_allocated_data();
-  ldv_2_ldv_param_4_3_default = (long long *)tmp___5;
+  ldv_2_ldv_param_25_1_default = (char *)tmp___5;
   tmp___6 = external_allocated_data();
-  ldv_2_resource_file = (struct file *)tmp___6;
+  ldv_2_ldv_param_25_3_default = (long long *)tmp___6;
   tmp___7 = external_allocated_data();
-  ldv_2_resource_inode = (struct inode *)tmp___7;
+  ldv_2_ldv_param_4_1_default = (char *)tmp___7;
+  tmp___8 = external_allocated_data();
+  ldv_2_ldv_param_4_3_default = (long long *)tmp___8;
+  tmp___9 = external_allocated_data();
+  ldv_2_resource_file = (struct file *)tmp___9;
+  tmp___10 = external_allocated_data();
+  ldv_2_resource_inode = (struct inode *)tmp___10;
   ldv_2_ret_default = ldv_undef_int();
   ldv_free(arg0);
-  tmp___8 = ldv_xmalloc_unknown_size(0UL);
-  ldv_2_container_file_operations = (struct file_operations *)tmp___8;
-  tmp___9 = ldv_xmalloc(520UL);
-  ldv_2_resource_file = (struct file *)tmp___9;
-  tmp___10 = ldv_xmalloc(1032UL);
-  ldv_2_resource_inode = (struct inode *)tmp___10;
-  tmp___11 = ldv_undef_int();
-  ldv_2_size_cnt_write_size = (size_t )tmp___11;
+  tmp___11 = ldv_xmalloc_unknown_size(0UL);
+  ldv_2_container_file_operations = (struct file_operations *)tmp___11;
+  tmp___12 = ldv_xmalloc(520UL);
+  ldv_2_resource_file = (struct file *)tmp___12;
+  tmp___13 = ldv_xmalloc(1032UL);
+  ldv_2_resource_inode = (struct inode *)tmp___13;
+  tmp___14 = ldv_undef_int();
+  ldv_2_size_cnt_write_size = (size_t )tmp___14;
   }
   goto ldv_main_2;
   return ((void *)0);
   ldv_main_2:
   {
-  tmp___13 = ldv_undef_int();
+  tmp___16 = ldv_undef_int();
   }
-  if (tmp___13 != 0) {
+  if (tmp___16 != 0) {
     {
     ldv_2_ret_default = ldv_character_driver_scenario_probe_2_13(ldv_2_container_file_operations->open,
                                                                  ldv_2_resource_inode,
                                                                  ldv_2_resource_file);
     ldv_2_ret_default = ldv_filter_err_code(ldv_2_ret_default);
-    tmp___12 = ldv_undef_int();
+    tmp___15 = ldv_undef_int();
     }
-    if (tmp___12 != 0) {
+    if (tmp___15 != 0) {
       {
       __VERIFIER_assume(ldv_2_ret_default == 0);
       }
@@ -5828,28 +5250,28 @@ void *ldv_character_driver_scenario_2(void *arg0 )
   return ((void *)0);
   ldv_call_2:
   {
-  tmp___14 = ldv_undef_int();
+  tmp___17 = ldv_undef_int();
   }
   {
-  if (tmp___14 == 1) {
+  if (tmp___17 == 1) {
     goto case_1;
   } else {
   }
-  if (tmp___14 == 2) {
+  if (tmp___17 == 2) {
     goto case_2;
   } else {
   }
-  if (tmp___14 == 3) {
+  if (tmp___17 == 3) {
     goto case_3;
   } else {
   }
-  goto switch_default;
+  goto switch_default___0;
   case_1:
   {
-  tmp___15 = ldv_xmalloc_unknown_size(0UL);
-  ldv_2_ldv_param_4_1_default = (char *)tmp___15;
-  tmp___16 = ldv_xmalloc_unknown_size(0UL);
-  ldv_2_ldv_param_4_3_default = (long long *)tmp___16;
+  tmp___18 = ldv_xmalloc_unknown_size(0UL);
+  ldv_2_ldv_param_4_1_default = (char *)tmp___18;
+  tmp___19 = ldv_xmalloc_unknown_size(0UL);
+  ldv_2_ldv_param_4_3_default = (long long *)tmp___19;
   __VERIFIER_assume(ldv_2_size_cnt_write_size <= 2147479552UL);
   ldv_character_driver_scenario_write_2_4((ssize_t (*)(struct file * , char * , size_t ,
                                                        loff_t * ))ldv_2_container_file_operations->write,
@@ -5867,46 +5289,108 @@ void *ldv_character_driver_scenario_2(void *arg0 )
   goto ldv_main_2;
   case_3:
   {
-  tmp___19 = ldv_undef_int();
+  tmp___20 = ldv_undef_int();
   }
-  if (tmp___19 != 0) {
-    {
-    tmp___17 = ldv_xmalloc_unknown_size(0UL);
-    ldv_2_ldv_param_22_1_default = (char *)tmp___17;
-    tmp___18 = ldv_xmalloc_unknown_size(0UL);
-    ldv_2_ldv_param_22_3_default = (long long *)tmp___18;
-    ldv_character_driver_scenario_callback_2_22(ldv_2_callback_read, ldv_2_resource_file,
-                                                ldv_2_ldv_param_22_1_default, ldv_2_size_cnt_write_size,
-                                                ldv_2_ldv_param_22_3_default);
-    ldv_free((void *)ldv_2_ldv_param_22_1_default);
-    ldv_free((void *)ldv_2_ldv_param_22_3_default);
-    }
+  {
+  if (tmp___20 == 1) {
+    goto case_1___0;
   } else {
-    {
-    ldv_character_driver_scenario_callback_2_5(ldv_2_callback_llseek, ldv_2_resource_file,
-                                               ldv_2_ldv_param_5_1_default, ldv_2_ldv_param_5_2_default);
-    }
   }
-  goto ldv_30929;
+  if (tmp___20 == 2) {
+    goto case_2___0;
+  } else {
+  }
+  if (tmp___20 == 3) {
+    goto case_3___0;
+  } else {
+  }
+  if (tmp___20 == 4) {
+    goto case_4;
+  } else {
+  }
+  goto switch_default;
+  case_1___0:
+  {
+  ldv_character_driver_scenario_callback_2_28(ldv_2_callback_unlocked_ioctl, ldv_2_resource_file,
+                                              ldv_2_ldv_param_28_1_default, ldv_2_size_cnt_write_size);
+  }
+  goto ldv_30874;
+  case_2___0:
+  {
+  tmp___21 = ldv_xmalloc_unknown_size(0UL);
+  ldv_2_ldv_param_25_1_default = (char *)tmp___21;
+  tmp___22 = ldv_xmalloc_unknown_size(0UL);
+  ldv_2_ldv_param_25_3_default = (long long *)tmp___22;
+  ldv_character_driver_scenario_callback_2_25(ldv_2_callback_read, ldv_2_resource_file,
+                                              ldv_2_ldv_param_25_1_default, ldv_2_size_cnt_write_size,
+                                              ldv_2_ldv_param_25_3_default);
+  ldv_free((void *)ldv_2_ldv_param_25_1_default);
+  ldv_free((void *)ldv_2_ldv_param_25_3_default);
+  }
+  goto ldv_30874;
+  case_3___0:
+  {
+  tmp___23 = ldv_xmalloc_unknown_size(0UL);
+  ldv_2_ldv_param_22_1_default = (struct poll_table_struct *)tmp___23;
+  ldv_character_driver_scenario_callback_2_22(ldv_2_callback_poll, ldv_2_resource_file,
+                                              ldv_2_ldv_param_22_1_default);
+  ldv_free((void *)ldv_2_ldv_param_22_1_default);
+  }
+  goto ldv_30874;
+  case_4:
+  {
+  ldv_character_driver_scenario_callback_2_5(ldv_2_callback_llseek, ldv_2_resource_file,
+                                             ldv_2_ldv_param_5_1_default, ldv_2_ldv_param_5_2_default);
+  }
+  goto ldv_30874;
   switch_default:
+  {
+  __VERIFIER_assume(0);
+  }
+  switch_break___0: ;
+  }
+  ldv_30874: ;
+  goto ldv_30879;
+  switch_default___0:
   {
   __VERIFIER_assume(0);
   }
   switch_break: ;
   }
-  ldv_30929: ;
+  ldv_30879: ;
   goto ldv_call_2;
   return ((void *)0);
 }
 }
-void ldv_character_driver_scenario_callback_2_22(ssize_t (*arg0)(struct file * , char * ,
+void ldv_character_driver_scenario_callback_2_22(gfp_t (*arg0)(struct file * , poll_table * ) ,
+                                                 struct file *arg1 , struct poll_table_struct *arg2 )
+{
+  {
+  {
+  iowarrior_poll(arg1, arg2);
+  }
+  return;
+}
+}
+void ldv_character_driver_scenario_callback_2_25(ssize_t (*arg0)(struct file * , char * ,
                                                                  size_t , loff_t * ) ,
                                                  struct file *arg1 , char *arg2 ,
                                                  unsigned long arg3 , long long *arg4 )
 {
   {
   {
-  adu_read(arg1, arg2, arg3, arg4);
+  iowarrior_read(arg1, arg2, arg3, arg4);
+  }
+  return;
+}
+}
+void ldv_character_driver_scenario_callback_2_28(ssize_t (*arg0)(struct file * , gfp_t ,
+                                                                 size_t ) , struct file *arg1 ,
+                                                 unsigned int arg2 , unsigned long arg3 )
+{
+  {
+  {
+  iowarrior_ioctl(arg1, arg2, arg3);
   }
   return;
 }
@@ -5928,7 +5412,7 @@ int ldv_character_driver_scenario_probe_2_13(int (*arg0)(struct inode * , struct
   int tmp ;
   {
   {
-  tmp = adu_open(arg1, arg2);
+  tmp = iowarrior_open(arg1, arg2);
   }
   return (tmp);
 }
@@ -5938,7 +5422,7 @@ void ldv_character_driver_scenario_release_2_2(int (*arg0)(struct inode * , stru
 {
   {
   {
-  adu_release(arg1, arg2);
+  iowarrior_release(arg1, arg2);
   }
   return;
 }
@@ -5950,7 +5434,7 @@ void ldv_character_driver_scenario_write_2_4(ssize_t (*arg0)(struct file * , cha
 {
   {
   {
-  adu_write(arg1, (char const *)arg2, arg3, arg4);
+  iowarrior_write(arg1, (char const *)arg2, arg3, arg4);
   }
   return;
 }
@@ -6083,8 +5567,8 @@ int ldv_emg_usb_register_driver(struct usb_driver *arg0 , struct module *arg1 , 
 }
 void *ldv_insmod_4(void *arg0 )
 {
-  void (*ldv_4_adu_driver_exit_default)(void) ;
-  int (*ldv_4_adu_driver_init_default)(void) ;
+  void (*ldv_4_iowarrior_driver_exit_default)(void) ;
+  int (*ldv_4_iowarrior_driver_init_default)(void) ;
   int ldv_4_reg_guard_3_default ;
   int ldv_4_ret_default ;
   void *tmp ;
@@ -6093,11 +5577,11 @@ void *ldv_insmod_4(void *arg0 )
   {
   {
   tmp = external_allocated_data();
-  ldv_4_adu_driver_exit_default = (void (*)(void))tmp;
+  ldv_4_iowarrior_driver_exit_default = (void (*)(void))tmp;
   tmp___0 = external_allocated_data();
-  ldv_4_adu_driver_init_default = (int (*)(void))tmp___0;
+  ldv_4_iowarrior_driver_init_default = (int (*)(void))tmp___0;
   ldv_free(arg0);
-  ldv_4_ret_default = ldv_insmod_adu_driver_init_4_9(ldv_4_adu_driver_init_default);
+  ldv_4_ret_default = ldv_insmod_iowarrior_driver_init_4_9(ldv_4_iowarrior_driver_init_default);
   ldv_4_ret_default = ldv_post_init(ldv_4_ret_default);
   tmp___1 = ldv_undef_int();
   }
@@ -6124,28 +5608,28 @@ void *ldv_insmod_4(void *arg0 )
     } else {
     }
     {
-    ldv_insmod_adu_driver_exit_4_2(ldv_4_adu_driver_exit_default);
+    ldv_insmod_iowarrior_driver_exit_4_2(ldv_4_iowarrior_driver_exit_default);
     }
     return ((void *)0);
   }
   return ((void *)0);
 }
 }
-void ldv_insmod_adu_driver_exit_4_2(void (*arg0)(void) )
+void ldv_insmod_iowarrior_driver_exit_4_2(void (*arg0)(void) )
 {
   {
   {
-  adu_driver_exit();
+  iowarrior_driver_exit();
   }
   return;
 }
 }
-int ldv_insmod_adu_driver_init_4_9(int (*arg0)(void) )
+int ldv_insmod_iowarrior_driver_init_4_9(int (*arg0)(void) )
 {
   int tmp ;
   {
   {
-  tmp = adu_driver_init();
+  tmp = iowarrior_driver_init();
   }
   return (tmp);
 }
@@ -6267,20 +5751,20 @@ void *ldv_usb_scenario_3(void *arg0 )
       }
       goto switch_default;
       case_1: ;
-      goto ldv_31045;
+      goto ldv_31011;
       case_2: ;
-      goto ldv_31045;
+      goto ldv_31011;
       case_3: ;
-      goto ldv_31045;
+      goto ldv_31011;
       case_4: ;
-      goto ldv_31045;
+      goto ldv_31011;
       switch_default:
       {
       __VERIFIER_assume(0);
       }
       switch_break: ;
       }
-      ldv_31045: ;
+      ldv_31011: ;
     }
     {
     ldv_usb_scenario_release_3_5(ldv_3_container_usb_driver->disconnect, ldv_3_resource_usb_interface);
@@ -6302,7 +5786,7 @@ int ldv_usb_scenario_probe_3_14(int (*arg0)(struct usb_interface * , struct usb_
   int tmp ;
   {
   {
-  tmp = adu_probe(arg1, (struct usb_device_id const *)arg2);
+  tmp = iowarrior_probe(arg1, (struct usb_device_id const *)arg2);
   }
   return (tmp);
 }
@@ -6311,7 +5795,7 @@ void ldv_usb_scenario_release_3_5(void (*arg0)(struct usb_interface * ) , struct
 {
   {
   {
-  adu_disconnect(arg1);
+  iowarrior_disconnect(arg1);
   }
   return;
 }
@@ -6355,80 +5839,112 @@ __inline static void *kzalloc(size_t size , gfp_t flags )
   return (tmp);
 }
 }
-static void ldv___ldv_spin_lock_49(spinlock_t *ldv_func_arg1 )
+__inline static void ldv_spin_lock_49(spinlock_t *lock )
 {
   {
   {
-  ldv_spin_lock_buflock_of_adu_device();
-  __ldv_spin_lock(ldv_func_arg1);
-  }
-  return;
-}
-}
-__inline static void ldv_spin_unlock_irqrestore_50(spinlock_t *lock , unsigned long flags )
-{
-  {
-  {
-  ldv_spin_unlock_buflock_of_adu_device();
-  spin_unlock_irqrestore(lock, flags);
-  }
-  return;
-}
-}
-static void ldv___ldv_spin_lock_52(spinlock_t *ldv_func_arg1 )
-{
-  {
-  {
-  ldv_spin_lock_buflock_of_adu_device();
-  __ldv_spin_lock(ldv_func_arg1);
-  }
-  return;
-}
-}
-__inline static void ldv_spin_lock_55(spinlock_t *lock )
-{
-  {
-  {
-  ldv_spin_lock_buflock_of_adu_device();
+  ldv_spin_lock_intr_idx_lock_of_iowarrior();
   spin_lock(lock);
   }
   return;
 }
 }
-__inline static void ldv_spin_unlock_56(spinlock_t *lock )
+__inline static void ldv_spin_unlock_50(spinlock_t *lock )
 {
   {
   {
-  ldv_spin_unlock_buflock_of_adu_device();
+  ldv_spin_unlock_intr_idx_lock_of_iowarrior();
   spin_unlock(lock);
   }
   return;
 }
 }
-static int ldv_mutex_lock_interruptible_59(struct mutex *ldv_func_arg1 )
-{
-  int tmp ;
-  {
-  {
-  tmp = ldv_mutex_lock_interruptible_or_killable_adutux_mutex(ldv_func_arg1);
-  }
-  return (tmp);
-}
-}
-static void ldv_mutex_unlock_60(struct mutex *ldv_func_arg1 )
+static void ldv_mutex_lock_52(struct mutex *ldv_func_arg1 )
 {
   {
   {
-  ldv_mutex_unlock_adutux_mutex(ldv_func_arg1);
+  ldv_mutex_lock_mutex_of_iowarrior(ldv_func_arg1);
   }
   return;
 }
 }
-static void ldv_mutex_lock_61(struct mutex *ldv_func_arg1 )
+static void ldv_mutex_unlock_53(struct mutex *ldv_func_arg1 )
 {
   {
   {
-  ldv_mutex_lock_adutux_mutex(ldv_func_arg1);
+  ldv_mutex_unlock_mutex_of_iowarrior(ldv_func_arg1);
+  }
+  return;
+}
+}
+static void ldv_mutex_lock_54(struct mutex *ldv_func_arg1 )
+{
+  {
+  {
+  ldv_mutex_lock_iowarrior_mutex(ldv_func_arg1);
+  }
+  return;
+}
+}
+static void ldv_mutex_lock_55(struct mutex *ldv_func_arg1 )
+{
+  {
+  {
+  ldv_mutex_lock_mutex_of_iowarrior(ldv_func_arg1);
+  }
+  return;
+}
+}
+static void ldv_mutex_unlock_56(struct mutex *ldv_func_arg1 )
+{
+  {
+  {
+  ldv_mutex_unlock_mutex_of_iowarrior(ldv_func_arg1);
+  }
+  return;
+}
+}
+static void ldv_mutex_unlock_57(struct mutex *ldv_func_arg1 )
+{
+  {
+  {
+  ldv_mutex_unlock_iowarrior_mutex(ldv_func_arg1);
+  }
+  return;
+}
+}
+static void ldv_mutex_lock_58(struct mutex *ldv_func_arg1 )
+{
+  {
+  {
+  ldv_mutex_lock_iowarrior_mutex(ldv_func_arg1);
+  }
+  return;
+}
+}
+static void ldv_mutex_unlock_59(struct mutex *ldv_func_arg1 )
+{
+  {
+  {
+  ldv_mutex_unlock_iowarrior_mutex(ldv_func_arg1);
+  }
+  return;
+}
+}
+static void ldv_mutex_lock_60(struct mutex *ldv_func_arg1 )
+{
+  {
+  {
+  ldv_mutex_lock_iowarrior_open_disc_lock(ldv_func_arg1);
+  }
+  return;
+}
+}
+static void ldv_mutex_unlock_61(struct mutex *ldv_func_arg1 )
+{
+  {
+  {
+  ldv_mutex_unlock_iowarrior_open_disc_lock(ldv_func_arg1);
   }
   return;
 }
@@ -6437,47 +5953,106 @@ static void ldv_mutex_unlock_62(struct mutex *ldv_func_arg1 )
 {
   {
   {
-  ldv_mutex_unlock_adutux_mutex(ldv_func_arg1);
+  ldv_mutex_unlock_iowarrior_mutex(ldv_func_arg1);
   }
   return;
 }
 }
-static int ldv_mutex_lock_interruptible_63(struct mutex *ldv_func_arg1 )
-{
-  int tmp ;
-  {
-  {
-  tmp = ldv_mutex_lock_interruptible_or_killable_mtx_of_adu_device(ldv_func_arg1);
-  }
-  return (tmp);
-}
-}
-static void ldv___ldv_spin_lock_64(spinlock_t *ldv_func_arg1 )
+static void ldv_mutex_lock_63(struct mutex *ldv_func_arg1 )
 {
   {
   {
-  ldv_spin_lock_buflock_of_adu_device();
-  __ldv_spin_lock(ldv_func_arg1);
+  ldv_mutex_lock_mutex_of_iowarrior(ldv_func_arg1);
   }
   return;
 }
 }
-static void ldv___ldv_spin_lock_68(spinlock_t *ldv_func_arg1 )
+static void ldv_mutex_unlock_64(struct mutex *ldv_func_arg1 )
 {
   {
   {
-  ldv_spin_lock_buflock_of_adu_device();
-  __ldv_spin_lock(ldv_func_arg1);
+  ldv_mutex_unlock_iowarrior_open_disc_lock(ldv_func_arg1);
   }
   return;
 }
 }
-static void ldv___ldv_spin_lock_71(spinlock_t *ldv_func_arg1 )
+static void ldv_mutex_unlock_65(struct mutex *ldv_func_arg1 )
 {
   {
   {
-  ldv_spin_lock_buflock_of_adu_device();
-  __ldv_spin_lock(ldv_func_arg1);
+  ldv_mutex_unlock_mutex_of_iowarrior(ldv_func_arg1);
+  }
+  return;
+}
+}
+static void ldv_mutex_unlock_66(struct mutex *ldv_func_arg1 )
+{
+  {
+  {
+  ldv_mutex_unlock_iowarrior_mutex(ldv_func_arg1);
+  }
+  return;
+}
+}
+static void ldv_mutex_lock_67(struct mutex *ldv_func_arg1 )
+{
+  {
+  {
+  ldv_mutex_lock_mutex_of_iowarrior(ldv_func_arg1);
+  }
+  return;
+}
+}
+static void ldv_mutex_unlock_68(struct mutex *ldv_func_arg1 )
+{
+  {
+  {
+  ldv_mutex_unlock_mutex_of_iowarrior(ldv_func_arg1);
+  }
+  return;
+}
+}
+static void ldv_mutex_unlock_69(struct mutex *ldv_func_arg1 )
+{
+  {
+  {
+  ldv_mutex_unlock_mutex_of_iowarrior(ldv_func_arg1);
+  }
+  return;
+}
+}
+static void ldv_mutex_unlock_70(struct mutex *ldv_func_arg1 )
+{
+  {
+  {
+  ldv_mutex_unlock_mutex_of_iowarrior(ldv_func_arg1);
+  }
+  return;
+}
+}
+static void ldv_mutex_lock_71(struct mutex *ldv_func_arg1 )
+{
+  {
+  {
+  ldv_mutex_lock_iowarrior_open_disc_lock(ldv_func_arg1);
+  }
+  return;
+}
+}
+static void ldv_mutex_lock_72(struct mutex *ldv_func_arg1 )
+{
+  {
+  {
+  ldv_mutex_lock_mutex_of_iowarrior(ldv_func_arg1);
+  }
+  return;
+}
+}
+static void ldv_mutex_unlock_73(struct mutex *ldv_func_arg1 )
+{
+  {
+  {
+  ldv_mutex_unlock_mutex_of_iowarrior(ldv_func_arg1);
   }
   return;
 }
@@ -6486,105 +6061,12 @@ static void ldv_mutex_unlock_74(struct mutex *ldv_func_arg1 )
 {
   {
   {
-  ldv_mutex_unlock_mtx_of_adu_device(ldv_func_arg1);
+  ldv_mutex_unlock_iowarrior_open_disc_lock(ldv_func_arg1);
   }
   return;
 }
 }
-static int ldv_mutex_lock_interruptible_75(struct mutex *ldv_func_arg1 )
-{
-  int tmp ;
-  {
-  {
-  tmp = ldv_mutex_lock_interruptible_or_killable_mtx_of_adu_device(ldv_func_arg1);
-  }
-  return (tmp);
-}
-}
-static void ldv___ldv_spin_lock_76(spinlock_t *ldv_func_arg1 )
-{
-  {
-  {
-  ldv_spin_lock_buflock_of_adu_device();
-  __ldv_spin_lock(ldv_func_arg1);
-  }
-  return;
-}
-}
-static void ldv_mutex_unlock_78(struct mutex *ldv_func_arg1 )
-{
-  {
-  {
-  ldv_mutex_unlock_mtx_of_adu_device(ldv_func_arg1);
-  }
-  return;
-}
-}
-static int ldv_mutex_lock_interruptible_79(struct mutex *ldv_func_arg1 )
-{
-  int tmp ;
-  {
-  {
-  tmp = ldv_mutex_lock_interruptible_or_killable_mtx_of_adu_device(ldv_func_arg1);
-  }
-  return (tmp);
-}
-}
-static void ldv_mutex_unlock_81(struct mutex *ldv_func_arg1 )
-{
-  {
-  {
-  ldv_mutex_unlock_mtx_of_adu_device(ldv_func_arg1);
-  }
-  return;
-}
-}
-static void ldv_mutex_unlock_82(struct mutex *ldv_func_arg1 )
-{
-  {
-  {
-  ldv_mutex_unlock_mtx_of_adu_device(ldv_func_arg1);
-  }
-  return;
-}
-}
-static void ldv_mutex_lock_83(struct mutex *ldv_func_arg1 )
-{
-  {
-  {
-  ldv_mutex_lock_mtx_of_adu_device(ldv_func_arg1);
-  }
-  return;
-}
-}
-static void ldv_mutex_unlock_84(struct mutex *ldv_func_arg1 )
-{
-  {
-  {
-  ldv_mutex_unlock_mtx_of_adu_device(ldv_func_arg1);
-  }
-  return;
-}
-}
-static void ldv_mutex_lock_85(struct mutex *ldv_func_arg1 )
-{
-  {
-  {
-  ldv_mutex_lock_adutux_mutex(ldv_func_arg1);
-  }
-  return;
-}
-}
-static void ldv_mutex_unlock_86(struct mutex *ldv_func_arg1 )
-{
-  {
-  {
-  ldv_mutex_unlock_adutux_mutex(ldv_func_arg1);
-  }
-  return;
-}
-}
-static int ldv_usb_register_driver_87(struct usb_driver *ldv_func_arg1 , struct module *ldv_func_arg2 ,
+static int ldv_usb_register_driver_75(struct usb_driver *ldv_func_arg1 , struct module *ldv_func_arg2 ,
                                       char const *ldv_func_arg3 )
 {
   int tmp ;
@@ -6595,7 +6077,7 @@ static int ldv_usb_register_driver_87(struct usb_driver *ldv_func_arg1 , struct 
   return (tmp);
 }
 }
-static void ldv_usb_deregister_88(struct usb_driver *ldv_func_arg1 )
+static void ldv_usb_deregister_76(struct usb_driver *ldv_func_arg1 )
 {
   {
   {
@@ -6738,6 +6220,7 @@ void *ldv_kzalloc(size_t size , gfp_t flags )
   return (res);
 }
 }
+void ldv_assert(char const *desc , int expr ) ;
 long ldv__builtin_expect(long exp , long c )
 {
   {
@@ -7000,80 +6483,6 @@ int ldv_undef_int_nonpositive(void)
 extern void __VERIFIER_error(void) ;
 extern int pthread_mutex_lock(pthread_mutex_t * ) ;
 extern int pthread_mutex_trylock(pthread_mutex_t * ) ;
-pthread_mutex_t pmutex_adutux_mutex ;
-void ldv_mutex_lock_adutux_mutex(struct mutex *lock )
-{
-  {
-  {
-  pthread_mutex_lock(& pmutex_adutux_mutex);
-  }
-  return;
-}
-}
-int ldv_mutex_lock_interruptible_or_killable_adutux_mutex(struct mutex *lock )
-{
-  int tmp ;
-  {
-  {
-  tmp = ldv_undef_int();
-  }
-  if (tmp != 0) {
-    {
-    pthread_mutex_lock(& pmutex_adutux_mutex);
-    }
-    return (0);
-  } else {
-    return (-4);
-  }
-}
-}
-int ldv_mutex_is_locked_adutux_mutex(struct mutex *lock )
-{
-  int tmp ;
-  {
-  {
-  tmp = ldv_undef_int();
-  }
-  if (tmp != 0) {
-    return (1);
-  } else {
-    return (0);
-  }
-}
-}
-int ldv_mutex_trylock_adutux_mutex(struct mutex *lock )
-{
-  int tmp ;
-  {
-  {
-  tmp = pthread_mutex_trylock(& pmutex_adutux_mutex);
-  }
-  return (tmp);
-}
-}
-int ldv_atomic_dec_and_mutex_lock_adutux_mutex(atomic_t *cnt , struct mutex *lock )
-{
-  {
-  cnt->counter = cnt->counter - 1;
-  if (cnt->counter != 0) {
-    return (0);
-  } else {
-    {
-    pthread_mutex_lock(& pmutex_adutux_mutex);
-    }
-    return (1);
-  }
-}
-}
-void ldv_mutex_unlock_adutux_mutex(struct mutex *lock )
-{
-  {
-  {
-  pthread_mutex_unlock(& pmutex_adutux_mutex);
-  }
-  return;
-}
-}
 pthread_mutex_t pmutex_i_mutex_of_inode ;
 void ldv_mutex_lock_i_mutex_of_inode(struct mutex *lock )
 {
@@ -7144,6 +6553,154 @@ void ldv_mutex_unlock_i_mutex_of_inode(struct mutex *lock )
   {
   {
   pthread_mutex_unlock(& pmutex_i_mutex_of_inode);
+  }
+  return;
+}
+}
+pthread_mutex_t pmutex_iowarrior_mutex ;
+void ldv_mutex_lock_iowarrior_mutex(struct mutex *lock )
+{
+  {
+  {
+  pthread_mutex_lock(& pmutex_iowarrior_mutex);
+  }
+  return;
+}
+}
+int ldv_mutex_lock_interruptible_or_killable_iowarrior_mutex(struct mutex *lock )
+{
+  int tmp ;
+  {
+  {
+  tmp = ldv_undef_int();
+  }
+  if (tmp != 0) {
+    {
+    pthread_mutex_lock(& pmutex_iowarrior_mutex);
+    }
+    return (0);
+  } else {
+    return (-4);
+  }
+}
+}
+int ldv_mutex_is_locked_iowarrior_mutex(struct mutex *lock )
+{
+  int tmp ;
+  {
+  {
+  tmp = ldv_undef_int();
+  }
+  if (tmp != 0) {
+    return (1);
+  } else {
+    return (0);
+  }
+}
+}
+int ldv_mutex_trylock_iowarrior_mutex(struct mutex *lock )
+{
+  int tmp ;
+  {
+  {
+  tmp = pthread_mutex_trylock(& pmutex_iowarrior_mutex);
+  }
+  return (tmp);
+}
+}
+int ldv_atomic_dec_and_mutex_lock_iowarrior_mutex(atomic_t *cnt , struct mutex *lock )
+{
+  {
+  cnt->counter = cnt->counter - 1;
+  if (cnt->counter != 0) {
+    return (0);
+  } else {
+    {
+    pthread_mutex_lock(& pmutex_iowarrior_mutex);
+    }
+    return (1);
+  }
+}
+}
+void ldv_mutex_unlock_iowarrior_mutex(struct mutex *lock )
+{
+  {
+  {
+  pthread_mutex_unlock(& pmutex_iowarrior_mutex);
+  }
+  return;
+}
+}
+pthread_mutex_t pmutex_iowarrior_open_disc_lock ;
+void ldv_mutex_lock_iowarrior_open_disc_lock(struct mutex *lock )
+{
+  {
+  {
+  pthread_mutex_lock(& pmutex_iowarrior_open_disc_lock);
+  }
+  return;
+}
+}
+int ldv_mutex_lock_interruptible_or_killable_iowarrior_open_disc_lock(struct mutex *lock )
+{
+  int tmp ;
+  {
+  {
+  tmp = ldv_undef_int();
+  }
+  if (tmp != 0) {
+    {
+    pthread_mutex_lock(& pmutex_iowarrior_open_disc_lock);
+    }
+    return (0);
+  } else {
+    return (-4);
+  }
+}
+}
+int ldv_mutex_is_locked_iowarrior_open_disc_lock(struct mutex *lock )
+{
+  int tmp ;
+  {
+  {
+  tmp = ldv_undef_int();
+  }
+  if (tmp != 0) {
+    return (1);
+  } else {
+    return (0);
+  }
+}
+}
+int ldv_mutex_trylock_iowarrior_open_disc_lock(struct mutex *lock )
+{
+  int tmp ;
+  {
+  {
+  tmp = pthread_mutex_trylock(& pmutex_iowarrior_open_disc_lock);
+  }
+  return (tmp);
+}
+}
+int ldv_atomic_dec_and_mutex_lock_iowarrior_open_disc_lock(atomic_t *cnt , struct mutex *lock )
+{
+  {
+  cnt->counter = cnt->counter - 1;
+  if (cnt->counter != 0) {
+    return (0);
+  } else {
+    {
+    pthread_mutex_lock(& pmutex_iowarrior_open_disc_lock);
+    }
+    return (1);
+  }
+}
+}
+void ldv_mutex_unlock_iowarrior_open_disc_lock(struct mutex *lock )
+{
+  {
+  {
+  pthread_mutex_unlock(& pmutex_iowarrior_open_disc_lock);
   }
   return;
 }
@@ -7222,80 +6779,6 @@ void ldv_mutex_unlock_lock(struct mutex *lock )
   return;
 }
 }
-pthread_mutex_t pmutex_mtx_of_adu_device ;
-void ldv_mutex_lock_mtx_of_adu_device(struct mutex *lock )
-{
-  {
-  {
-  pthread_mutex_lock(& pmutex_mtx_of_adu_device);
-  }
-  return;
-}
-}
-int ldv_mutex_lock_interruptible_or_killable_mtx_of_adu_device(struct mutex *lock )
-{
-  int tmp ;
-  {
-  {
-  tmp = ldv_undef_int();
-  }
-  if (tmp != 0) {
-    {
-    pthread_mutex_lock(& pmutex_mtx_of_adu_device);
-    }
-    return (0);
-  } else {
-    return (-4);
-  }
-}
-}
-int ldv_mutex_is_locked_mtx_of_adu_device(struct mutex *lock )
-{
-  int tmp ;
-  {
-  {
-  tmp = ldv_undef_int();
-  }
-  if (tmp != 0) {
-    return (1);
-  } else {
-    return (0);
-  }
-}
-}
-int ldv_mutex_trylock_mtx_of_adu_device(struct mutex *lock )
-{
-  int tmp ;
-  {
-  {
-  tmp = pthread_mutex_trylock(& pmutex_mtx_of_adu_device);
-  }
-  return (tmp);
-}
-}
-int ldv_atomic_dec_and_mutex_lock_mtx_of_adu_device(atomic_t *cnt , struct mutex *lock )
-{
-  {
-  cnt->counter = cnt->counter - 1;
-  if (cnt->counter != 0) {
-    return (0);
-  } else {
-    {
-    pthread_mutex_lock(& pmutex_mtx_of_adu_device);
-    }
-    return (1);
-  }
-}
-}
-void ldv_mutex_unlock_mtx_of_adu_device(struct mutex *lock )
-{
-  {
-  {
-  pthread_mutex_unlock(& pmutex_mtx_of_adu_device);
-  }
-  return;
-}
-}
 pthread_mutex_t pmutex_mutex_of_device ;
 void ldv_mutex_lock_mutex_of_device(struct mutex *lock )
 {
@@ -7366,6 +6849,80 @@ void ldv_mutex_unlock_mutex_of_device(struct mutex *lock )
   {
   {
   pthread_mutex_unlock(& pmutex_mutex_of_device);
+  }
+  return;
+}
+}
+pthread_mutex_t pmutex_mutex_of_iowarrior ;
+void ldv_mutex_lock_mutex_of_iowarrior(struct mutex *lock )
+{
+  {
+  {
+  pthread_mutex_lock(& pmutex_mutex_of_iowarrior);
+  }
+  return;
+}
+}
+int ldv_mutex_lock_interruptible_or_killable_mutex_of_iowarrior(struct mutex *lock )
+{
+  int tmp ;
+  {
+  {
+  tmp = ldv_undef_int();
+  }
+  if (tmp != 0) {
+    {
+    pthread_mutex_lock(& pmutex_mutex_of_iowarrior);
+    }
+    return (0);
+  } else {
+    return (-4);
+  }
+}
+}
+int ldv_mutex_is_locked_mutex_of_iowarrior(struct mutex *lock )
+{
+  int tmp ;
+  {
+  {
+  tmp = ldv_undef_int();
+  }
+  if (tmp != 0) {
+    return (1);
+  } else {
+    return (0);
+  }
+}
+}
+int ldv_mutex_trylock_mutex_of_iowarrior(struct mutex *lock )
+{
+  int tmp ;
+  {
+  {
+  tmp = pthread_mutex_trylock(& pmutex_mutex_of_iowarrior);
+  }
+  return (tmp);
+}
+}
+int ldv_atomic_dec_and_mutex_lock_mutex_of_iowarrior(atomic_t *cnt , struct mutex *lock )
+{
+  {
+  cnt->counter = cnt->counter - 1;
+  if (cnt->counter != 0) {
+    return (0);
+  } else {
+    {
+    pthread_mutex_lock(& pmutex_mutex_of_iowarrior);
+    }
+    return (1);
+  }
+}
+}
+void ldv_mutex_unlock_mutex_of_iowarrior(struct mutex *lock )
+{
+  {
+  {
+  pthread_mutex_unlock(& pmutex_mutex_of_iowarrior);
   }
   return;
 }
@@ -7485,96 +7042,6 @@ int ldv_atomic_dec_and_lock_alloc_lock_of_task_struct(void)
   return (0);
 }
 }
-pthread_mutex_t smutex_buflock_of_adu_device ;
-void ldv_spin_lock_buflock_of_adu_device(void)
-{
-  {
-  {
-  pthread_mutex_lock(& smutex_buflock_of_adu_device);
-  }
-  return;
-}
-}
-void ldv_spin_unlock_buflock_of_adu_device(void)
-{
-  {
-  {
-  pthread_mutex_unlock(& smutex_buflock_of_adu_device);
-  }
-  return;
-}
-}
-int ldv_spin_trylock_buflock_of_adu_device(void)
-{
-  int tmp ;
-  {
-  {
-  tmp = pthread_mutex_trylock(& smutex_buflock_of_adu_device);
-  }
-  return (tmp);
-}
-}
-void ldv_spin_unlock_wait_buflock_of_adu_device(void)
-{
-  {
-  return;
-}
-}
-int ldv_spin_is_locked_buflock_of_adu_device(void)
-{
-  int tmp ;
-  {
-  {
-  tmp = ldv_undef_int();
-  }
-  if (tmp != 0) {
-    return (1);
-  } else {
-    return (0);
-  }
-}
-}
-int ldv_spin_can_lock_buflock_of_adu_device(void)
-{
-  int tmp ;
-  {
-  {
-  tmp = ldv_spin_is_locked_buflock_of_adu_device();
-  }
-  return (tmp == 0);
-}
-}
-int ldv_spin_is_contended_buflock_of_adu_device(void)
-{
-  int is_spin_contended ;
-  {
-  {
-  is_spin_contended = ldv_undef_int();
-  }
-  if (is_spin_contended != 0) {
-    return (0);
-  } else {
-    return (1);
-  }
-}
-}
-int ldv_atomic_dec_and_lock_buflock_of_adu_device(void)
-{
-  int atomic_value_after_dec ;
-  {
-  {
-  atomic_value_after_dec = ldv_undef_int();
-  }
-  if (atomic_value_after_dec == 0) {
-    {
-    ldv_spin_lock_buflock_of_adu_device();
-    }
-    return (1);
-  } else {
-  }
-  return (0);
-}
-}
 pthread_mutex_t smutex_i_lock_of_inode ;
 void ldv_spin_lock_i_lock_of_inode(void)
 {
@@ -7658,6 +7125,96 @@ int ldv_atomic_dec_and_lock_i_lock_of_inode(void)
   if (atomic_value_after_dec == 0) {
     {
     ldv_spin_lock_i_lock_of_inode();
+    }
+    return (1);
+  } else {
+  }
+  return (0);
+}
+}
+pthread_mutex_t smutex_intr_idx_lock_of_iowarrior ;
+void ldv_spin_lock_intr_idx_lock_of_iowarrior(void)
+{
+  {
+  {
+  pthread_mutex_lock(& smutex_intr_idx_lock_of_iowarrior);
+  }
+  return;
+}
+}
+void ldv_spin_unlock_intr_idx_lock_of_iowarrior(void)
+{
+  {
+  {
+  pthread_mutex_unlock(& smutex_intr_idx_lock_of_iowarrior);
+  }
+  return;
+}
+}
+int ldv_spin_trylock_intr_idx_lock_of_iowarrior(void)
+{
+  int tmp ;
+  {
+  {
+  tmp = pthread_mutex_trylock(& smutex_intr_idx_lock_of_iowarrior);
+  }
+  return (tmp);
+}
+}
+void ldv_spin_unlock_wait_intr_idx_lock_of_iowarrior(void)
+{
+  {
+  return;
+}
+}
+int ldv_spin_is_locked_intr_idx_lock_of_iowarrior(void)
+{
+  int tmp ;
+  {
+  {
+  tmp = ldv_undef_int();
+  }
+  if (tmp != 0) {
+    return (1);
+  } else {
+    return (0);
+  }
+}
+}
+int ldv_spin_can_lock_intr_idx_lock_of_iowarrior(void)
+{
+  int tmp ;
+  {
+  {
+  tmp = ldv_spin_is_locked_intr_idx_lock_of_iowarrior();
+  }
+  return (tmp == 0);
+}
+}
+int ldv_spin_is_contended_intr_idx_lock_of_iowarrior(void)
+{
+  int is_spin_contended ;
+  {
+  {
+  is_spin_contended = ldv_undef_int();
+  }
+  if (is_spin_contended != 0) {
+    return (0);
+  } else {
+    return (1);
+  }
+}
+}
+int ldv_atomic_dec_and_lock_intr_idx_lock_of_iowarrior(void)
+{
+  int atomic_value_after_dec ;
+  {
+  {
+  atomic_value_after_dec = ldv_undef_int();
+  }
+  if (atomic_value_after_dec == 0) {
+    {
+    ldv_spin_lock_intr_idx_lock_of_iowarrior();
     }
     return (1);
   } else {
@@ -8134,15 +7691,32 @@ int __VEFIRIER_nondet_int(void);
 int _dev_info(const struct device *arg0, const char *arg1, ...){
   return __VEFIRIER_nondet_int();
 }
-void remove_wait_queue(wait_queue_head_t *arg0, wait_queue_t *arg1){
-  return;
+unsigned long __VEFIRIER_nondet_ulong(void);
+size_t strlen(const char *arg0){
+  return __VEFIRIER_nondet_ulong();
+}
+int __VEFIRIER_nondet_int(void);
+int memcmp(const void *arg0, const void *arg1, size_t arg2){
+  return __VEFIRIER_nondet_int();
 }
 unsigned long __VEFIRIER_nondet_ulong(void);
 unsigned long int _copy_to_user(void *arg0, const void *arg1, unsigned int arg2){
   return __VEFIRIER_nondet_ulong();
 }
-void _raw_spin_unlock_irqrestore(raw_spinlock_t *arg0, unsigned long arg1){
+void *external_alloc(void);
+char *kasprintf(gfp_t arg0, const char *arg1, ...){
+  return (char *)external_alloc();
+}
+void usb_free_coherent(struct usb_device *arg0, size_t arg1, void *arg2, dma_addr_t arg3){
   return;
+}
+void *external_alloc(void);
+void *usb_alloc_coherent(struct usb_device *arg0, size_t arg1, gfp_t arg2, dma_addr_t *arg3){
+  return (void *)external_alloc();
+}
+int __VEFIRIER_nondet_int(void);
+int usb_control_msg(struct usb_device *arg0, unsigned int arg1, __u8 arg2, __u8 arg3, __u16 arg4, __u16 arg5, void *arg6, __u16 arg7, int arg8){
+  return __VEFIRIER_nondet_int();
 }
 void ldv_after_alloc(void *arg0){
   return;
@@ -8166,8 +7740,9 @@ void usb_kill_urb(struct urb *arg0){
 void ldv_check_alloc_flags(gfp_t arg0){
   return;
 }
-void __ldv_spin_lock(spinlock_t *arg0){
-  return;
+long __VEFIRIER_nondet_long(void);
+long int prepare_to_wait_event(wait_queue_head_t *arg0, wait_queue_t *arg1, int arg2){
+  return __VEFIRIER_nondet_long();
 }
 void might_fault(){
   return;
@@ -8181,10 +7756,6 @@ void ldv_pre_probe(){
 }
 int __VEFIRIER_nondet_int(void);
 int dev_err(const struct device *arg0, const char *arg1, ...){
-  return __VEFIRIER_nondet_int();
-}
-int __VEFIRIER_nondet_int(void);
-int __dynamic_dev_dbg(struct _ddebug *arg0, const struct device *arg1, const char *arg2, ...){
   return __VEFIRIER_nondet_int();
 }
 void __mutex_init(struct mutex *arg0, const char *arg1, struct lock_class_key *arg2){
@@ -8208,15 +7779,8 @@ void *external_alloc(void);
 void *external_allocated_data(){
   return (void *)external_alloc();
 }
-void add_wait_queue(wait_queue_head_t *arg0, wait_queue_t *arg1){
-  return;
-}
 void __init_waitqueue_head(wait_queue_head_t *arg0, const char *arg1, struct lock_class_key *arg2){
   return;
-}
-long __VEFIRIER_nondet_long(void);
-long int schedule_timeout(long arg0){
-  return __VEFIRIER_nondet_long();
 }
 void __copy_from_user_overflow(){
   return;
@@ -8227,6 +7791,9 @@ void _raw_spin_lock(raw_spinlock_t *arg0){
 int __VEFIRIER_nondet_int(void);
 int usb_string(struct usb_device *arg0, int arg1, char *arg2, size_t arg3){
   return __VEFIRIER_nondet_int();
+}
+void schedule(){
+  return;
 }
 void *external_alloc(void);
 struct urb *usb_alloc_urb(int arg0, gfp_t arg1){
@@ -8243,4 +7810,7 @@ struct usb_interface *usb_find_interface(struct usb_driver *arg0, int arg1){
 unsigned long __VEFIRIER_nondet_ulong(void);
 unsigned long int _copy_from_user(void *arg0, const void *arg1, unsigned int arg2){
   return __VEFIRIER_nondet_ulong();
+}
+void finish_wait(wait_queue_head_t *arg0, wait_queue_t *arg1){
+  return;
 }
