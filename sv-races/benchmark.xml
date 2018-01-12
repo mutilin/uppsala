@@ -7,13 +7,6 @@
 
   <option name="-setprop">statistics.memory=true</option>
   <option name="-heap">7000M</option>
-  <option name="-threadModular-predicate"/>
-  <option name="-setprop">cpa.predicate.inferenceObjects.useUndefFunctions=true</option>
-  <option name="-setprop">cpa.predicate.inferenceObjects.abstractionLattice=false</option> 
-  <option name="-setprop">cpa.predicate.inferenceObjects.emptyAbstraction=false</option>
-  <option name="-setprop">cpa.predicate.mergeTypeForInferenceObjects=JOIN</option>
-  <option name="-setprop">cpa.predicate.applyRelevantEffects=true</option>
-  <option name="-setprop">cpa.lock.emptyEffects=false</option>
 
   <propertyfile>./ReachSafety.prp</propertyfile>
   
