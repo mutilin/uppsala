@@ -15,12 +15,48 @@
   <option name="-setprop">cpa.predicate.applyRelevantEffects=true</option>
   <option name="-setprop">cpa.lock.emptyEffects=false</option>
 
-  <propertyfile>/home/alpha/git/sv-benchmarks/c/ReachSafety.prp</propertyfile>
-
-  <rundefinition>
-    <tasks name="DeviceDrivers64">
+  <propertyfile>./ReachSafety.prp</propertyfile>
+  
+  <tasks name="DeviceDrivers64">
     <includesfile>Drivers.set</includesfile>
-    </tasks>
+  </tasks>
+
+  <rundefinition name="basic">
+    <option name="-threadModular-predicate"/>
+  </rundefinition>
+
+  <rundefinition name="simple">
+    <option name="-threadModular-predicate-simple"/>
+  </rundefinition>
+
+  <rundefinition name="withoutUndefsFunctions">
+    <option name="-threadModular-predicate"/>
+    <option name="-setprop">cpa.predicate.inferenceObjects.useUndefFunctions=false</option>
+  </rundefinition>
+
+  <rundefinition name="abstractionLattice">
+    <option name="-threadModular-predicate"/>
+    <option name="-setprop">cpa.predicate.inferenceObjects.abstractionLattice=true</option>
+  </rundefinition>
+
+  <rundefinition name="emptyAbstraction">
+    <option name="-threadModular-predicate"/>
+    <option name="-setprop">cpa.predicate.inferenceObjects.emptyAbstraction=false</option>
+  </rundefinition>
+
+  <rundefinition name="mergeSep">
+    <option name="-threadModular-predicate"/>
+    <option name="-setprop">cpa.predicate.mergeTypeForInferenceObjects=SEP</option>
+  </rundefinition>
+
+  <rundefinition name="withoutRelevance">
+    <option name="-threadModular-predicate"/>
+    <option name="-setprop">cpa.predicate.applyRelevantEffects=false</option>
+  </rundefinition>
+
+  <rundefinition name="withoutLockGuards">
+    <option name="-threadModular-predicate"/>
+    <option name="-setprop">cpa.lock.emptyEffects=true</option>
   </rundefinition>
 
   <columns>
