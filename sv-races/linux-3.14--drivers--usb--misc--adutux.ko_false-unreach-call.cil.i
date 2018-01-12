@@ -5629,7 +5629,7 @@ static void adu_disconnect(struct usb_interface *interface )
   tmp = usb_get_intfdata(interface);
   dev = (struct adu_device *)tmp;
   ldv_mutex_lock_83(& dev->mtx);
-  dev->udev = (struct usb_device *)0;
+  dev->udev = __VERIFIER_nondet_pointer();
   minor = (int )dev->minor;
   usb_deregister_dev(interface, & adu_class);
   ldv_mutex_unlock_84(& dev->mtx);

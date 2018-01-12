@@ -5439,11 +5439,9 @@ static int adu_probe(struct usb_interface *interface , struct usb_device_id cons
   __mutex_init(& dev->mtx, "&dev->mtx", & __key);
   spinlock_check(& dev->buflock);
   __raw_spin_lock_init(& dev->buflock.__annonCompField19.rlock, "&(&dev->buflock)->rlock",
-                       & __key___0);
-  ldv_mutex_lock_83(& dev->mtx);
+                       & __key___0);  
   dev->udev = udev;
   //dev_udev = udev;
-  ldv_mutex_unlock_84(& dev->mtx);
   __init_waitqueue_head(& dev->read_wait, "&dev->read_wait", & __key___1);
   __init_waitqueue_head(& dev->write_wait, "&dev->write_wait", & __key___2);
   iface_desc = interface->altsetting;

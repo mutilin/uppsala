@@ -4493,14 +4493,12 @@ static void ucb1400_ts_stop(struct ucb1400_ts *ucb )
 {
   {
   {
-  ldv_mutex_lock_60(0);
   ucb->stopped = 1;
   __asm__ volatile ("mfence": : : "memory");
   __wake_up(& ucb->ts_wait, 3U, 1, (void *)0);
   disable_irq((unsigned int )ucb->irq);
   ucb1400_ts_irq_disable(ucb);
   ucb1400_reg_write(ucb->ac97, 100, 0);
-  ldv_mutex_unlock_61(0);
   }
   return;
 }

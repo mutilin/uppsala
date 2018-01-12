@@ -5047,7 +5047,7 @@ static void iowarrior_disconnect(struct usb_interface *interface )
   ldv_mutex_unlock_74(& iowarrior_open_disc_lock);
   }
   old = dev->opened;
-  ldv_assert(old == dev->opened);
+  ldv_assert("", old == dev->opened);
   if (dev->opened != 0) {
     {
     usb_kill_urb(dev->int_in_urb);
