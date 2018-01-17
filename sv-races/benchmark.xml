@@ -7,6 +7,8 @@
 
   <option name="-setprop">statistics.memory=true</option>
   <option name="-heap">7000M</option>
+  <option name="-setprop">cpa.thread.skipTheSameThread=true</option>
+  <option name="-setprop">cpa.predicate.abs.useCache=false</option>
 
   <propertyfile>./ReachSafety.prp</propertyfile>
   
@@ -14,43 +16,54 @@
     <includesfile>Drivers.set</includesfile>
   </tasks>
 
-  <rundefinition name="basic">
+  <!--<rundefinition name="extra">
     <option name="-threadModular-predicate"/>
+    <option name="-setprop">cpa.predicate.abs.useCache=true</option>
   </rundefinition>
 
-  <rundefinition name="simple">
+  <rundefinition name="extra-nocache">
+    <option name="-threadModular-predicate"/>
+    <option name="-setprop">cpa.predicate.abs.useCache=false</option>
+  </rundefinition>-->
+
+  <rundefinition name="MergeJoin">
     <option name="-threadModular-predicate-simple"/>
-  </rundefinition>
-
-  <rundefinition name="withoutUndefsFunctions">
-    <option name="-threadModular-predicate"/>
     <option name="-setprop">cpa.predicate.inferenceObjects.useUndefFunctions=false</option>
   </rundefinition>
 
-  <rundefinition name="abstractionLattice">
-    <option name="-threadModular-predicate"/>
+<!--  <rundefinition name="withUndefsFunctions">
+    <option name="-threadModular-predicate-simple"/>
+    <option name="-setprop">cpa.predicate.inferenceObjects.useUndefFunctions=true</option>
+  </rundefinition>-->
+
+  <rundefinition name="MergeEq">
+    <option name="-threadModular-predicate-simple"/>
     <option name="-setprop">cpa.predicate.inferenceObjects.abstractionLattice=true</option>
+    <option name="-setprop">cpa.predicate.inferenceObjects.useUndefFunctions=false</option>
   </rundefinition>
 
-  <rundefinition name="emptyAbstraction">
-    <option name="-threadModular-predicate"/>
+<!--  <rundefinition name="emptyAbstraction">
+    <option name="-threadModular-predicate-simple"/>
     <option name="-setprop">cpa.predicate.inferenceObjects.emptyAbstraction=false</option>
-  </rundefinition>
+    <option name="-setprop">cpa.predicate.inferenceObjects.useUndefFunctions=false</option>
+  </rundefinition>-->
 
-  <rundefinition name="mergeSep">
-    <option name="-threadModular-predicate"/>
+  <rundefinition name="MergeSep">
+    <option name="-threadModular-predicate-simple"/>
     <option name="-setprop">cpa.predicate.mergeTypeForInferenceObjects=SEP</option>
+    <option name="-setprop">cpa.predicate.inferenceObjects.useUndefFunctions=false</option>
   </rundefinition>
 
-  <rundefinition name="withoutRelevance">
-    <option name="-threadModular-predicate"/>
+<!--  <rundefinition name="withoutRelevance">
+    <option name="-threadModular-predicate-simple"/>
     <option name="-setprop">cpa.predicate.applyRelevantEffects=false</option>
-  </rundefinition>
+    <option name="-setprop">cpa.predicate.inferenceObjects.useUndefFunctions=false</option>
+  </rundefinition>-->
 
-  <rundefinition name="withoutLockGuards">
+  <rundefinition name="EmptyLockset">
     <option name="-threadModular-predicate"/>
     <option name="-setprop">cpa.lock.emptyEffects=true</option>
-  </rundefinition>
+  </rundefinition>-->
 
   <columns>
     <column title="total states">Size of reached set</column>
