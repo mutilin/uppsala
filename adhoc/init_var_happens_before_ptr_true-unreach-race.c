@@ -9,15 +9,18 @@ int *get_ptr(void) {
         pthread_mutex_lock(&mutex);
         if(ptr==0) {
 		if(!init_var) {
-		  init_var = 1;
+			init_var = 1;
+		        pthread_mutex_unlock(&mutex);
+		        int *tmp;
+		        tmp = (int *)malloc(sizeof(int));
+	                __VERIFIER_assume(tmp!=0);
+			*tmp = 1;
+		        pthread_mutex_lock(&mutex);
+			ptr = tmp;
+		        pthread_mutex_unlock(&mutex);
+		} else {
+			pthread_mutex_unlock(&mutex);
 		}
-	        pthread_mutex_unlock(&mutex);
-	        int *tmp;
-	        tmp = (int *)malloc(sizeof(int));
-                __VERIFIER_assume(ptr!=0);
-	        pthread_mutex_lock(&mutex);
-		ptr = tmp;
-	        pthread_mutex_unlock(&mutex);
         } else {
 	        pthread_mutex_unlock(&mutex);
         }

@@ -8,11 +8,13 @@ void *t1(void* arg) {
         pthread_mutex_lock(&mutex);
         if(!init_var) {
           init_var = 1;
+          pthread_mutex_unlock(&mutex);
+          //init_var protects global variable from simultaneous access
+          global = 1;
+          ldv_assert(global == 1);
+        } else {
+          pthread_mutex_unlock(&mutex);
         }
-        pthread_mutex_unlock(&mutex);
-        //init_var protects global variable from simultaneous access
-        global = 1;
-        ldv_assert(global == 1);
 	return 0;
 }
 
@@ -20,9 +22,11 @@ void *t2(void* arg) {
         pthread_mutex_lock(&mutex);
         if(!init_var) {
           init_var = 1;
+          pthread_mutex_unlock(&mutex);
+          global = 2;
+        } else {
+          pthread_mutex_unlock(&mutex);
         }
-        pthread_mutex_unlock(&mutex);
-        global = 2;
 	return 0;
 }
 
