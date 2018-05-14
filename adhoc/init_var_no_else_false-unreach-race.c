@@ -8,9 +8,10 @@ void *t1(void* arg) {
         pthread_mutex_lock(&mutex);
         if(!init_var) {
           init_var = 1;
-        }
+        }//bug: missing else branch
         pthread_mutex_unlock(&mutex);
-        //init_var protects global variable from simultaneous access
+        //init_var does not protect global variable from simultaneous access
+        //because we may go by else branch where init_var was already 1
         global = 1;
         ldv_assert(global == 1);
 	return 0;
