@@ -1,7 +1,4 @@
 #include <pthread.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
 
 extern void __VERIFIER_error() __attribute__ ((__noreturn__));
 int __VERIFIER_nondet_int(void);
@@ -23,12 +20,10 @@ void *thread1(void *arg) {
 }
 
 void *thread2(void *arg) {
-   pthread_mutex_lock(&mutex);
    if (init == 0) {
         pdev = 1;
         init = 1;
    }
-   pthread_mutex_unlock(&mutex);
 }
 
 int main(void) {
