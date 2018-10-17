@@ -6171,6 +6171,7 @@ void *ldv_insmod_5(void *arg0 )
   ldv_5_ret_default = ldv_insmod_cafe_init_5_9(ldv_5_cafe_init_default);
   ldv_5_ret_default = ldv_post_init(ldv_5_ret_default);
   tmp___1 = ldv_undef_int();
+  alloc_bufs_at_read = __VERIFIER_nondet_int();
   }
   if (tmp___1 != 0) {
     {
@@ -9377,7 +9378,7 @@ static int mcam_v4l_release(struct file *filp )
   }
   {
   ldv_mutex_lock_114(& cam->s_mutex);
-  cam->users = cam->users - 1;
+  cam->users = __VERIFIER_nondet_int();
   }
   if (cam->users == 0) {
     {
@@ -9752,12 +9753,14 @@ void mccic_shutdown(struct mcam_camera *cam )
   {
   vb2_queue_release(& cam->vb_queue);
   }
+  ldv_mutex_lock_114(& cam->s_mutex);
   if ((unsigned int )cam->buffer_mode == 0U) {
     {
     mcam_free_dma_bufs(cam);
     }
   } else {
   }
+  ldv_mutex_unlock_115(& cam->s_mutex);
   {
   video_unregister_device(& cam->vdev);
   v4l2_ctrl_handler_free(& cam->ctrl_handler);
@@ -11094,7 +11097,7 @@ void ldv_mutex_unlock_i_mutex_of_inode(struct mutex *lock )
 {
   {
   {
-  pthread_mutex_lock(& pmutex_i_mutex_of_inode);
+  pthread_mutex_unlock(& pmutex_i_mutex_of_inode);
   }
   return;
 }
@@ -11168,7 +11171,7 @@ void ldv_mutex_unlock_lock(struct mutex *lock )
 {
   {
   {
-  pthread_mutex_lock(& pmutex_lock);
+  pthread_mutex_unlock(& pmutex_lock);
   }
   return;
 }
@@ -11242,7 +11245,7 @@ void ldv_mutex_unlock_lock_of_v4l2_ctrl_handler(struct mutex *lock )
 {
   {
   {
-  pthread_mutex_lock(& pmutex_lock_of_v4l2_ctrl_handler);
+  pthread_mutex_unlock(& pmutex_lock_of_v4l2_ctrl_handler);
   }
   return;
 }
@@ -11316,7 +11319,7 @@ void ldv_mutex_unlock_mutex_of_device(struct mutex *lock )
 {
   {
   {
-  pthread_mutex_lock(& pmutex_mutex_of_device);
+  pthread_mutex_unlock(& pmutex_mutex_of_device);
   }
   return;
 }
@@ -11390,7 +11393,7 @@ void ldv_mutex_unlock_s_mutex_of_mcam_camera(struct mutex *lock )
 {
   {
   {
-  pthread_mutex_lock(& pmutex_s_mutex_of_mcam_camera);
+  pthread_mutex_unlock(& pmutex_s_mutex_of_mcam_camera);
   }
   return;
 }

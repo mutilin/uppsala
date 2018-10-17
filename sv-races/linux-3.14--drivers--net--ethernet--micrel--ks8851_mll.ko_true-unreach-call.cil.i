@@ -6194,8 +6194,10 @@ static int ks_net_open(struct net_device *netdev )
   }
   {
   ks_wrreg16(ks, 146, 65535);
+  ldv_mutex_lock_68(& ks->lock);
   ks_enable_int(ks);
   ks_enable_qmu(ks);
+  ldv_mutex_unlock_70(& ks->lock);
   netif_start_queue(ks->netdev);
   }
   if ((ks->msg_enable & 32U) != 0U) {
