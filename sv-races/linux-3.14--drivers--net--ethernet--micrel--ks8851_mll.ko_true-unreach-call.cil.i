@@ -9246,7 +9246,7 @@ void ldv_mutex_unlock_lock_of_ks_net(struct mutex *lock )
 {
   {
   {
-  pthread_mutex_lock(& pmutex_lock_of_ks_net);
+  pthread_mutex_unlock(& pmutex_lock_of_ks_net);
   }
   return;
 }
@@ -9320,7 +9320,7 @@ void ldv_mutex_unlock_mutex_of_device(struct mutex *lock )
 {
   {
   {
-  pthread_mutex_lock(& pmutex_mutex_of_device);
+  pthread_mutex_unlock(& pmutex_mutex_of_device);
   }
   return;
 }

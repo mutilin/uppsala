@@ -7900,12 +7900,6 @@ static int loop_init(void)
   {
   {
   part_shift = 0;
-  err = ldv_misc_register_88(& loop_misc);
-  }
-  if (err < 0) {
-    return (err);
-  } else {
-  }
   if (max_part > 0) {
     {
     part_shift = fls(max_part);
@@ -7915,7 +7909,13 @@ static int loop_init(void)
   }
   if (1UL << part_shift > 256UL) {
     err = -22;
-    goto misc_out;
+    return (err);
+  } else {
+  }
+  err = ldv_misc_register_88(& loop_misc);
+  }
+  if (err < 0) {
+    return (err);
   } else {
   }
   if ((unsigned long )max_loop > 1UL << (20 - part_shift)) {

@@ -7094,8 +7094,8 @@ void ibmasm_event_reader_register(struct service_processor *sp , struct event_re
   {
   ldv___ldv_spin_lock_57___0(& sp->lock);
   reader->next_serial_number = (sp->event_buffer)->next_serial_number;
-  reader->next_serial_number = 1;
-  ldv_assert("", reader->next_serial_number == 1);
+  reader->next_serial_number = 2;
+  ldv_assert("", reader->next_serial_number == 2);
   __init_waitqueue_head(& reader->wait, "&reader->wait", & __key);
   list_add(& reader->node, & (sp->event_buffer)->readers);
   ldv_spin_unlock_irqrestore_49(& sp->lock, flags);
