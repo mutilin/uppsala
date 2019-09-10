@@ -7155,6 +7155,21 @@ static int nsc_ircc_open(chipio_t *info )
   self->tx_fifo.len = tmp___9;
   self->tx_fifo.tail = (void *)self->tx_buff.head;
   dev->netdev_ops = & nsc_ircc_sir_ops;
+  err = ldv_register_netdev_78(dev);
+  }
+  if (err != 0) {
+    {
+    tmp___11 = net_ratelimit();
+    }
+    if (tmp___11 != 0) {
+      {
+      printk("\v%s(), register_netdev() failed!\n", "nsc_ircc_open");
+      }
+    } else {
+    }
+    goto out4;
+  } else {
+  }
   {
   tmp___12 = net_ratelimit();
   }
@@ -7187,23 +7202,9 @@ static int nsc_ircc_open(chipio_t *info )
     }
   }
   {
+  ldv___ldv_spin_lock_83(& self->lock);
   self->io.dongle_id = dongle_id;
-  
-  err = ldv_register_netdev_78(dev);
-  }
-  if (err != 0) {
-    {
-    tmp___11 = net_ratelimit();
-    }
-    if (tmp___11 != 0) {
-      {
-      printk("\v%s(), register_netdev() failed!\n", "nsc_ircc_open");
-      }
-    } else {
-    }
-    goto out4;
-  } else {
-  }
+  ldv_spin_unlock_irqrestore_84(& self->lock, tmp);
   nsc_ircc_init_dongle_interface(self->io.fir_base, dongle_id);
   self->pldev = platform_device_register_simple("nsc-ircc", self->index, (struct resource const *)0,
                                                 0U);

@@ -4703,7 +4703,9 @@ static int cypress_generic_port_probe(struct usb_serial_port *port )
   } else {
   }
   {
+  ldv___ldv_spin_lock_57(& priv->lock);
   priv->comm_is_ok = 1;
+    ldv_spin_unlock_irqrestore_52(& priv->lock, tmp___0);
   spinlock_check(& priv->lock);
   __raw_spin_lock_init(& priv->lock.__annonCompField19.rlock, "&(&priv->lock)->rlock",
                        & __key);
