@@ -12,6 +12,7 @@ int init;
 void *thread1(void *arg) {
    pthread_mutex_lock(&mutex);
    if (init ==0) {
+       pthread_mutex_unlock(&mutex);
        return;
    }
    pthread_mutex_unlock(&mutex);
