@@ -22,8 +22,10 @@ void *thread1(void *arg) {
 
 void *thread2(void *arg) {
    if (init == 0) {
-        pdev = 1;
-        init = 1;
+       pthread_mutex_lock(&mutex);
+       pdev = 1;
+       init = 1;
+       pthread_mutex_unlock(&mutex);
    }
 }
 
