@@ -1,10 +1,10 @@
-# 1 "init-synchronization_true-unreach-call.c"
+# 1 "init-synchronization_false-unreach-call.c"
 # 1 "<built-in>"
 # 1 "<command-line>"
 # 31 "<command-line>"
 # 1 "/usr/include/stdc-predef.h" 1 3 4
 # 32 "<command-line>" 2
-# 1 "init-synchronization_true-unreach-call.c"
+# 1 "init-synchronization_false-unreach-call.c"
 # 1 "/usr/include/pthread.h" 1 3 4
 # 21 "/usr/include/pthread.h" 3 4
 # 1 "/usr/include/features.h" 1 3 4
@@ -1433,10 +1433,10 @@ extern int pthread_atfork (void (*__prepare) (void),
       void (*__child) (void)) __attribute__ ((__nothrow__ , __leaf__));
 # 1171 "/usr/include/pthread.h" 3 4
 
-# 2 "init-synchronization_true-unreach-call.c" 2
+# 2 "init-synchronization_false-unreach-call.c" 2
 
 
-# 3 "init-synchronization_true-unreach-call.c"
+# 3 "init-synchronization_false-unreach-call.c"
 extern void __VERIFIER_error() __attribute__ ((__noreturn__));
 int __VERIFIER_nondet_int(void);
 void ldv_assert(int expression) { if (!expression) { ERROR: __VERIFIER_error();}; return; }
@@ -1458,33 +1458,31 @@ void *thread1(void *arg) {
 }
 
 void *thread2(void *arg) {
-   pthread_mutex_lock(&mutex);
    if (init == 0) {
-        pdev = 1;
         init = 1;
+        pdev = 1;
    }
-   pthread_mutex_unlock(&mutex);
 }
 
 int main(void) {
     pthread_t t1, t2;
     pthread_create(&t1, 
-# 34 "init-synchronization_true-unreach-call.c" 3 4
+# 32 "init-synchronization_false-unreach-call.c" 3 4
                        ((void *)0)
-# 34 "init-synchronization_true-unreach-call.c"
+# 32 "init-synchronization_false-unreach-call.c"
                            , thread1, 
-# 34 "init-synchronization_true-unreach-call.c" 3 4
+# 32 "init-synchronization_false-unreach-call.c" 3 4
                                       ((void *)0)
-# 34 "init-synchronization_true-unreach-call.c"
+# 32 "init-synchronization_false-unreach-call.c"
                                           );
     pthread_create(&t2, 
-# 35 "init-synchronization_true-unreach-call.c" 3 4
+# 33 "init-synchronization_false-unreach-call.c" 3 4
                        ((void *)0)
-# 35 "init-synchronization_true-unreach-call.c"
+# 33 "init-synchronization_false-unreach-call.c"
                            , thread2, 
-# 35 "init-synchronization_true-unreach-call.c" 3 4
+# 33 "init-synchronization_false-unreach-call.c" 3 4
                                       ((void *)0)
-# 35 "init-synchronization_true-unreach-call.c"
+# 33 "init-synchronization_false-unreach-call.c"
                                           );
     return 0;
 }
